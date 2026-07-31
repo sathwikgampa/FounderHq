@@ -1,16 +1,27 @@
-import { getApiBaseUrl } from './api-client';
+/**
+ * CEO Planner SSE Client — Authenticated
+ * ----------------------------------------
+ * WHY: The previous version opened SSE connections with no Authorization header,
+ * meaning the planner stream endpoint was effectively public. This version uses
+ * fetchAuthenticatedStream() from api-client.ts which injects the Firebase Bearer
+ * token and CSRF headers before opening the stream connection.
+ */
+
+import { fetchAuthenticatedStream } from './api-client';
 
 export interface PlannerStreamEvent {
   event:
     | 'session_start'
+    | 'routing_decision'
+    | 'agent_start'
     | 'agent_started'
     | 'tool_executed'
+    | 'approval_flag'
     | 'approval_required'
     | 'final_brief'
     | 'error'
     | string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: Record<string, any>;
+  data: Record<string, unknown>;
 }
 
 export async function streamPlannerExecution(
@@ -20,35 +31,14 @@ export async function streamPlannerExecution(
   onComplete?: () => void,
   onError?: (err: Error) => void,
 ): Promise<void> {
-  const baseUrl = getApiBaseUrl();
-  const url = `${baseUrl}/api/v1/planner/stream`;
-
   try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'text/event-stream',
-      },
-      body: JSON.stringify({
-        prompt,
-        workspace_id: workspaceId,
-      }),
+    const reader = await fetchAuthenticatedStream('/api/v1/planner/stream', {
+      prompt,
+      workspace_id: workspaceId,
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`SSE Stream connection failed [${response.status}]: ${errorText}`);
-    }
-
-    if (!response.body) {
-      throw new Error('ReadableStream not supported by browser or empty body');
-    }
-
-    const reader = response.body.getReader();
     const decoder = new TextDecoder('utf-8');
     let buffer = '';
-    let currentEvent = 'message';
 
     while (true) {
       const { done, value } = await reader.read();
@@ -56,37 +46,29 @@ export async function streamPlannerExecution(
 
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split('\n');
-      buffer = lines.pop() || ''; // keep incomplete trailing line in buffer
+      buffer = lines.pop() ?? '';
 
+      let currentEvent = '';
       for (const line of lines) {
         const trimmed = line.trim();
         if (!trimmed) continue;
 
         if (trimmed.startsWith('event:')) {
-          currentEvent = trimmed.substring('event:'.length).trim();
-        } else if (trimmed.startsWith('data:')) {
-          const rawData = trimmed.substring('data:'.length).trim();
-          const evtName = currentEvent || 'message';
+          currentEvent = trimmed.slice('event:'.length).trim();
+        } else if (trimmed.startsWith('data:') && currentEvent) {
+          const rawData = trimmed.slice('data:'.length).trim();
           try {
-            const parsedData = JSON.parse(rawData);
-            onEvent({
-              event: evtName,
-              data: parsedData,
-            });
+            onEvent({ event: currentEvent, data: JSON.parse(rawData) });
           } catch {
-            onEvent({
-              event: evtName,
-              data: { raw: rawData },
-            });
+            onEvent({ event: currentEvent, data: { raw: rawData } });
           }
-          currentEvent = 'message';
+          currentEvent = '';
         }
       }
     }
 
     onComplete?.();
   } catch (err) {
-    const errorObj = err instanceof Error ? err : new Error(String(err));
-    onError?.(errorObj);
+    onError?.(err instanceof Error ? err : new Error(String(err)));
   }
 }
