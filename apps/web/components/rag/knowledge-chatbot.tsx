@@ -19,7 +19,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { clientRAGEngine, Citation } from '@/lib/rag-engine';
+import { Citation } from '@/lib/rag-engine';
 import { useVoice } from '@/hooks/use-voice';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
@@ -84,36 +84,69 @@ export function KnowledgeChatbot() {
     setMessages((prev) => [...prev, userMsg]);
     setIsLoading(true);
 
-    setTimeout(async () => {
-      // Execute 4-Layer RAG Engine Query with Permission Resolution
-      const ragRes = clientRAGEngine.query(userText, 'siddharth', 'acme-inc', [
-        'ENGINEERING',
-        'FINANCE',
-      ]);
+    try {
+      // Call the real backend RAG pipeline
+      const res = await fetch('http://localhost:8000/api/v1/documents/query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: userText,
+          userId: 'siddharth',
+          workspaceId: 'acme-inc',
+          departments: ['ENGINEERING', 'FINANCE', 'GLOBAL'],
+        }),
+      });
 
       let assistantText = '';
-      if (ragRes.citations && ragRes.citations.length > 0) {
-        assistantText = `Based on your accessible workspace documents [Intent: ${ragRes.intent}]:\n\n${ragRes.compressedContext}`;
+      let msgCitations: Citation[] = [];
+      let intent = 'GENERAL';
+
+      if (res.ok) {
+        const json = await res.json();
+        const data = json.data;
+        // Prefer LLM-generated answer; fall back to raw compressed context
+        assistantText =
+          data.generated_answer?.trim() ||
+          data.compressed_context?.slice(0, 600) ||
+          "I couldn't find relevant information in your workspace documents.";
+        intent = data.intent || 'GENERAL';
+        msgCitations = (data.citations || []).map(
+          (c: { file_name: string; page_number: number; visibility: string }) => ({
+            fileName: c.file_name,
+            pageNumber: c.page_number,
+            section: c.visibility === 'PRIVATE' ? 'Private Notes' : 'Workspace Knowledge',
+            visibility: c.visibility as Citation['visibility'],
+          }),
+        );
       } else {
         assistantText =
-          "I couldn't find this information in your accessible workspace documents. Please verify your team permissions or upload the reference file.";
+          "Couldn't reach the knowledge base right now. Please ensure the backend server is running.";
       }
 
       const assistantMsg: ChatMessage = {
         id: `msg-${Date.now() + 1}`,
         sender: 'assistant',
         text: assistantText,
-        intent: ragRes.intent,
-        citations: ragRes.citations,
+        intent,
+        citations: msgCitations,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
-      setIsLoading(false);
-
-      // Play ultra-realistic ElevenLabs TTS Voice Output
       await speak(assistantText.slice(0, 300));
-    }, 1100);
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `msg-err-${Date.now()}`,
+          sender: 'assistant',
+          text: "Connection error: couldn't reach the backend. Make sure the API server is running.",
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -151,10 +184,10 @@ export function KnowledgeChatbot() {
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-6 right-6 z-40 p-2.5 rounded-3xl bg-[#0E1014]/90 border border-[#7C5CFF]/50 text-white shadow-2xl shadow-[#7C5CFF]/40 hover:scale-105 transition-all flex items-center gap-2 group backdrop-blur-xl"
       >
-        <div className="w-10 h-10 overflow-hidden flex items-center justify-center shrink-0">
+        <div className="w-10 h-10 overflow-hidden flex items-center justify-center shrink-0 bg-white rounded-full p-1">
           {!lottieError ? (
             <DotLottieReact
-              src="https://lottie.host/53761f30-4dd3-42a6-a300-fcc52365776f/42HptGJW1u.lottie"
+              src="/knowledge-ai.lottie"
               loop
               autoplay
               onError={() => setLottieError(true)}
@@ -179,10 +212,10 @@ export function KnowledgeChatbot() {
             {/* Chatbot Header */}
             <div className="p-4 border-b border-white/10 bg-white/[0.02] flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#7C5CFF]/20 border border-[#7C5CFF]/40 flex items-center justify-center text-[#7C5CFF] overflow-hidden shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-white border border-[#7C5CFF]/40 flex items-center justify-center text-[#7C5CFF] overflow-hidden shrink-0 p-1">
                   {!lottieError ? (
                     <DotLottieReact
-                      src="https://lottie.host/53761f30-4dd3-42a6-a300-fcc52365776f/42HptGJW1u.lottie"
+                      src="/knowledge-ai.lottie"
                       loop
                       autoplay
                       onError={() => setLottieError(true)}

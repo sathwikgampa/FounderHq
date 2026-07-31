@@ -63,12 +63,18 @@ export default function LandingPage() {
           }
         };
         document.head.appendChild(unicornScript);
+      } else {
+        // Script already loaded — re-init to pick up newly mounted divs
+        const win = window as unknown as { UnicornStudio?: { init?: () => void } };
+        if (win.UnicornStudio && typeof win.UnicornStudio.init === 'function') {
+          setTimeout(() => win.UnicornStudio!.init!(), 500);
+        }
       }
     }
   }, []);
 
   return (
-    <div className="bg-[#030304] text-slate-400 antialiased selection:bg-indigo-500/30 selection:text-indigo-200 overflow-x-hidden min-h-screen relative font-sans">
+    <div className="bg-[#0d0d12] text-slate-400 antialiased selection:bg-indigo-500/30 selection:text-indigo-200 overflow-x-hidden min-h-screen relative font-sans">
       {/* Custom Styles */}
       <style jsx global>{`
         ::-webkit-scrollbar {
@@ -95,9 +101,10 @@ export default function LandingPage() {
           -webkit-text-fill-color: transparent;
         }
         .title-gradient {
-          background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+          background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 60%, #cbd5e1 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
+          text-shadow: none;
         }
         .hero-glow {
           background: radial-gradient(
@@ -148,7 +155,7 @@ export default function LandingPage() {
       <AuraBackground />
 
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#030304]/80 backdrop-blur-md transition-all duration-300 reveal active">
+      <nav className="fixed top-0 w-full z-50 border-b border-white/10 bg-[#0d0d12]/90 backdrop-blur-xl transition-all duration-300 reveal active">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
             <Image
@@ -194,10 +201,25 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
-        {/* Background Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] hero-glow pointer-events-none opacity-60" />
+        {/* Spline 3D Background */}
+        <div className="spline-container absolute inset-0 w-full h-full z-0 pointer-events-none">
+          <iframe
+            src="https://my.spline.design/nexbotrobotcharacterconcept-kLwr8f6hgKgaa5gmU6oB00Si"
+            frameBorder="0"
+            width="100%"
+            height="100%"
+            id="aura-spline"
+            className="w-full h-full"
+          ></iframe>
+        </div>
 
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
+        {/* Dark overlay so text is readable over the 3D scene */}
+        <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#0d0d12]/80 via-[#0d0d12]/40 to-transparent pointer-events-none" />
+
+        {/* Background Glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] hero-glow pointer-events-none opacity-40" />
+
+        <div className="max-w-7xl mx-auto px-6 relative z-20">
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
             <div className="reveal active inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-[11px] font-medium mb-8">
               <span className="relative flex h-2 w-2">
@@ -207,11 +229,11 @@ export default function LandingPage() {
               AI Operating System v1.0
             </div>
 
-            <h1 className="reveal active delay-100 text-5xl md:text-7xl font-medium tracking-tight text-white mb-6 leading-[1.1] title-gradient">
+            <h1 className="reveal active delay-100 text-5xl md:text-7xl font-medium tracking-tight mb-6 leading-[1.1] title-gradient drop-shadow-[0_2px_20px_rgba(255,255,255,0.15)]">
               Your Startup&apos;s AI-Powered <br className="hidden md:block" /> Executive Team.
             </h1>
 
-            <p className="reveal active delay-200 text-lg md:text-xl text-slate-400 max-w-2xl mb-10 leading-relaxed font-light">
+            <p className="reveal active delay-200 text-lg md:text-xl text-slate-200/90 max-w-2xl mb-10 leading-relaxed font-light drop-shadow-[0_1px_8px_rgba(0,0,0,0.8)]">
               FounderHQ replaces fragmented startup tools with one unified operating system where AI
               executives collaborate under a CEO Planner — keeping you in complete control.
             </p>
@@ -400,9 +422,27 @@ export default function LandingPage() {
               </div>
             </div>
             {/* Reflection/Shadow */}
-            <div className="absolute -bottom-10 left-0 right-0 h-20 bg-gradient-to-t from-[#030304] to-transparent z-20" />
+            <div className="absolute -bottom-10 left-0 right-0 h-20 bg-gradient-to-t from-[#0d0d12] to-transparent z-20" />
           </div>
         </div>
+      </section>
+
+      {/* UnicornStudio Animated Section — between hero and trust signals */}
+      <section className="relative w-full" style={{ height: '420px' }}>
+        <div
+          data-us-project="p7Ff6pfTrb5Gs59C7nLC"
+          className="absolute w-full h-full left-0 top-0"
+          style={{ zIndex: 0 }}
+        />
+        {/* Gradient overlays so text above/below blends cleanly */}
+        <div
+          className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-[#0d0d12] to-transparent pointer-events-none"
+          style={{ zIndex: 1 }}
+        />
+        <div
+          className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#0d0d12] to-transparent pointer-events-none"
+          style={{ zIndex: 1 }}
+        />
       </section>
 
       {/* Trust Signals (Marquee) */}
@@ -455,7 +495,13 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-24 relative">
+      <section id="features" className="py-24 relative overflow-hidden">
+        {/* UnicornStudio Animated Background */}
+        <div
+          data-us-project="p7Ff6pfTrb5Gs59C7nLC"
+          className="absolute w-full h-full left-0 top-0 -z-10 pointer-events-none"
+        />
+
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-16 md:text-center max-w-2xl md:mx-auto reveal active">
             <h2 className="text-3xl md:text-4xl font-medium text-white mb-4 tracking-tight">

@@ -73,3 +73,7 @@ class RAGQueryResponse(BaseModel):
     compressed_context: str
     citations: list[CitationItem]
     retrieved_chunk_count: int
+    generated_answer: str = Field(
+        default="",
+        description="LLM-synthesized answer grounded strictly in retrieved context",
+    )
