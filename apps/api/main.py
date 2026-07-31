@@ -18,6 +18,7 @@ import uuid
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
+from typing import Any
 
 import uvicorn
 from fastapi import FastAPI, Request, status
@@ -129,6 +130,72 @@ async def log_requests(request: Request, call_next):
     return response
 
 
+def _extract_prompt_context(prompt: str) -> dict[str, Any]:  # noqa: C901
+    """Dynamically extract target audience, core problem, capital, and co-founder status directly from user prompt."""
+    import re
+
+    lower_p = prompt.lower()
+
+    # Extract capital/savings if mentioned (e.g. $10,000, 10k, 10000)
+    capital = 10000.0
+    cap_match = re.search(r"\$(\d+[\d,]*)(k)?|\b(\d+)\s*k\s*(savings|capital|dollars|\$)?", lower_p)
+    if cap_match:
+        val_str = cap_match.group(1) or cap_match.group(3)
+        if val_str:
+            try:
+                val = float(val_str.replace(",", ""))
+                if cap_match.group(2) or "k" in (cap_match.group(0) or ""):
+                    val *= 1000
+                if val > 0:
+                    capital = val
+            except ValueError:
+                pass
+
+    has_co_founders = any(
+        w in lower_p for w in ["co-founder", "cofounder", "co founder", "partner", "founders"]
+    )
+
+    # Contextual domain mapping directly from user request
+    if any(w in lower_p for w in ["real estate", "broker", "realtor", "property", "listing"]):
+        target_audience = "Local real estate brokers & independent agent teams"
+        core_problem = (
+            "Brokers spend 2+ hours per listing manually drafting MLS copy & social assets"
+        )
+    elif any(
+        w in lower_p
+        for w in ["study", "edtech", "education", "quiz", "course", "school", "student"]
+    ):
+        target_audience = "Students, educators, course creators & boutique learning academies"
+        core_problem = (
+            "Learners spend hours synthesizing notes into practice quizzes & study guides"
+        )
+    elif any(w in lower_p for w in ["health", "fitness", "tracking", "track", "workout", "gym"]):
+        target_audience = "Health-conscious individuals, personal trainers & wellness coaches"
+        core_problem = (
+            "Users struggle to consistently track daily health metrics and workout progress"
+        )
+    elif any(w in lower_p for w in ["hiring", "job", "recruiting", "hr", "candidate", "resume"]):
+        target_audience = "Hiring managers, recruiters & fast-growing tech startups"
+        core_problem = "Recruiters waste hours screening resumes & scheduling interview rounds"
+    elif any(w in lower_p for w in ["sales", "lead", "b2b", "outreach", "crm", "email"]):
+        target_audience = "B2B sales teams, agency owners & account executives"
+        core_problem = (
+            "Sales reps burn hours researching prospects & writing personalized cold emails"
+        )
+    else:
+        # Prompt-derived custom customer & problem fallback
+        target_audience = f"Target customers & early adopters of '{prompt[:40]}...'"
+        core_problem = f"Solving primary user pain points described in: '{prompt}'"
+
+    return {
+        "initial_capital": capital,
+        "est_monthly_cost": round(capital / 6.0, 2) if capital > 0 else 1500.0,
+        "target_audience": target_audience,
+        "core_problem": core_problem,
+        "has_co_founders": has_co_founders,
+    }
+
+
 async def _planner_event_stream(
     prompt: str,
     workspace_id: str,
@@ -163,13 +230,14 @@ async def _planner_event_stream(
         ),
     }
 
-    # Execute deterministic tools per sub-agent
-    mvp_res = generate_mvp_spec(
-        prompt, "Founder concept validation & study platform implementation"
-    )
-    gtm_res = build_gtm_launch_plan("Educators, course creators & boutique academies", 1000.0)
-    fin_res = calculate_bootstrap_runway(10000.0, 2000.0)
-    leg_res = generate_incorporation_checklist("Delaware, USA", True)
+    # Extract dynamic request parameters based strictly on user prompt input
+    ctx = _extract_prompt_context(prompt)
+
+    # Execute deterministic tools per sub-agent with user-input parameters
+    mvp_res = generate_mvp_spec(prompt, ctx["core_problem"])
+    gtm_res = build_gtm_launch_plan(ctx["target_audience"], 1000.0)
+    fin_res = calculate_bootstrap_runway(ctx["initial_capital"], ctx["est_monthly_cost"])
+    leg_res = generate_incorporation_checklist("Delaware, USA", ctx["has_co_founders"])
 
     tool_map = {
         "ProductAgent": ("generate_mvp_spec", lambda: mvp_res),
@@ -251,44 +319,53 @@ async def _planner_event_stream(
             summary_items.append(f"{agent_name} executed {tool_name}.")
             next_steps.append(f"Review {agent_name} {tool_name} results.")
 
-    # Synthesize clean, emoji-rich 30-Day Founder Launch Blueprint (SIMPLE FORMAT LAW)
-    first_feature = mvp_res.get("mvp_features", ["Core AI Engine"])[0]
-    stack_fe = mvp_res.get("tech_stack_recommendation", {}).get("frontend", "Next.js 15")
-    stack_be = mvp_res.get("tech_stack_recommendation", {}).get("backend", "FastAPI")
-    stack_ai = mvp_res.get("tech_stack_recommendation", {}).get("ai_engine", "Gemini 2.5 API")
-    icp_desc = gtm_res.get("icp_targets", ["Target Educators & Founders"])[0]
-    cold_email = gtm_res.get("cold_email_template", {}).get(
-        "body", "Hi {Name}, open to testing our automated study engine this week?"
+    # Synthesize clean, emoji-rich 30-Day Founder Launch Blueprint based strictly on user prompt input
+    first_feature = mvp_res.get("mvp_features", [f"Core solution for: {prompt[:30]}"])[0]
+    stack_recommendation = mvp_res.get(
+        "recommended_stack", ["Next.js 15", "Gemini 2.5 API", "Supabase"]
     )
-    runway_m = fin_res.get("runway_months", "5.0 months")
-    burn_cost = fin_res.get("est_monthly_cost_usd", 2000.0)
-    health_stat = fin_res.get("health_status", "LEAN_VALIDATION")
+    stack_str = (
+        ", ".join(stack_recommendation)
+        if isinstance(stack_recommendation, list)
+        else str(stack_recommendation)
+    )
+    icp_desc = gtm_res.get("icp_targets", [f"Target audience: {ctx['target_audience']}"])[0]
+    cold_email = gtm_res.get("cold_email_template", {}).get(
+        "body", f"Hi {{Name}}, open to testing our solution for {ctx['target_audience']} this week?"
+    )
+    runway_m = fin_res.get("runway_months", "6.0 months")
+    safe_spend = fin_res.get("safe_monthly_spend_usd", 150.0)
+    health_stat = fin_res.get("health_status", "STRONG_BOOTSTRAP")
     cfo_adv = fin_res.get("cfo_recommendation", "Keep burn low to maximize validation time.")
-    equity_terms = leg_res.get("founder_equity_terms", {}).get(
-        "structure", "50/50 Equity Split with 4-year vesting and 1-year cliff"
+    equity_terms = leg_res.get(
+        "recommended_equity_split", "50/50 Equity Split with 4-year vesting and 1-year cliff"
+    )
+    legal_action = leg_res.get(
+        "immediate_action_item", "File legal entity incorporation & sign PIIA agreement"
     )
 
     synthesis_markdown = (
         f"💡 TOP TAKEAWAY\n"
-        f"By focusing strictly on 3 core MVP features and executing direct outreach for your concept, "
-        f"you save ~4 weeks of coding while maintaining 5+ months of zero-revenue runway!\n\n"
+        f'For your concept: "{prompt}"\n'
+        f"By focusing strictly on 3 core MVP features and launching direct outreach to {ctx['target_audience']}, "
+        f"you save {mvp_res.get('time_saved_weeks', 3)} weeks of coding and project {gtm_res.get('projected_sales_impact', '$1,500/mo')} while maintaining {runway_m} runway!\n\n"
         f"🛠️ 14-DAY MVP PLAN\n"
         f"• 🎯 Core Focus: {first_feature}\n"
-        f"• ⏱️ Time Saved: By cutting non-essential custom auth & telemetry, you save 4 weeks of coding.\n"
-        f"• 🛠️ Recommended Stack: {stack_fe}, {stack_be}, {stack_ai}\n\n"
+        f"• ⏱️ Time Saved: {mvp_res.get('estimated_build_days', 12)} days build target (saves {mvp_res.get('time_saved_weeks', 3)} weeks of non-essential coding).\n"
+        f"• 🛠️ Recommended Stack: {stack_str}\n\n"
         f"📈 THIS MONTH'S GROWTH & SALES PLAN\n"
-        f"• 💡 Sales Insight: Executing targeted outreach across 3 organic channels reaches ~250 leads & secures your first 10 beta users.\n"
-        f"• 👥 Who to Target: {icp_desc}\n"
+        f"• 💡 Sales Insight: Direct outreach across target channels projects {gtm_res.get('projected_sales_impact', '$1,500/mo in initial sales')}.\n"
+        f"• 👥 Target Audience: {icp_desc}\n"
         f"• ✉️ Ready Outreach Script:\n"
         f'  "{cold_email.splitlines()[0]}"\n\n'
         f"💰 MONEY & RUNWAY SUMMARY\n"
         f"• 💰 Cash Runway: {runway_m} remaining ({health_stat})\n"
-        f"• 📊 Safe Monthly Spend: ${burn_cost:,.2f} / month\n"
+        f"• 📊 Safe Monthly Spend: ${safe_spend:,.2f} / month safe tool budget\n"
         f"• 💡 Financial Advice: {cfo_adv}\n\n"
         f"⚖️ LEGAL & FOUNDER CHECKLIST\n"
         f"• 📜 Founder Equity: {equity_terms}\n"
-        f"• 🛡️ IP Protection: 100% pre-existing & future IP assigned to startup entity\n"
-        f"• ✅ Next Legal Step: File legal entity incorporation & sign PIIA agreement (⚠️ HOLD FOR HUMAN APPROVAL)"
+        f"• 🛡️ IP Protection: {leg_res.get('ip_protection', '100% IP assigned to startup legal entity')}\n"
+        f"• ✅ Next Legal Step: {legal_action} (⚠️ HOLD FOR HUMAN APPROVAL)"
     )
 
     # 5. event: final_brief
