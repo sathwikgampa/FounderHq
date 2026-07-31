@@ -159,44 +159,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithEmail = async (email: string, pass: string) => {
     if (!auth) {
-      loginAsDemo();
-      return;
+      throw new Error('Firebase Auth is not initialized. Check API keys.');
     }
-    try {
-      await signInWithEmailAndPassword(auth, email, pass);
-    } catch {
-      // If Firebase auth fails, fallback cleanly to Demo mode
-      loginAsDemo();
-    }
+    await signInWithEmailAndPassword(auth, email, pass);
   };
 
   const signUpWithEmail = async (email: string, pass: string, name: string) => {
     if (!auth) {
-      loginAsDemo();
-      return;
+      throw new Error('Firebase Auth is not initialized. Check API keys.');
     }
-    try {
-      const creds = await createUserWithEmailAndPassword(auth, email, pass);
-      if (creds.user) {
-        await updateProfile(creds.user, { displayName: name });
-      }
-    } catch {
-      // Fallback cleanly to Demo mode
-      loginAsDemo();
+    const creds = await createUserWithEmailAndPassword(auth, email, pass);
+    if (creds.user) {
+      await updateProfile(creds.user, { displayName: name });
     }
   };
 
   const signInWithGoogle = async () => {
     if (!auth) {
-      loginAsDemo();
-      return;
+      throw new Error('Firebase Auth is not initialized. Check API keys.');
     }
-    try {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
-    } catch {
-      loginAsDemo();
-    }
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
   };
 
   return (

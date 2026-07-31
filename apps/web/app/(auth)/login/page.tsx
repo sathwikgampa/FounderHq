@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/providers/auth-provider';
 import { toast } from 'sonner';
-
+import { OrbitBackground } from '@/components/ui/orbit-background';
 
 // ── Password strength ────────────────────────────────────────────────────────
 function getPasswordStrength(pass: string): { score: number; label: string; color: string } {
@@ -68,30 +68,6 @@ function FeatureCard({
   );
 }
 
-// ── Animated orbit background ────────────────────────────────────────────────
-function OrbitBackground() {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <div
-        className="absolute rounded-full border border-indigo-500/10"
-        style={{ width: 700, height: 700, top: -200, right: -300 }}
-      />
-      <div
-        className="absolute rounded-full border border-purple-500/10"
-        style={{ width: 500, height: 500, top: -80, right: -160 }}
-      />
-      <div
-        className="absolute rounded-full border border-blue-500/10"
-        style={{ width: 600, height: 600, bottom: -200, left: -250 }}
-      />
-      <div
-        className="absolute w-96 h-96 rounded-full bg-indigo-600/10 blur-[100px]"
-        style={{ top: '20%', left: '10%' }}
-      />
-    </div>
-  );
-}
-
 // ── Main Page Component ──────────────────────────────────────────────────────
 export default function AuthPage() {
   const router = useRouter();
@@ -133,13 +109,15 @@ export default function AuthPage() {
       if (tab === 'signin') {
         await signInWithEmail(email, password);
         toast.success('Welcome back! 🚀');
+        router.push('/dashboard');
       } else {
         await signUpWithEmail(email, password, displayName || 'Founder');
         toast.success('Workspace created! Starting onboarding...');
+        router.push('/onboarding');
       }
-      router.push('/dashboard');
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+      const message =
+        err instanceof Error ? err.message : 'Something went wrong. Please try again.';
       toast.error(message);
     } finally {
       setLoading(false);
@@ -185,7 +163,13 @@ export default function AuthPage() {
           transition={{ duration: 0.5 }}
           className="flex items-center gap-3 relative z-10"
         >
-          <Image src="/logo.png" alt="FounderHQ" width={40} height={40} className="object-contain" />
+          <Image
+            src="/logo.png"
+            alt="FounderHQ"
+            width={40}
+            height={40}
+            className="object-contain"
+          />
           <span className="text-white font-semibold tracking-tight text-lg">FOUNDERHQ</span>
         </motion.div>
 
@@ -287,17 +271,19 @@ export default function AuthPage() {
       <div className="flex-1 flex flex-col items-center justify-center p-6 lg:p-12 min-h-screen relative">
         {/* Mobile logo */}
         <div className="lg:hidden mb-8 flex items-center gap-2">
-          <Image src="/logo.png" alt="FounderHQ" width={32} height={32} className="object-contain" />
+          <Image
+            src="/logo.png"
+            alt="FounderHQ"
+            width={32}
+            height={32}
+            className="object-contain"
+          />
           <span className="text-white font-semibold text-sm tracking-tight">FOUNDERHQ</span>
         </div>
 
         <div className="w-full max-w-[400px] space-y-6">
           {/* Header */}
-          <motion.div
-            key={tab + '-header'}
-            {...pageTransition}
-            className="text-center space-y-1.5"
-          >
+          <motion.div key={tab + '-header'} {...pageTransition} className="text-center space-y-1.5">
             <h2 className="text-2xl font-bold text-white tracking-tight">
               {tab === 'signin' ? 'Welcome back' : 'Start building'}
             </h2>

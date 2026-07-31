@@ -1,17 +1,20 @@
 'use client';
 
 import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/providers/auth-provider';
 import { LoadingSpinner } from '@/components/common/loading-spinner';
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading, loginAsDemo } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+
+  const router = useRouter();
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      loginAsDemo();
+      router.push('/login');
     }
-  }, [isAuthenticated, isLoading, loginAsDemo]);
+  }, [isAuthenticated, isLoading, router]);
 
   if (isLoading || !isAuthenticated) {
     return (

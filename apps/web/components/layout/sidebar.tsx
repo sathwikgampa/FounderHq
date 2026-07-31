@@ -15,7 +15,9 @@ import {
   Briefcase,
   User,
   ChevronRight,
+  LogOut,
 } from 'lucide-react';
+import { useAuth } from '@/providers/auth-provider';
 
 const mainNavItems = [{ name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard }];
 
@@ -35,6 +37,7 @@ const secondaryNavItems = [
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const { logout } = useAuth();
   const [agentsExpanded, setAgentsExpanded] = useState(false);
 
   const NavItem = ({ item, isSub = false }: { item: any; isSub?: boolean }) => {
@@ -131,7 +134,7 @@ export function Sidebar() {
           </button>
         </div>
 
-        <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-muted transition-colors cursor-pointer group">
+        <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-muted transition-colors group">
           <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center border group-hover:border-primary/50 transition-colors">
             <User
               size={16}
@@ -142,6 +145,13 @@ export function Sidebar() {
             <p className="text-sm font-medium text-foreground truncate">Sarah Founder</p>
             <p className="text-xs text-muted-foreground truncate">CEO, Acme Inc</p>
           </div>
+          <button
+            onClick={() => logout()}
+            className="p-2 text-muted-foreground hover:text-destructive transition-colors ml-auto group/logout rounded-md hover:bg-destructive/10"
+            title="Log out"
+          >
+            <LogOut size={16} className="group-hover/logout:text-destructive" />
+          </button>
         </div>
       </div>
     </aside>
