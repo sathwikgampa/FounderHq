@@ -1,16 +1,17 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Mic, MicOff, Paperclip, Send, Command, Volume2, Square } from 'lucide-react';
+import { Sparkles, Mic, MicOff, Paperclip, Send, Command, Slash, Volume2, Square } from 'lucide-react';
 import { toast } from 'sonner';
 import { useVoice } from '@/hooks/use-voice';
 
 const PROMPT_CHIPS = [
-  'Analyze my runway',
-  'Create hiring plan',
-  'Generate pitch deck',
-  'Review contracts',
-  'Find growth opportunities',
+  'Analyze runway',
+  'Generate hiring plan',
+  'Review SAFE agreement',
+  'Forecast revenue',
+  'Find bottlenecks',
+  'Build GTM strategy',
 ];
 
 export function AiCopilot() {
@@ -36,20 +37,21 @@ export function AiCopilot() {
 
     setTimeout(async () => {
       setIsProcessing(false);
-      const responseText = `CEO Planner evaluated: "${userPrompt}". All 10 executive agents dispatched parallel tasks. Runway buffer remains healthy at 16 months.`;
+      const responseText = `CEO Planner evaluated: "${userPrompt}". All executive agents dispatched. Runway remains healthy at 16 months.`;
       setLastResponse(responseText);
-      toast.success(`CEO Planner processed: "${userPrompt}"`, { icon: '✨' });
+      toast.success(`CEO Planner: "${userPrompt}"`, { icon: '✨' });
       setQuery('');
       await speak(responseText);
-    }, 1000);
+    }, 900);
   };
 
   return (
     <div id="copilot" className="w-full mb-8">
-      <div className="relative max-w-4xl mx-auto space-y-3">
+      <div className="relative w-full max-w-4xl mx-auto space-y-3">
+        {/* Main Floating Command Bar (Raycast / Perplexity Style) */}
         <form
           onSubmit={handleSubmit}
-          className="relative bg-white border border-[#ECECEC] rounded-[24px] p-3.5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] space-y-3 z-10 transition-all hover:border-[#6C63FF]/30"
+          className="relative bg-white border border-[#ECECEC] rounded-[24px] p-3.5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] space-y-3 z-10 transition-all hover:border-[#6C63FF]/40 focus-within:border-[#6C63FF] focus-within:ring-2 focus-within:ring-[#6C63FF]/10"
         >
           <div className="flex items-center gap-3 px-2">
             <div className="w-8 h-8 rounded-xl bg-[#6C63FF]/10 border border-[#6C63FF]/20 flex items-center justify-center text-[#6C63FF] shrink-0">
@@ -60,12 +62,12 @@ export function AiCopilot() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder={isListening ? 'Listening to voice input...' : 'Ask FounderHQ anything...'}
-              className="flex-1 bg-transparent text-sm text-[#111827] placeholder:text-[#6B7280] focus:outline-none"
+              placeholder={isListening ? 'Listening to voice...' : 'Ask FounderHQ anything...'}
+              className="flex-1 bg-transparent text-sm font-medium text-[#111827] placeholder:text-[#6B7280] focus:outline-none"
             />
 
             <div className="flex items-center gap-2">
-              {/* Voice Button */}
+              {/* Voice STT */}
               <button
                 type="button"
                 onClick={toggleListening}
@@ -79,14 +81,24 @@ export function AiCopilot() {
                 {isListening ? <MicOff size={16} /> : <Mic size={16} />}
               </button>
 
-              {/* Attachment Button */}
+              {/* Attach File */}
               <button
                 type="button"
-                onClick={() => toast.info('Document attachment scanner ready')}
+                onClick={() => toast.info('File attachment ready')}
                 className="p-2 rounded-xl text-[#6B7280] hover:text-[#111827] hover:bg-[#FAFAFB] transition-colors"
                 title="Attach file"
               >
                 <Paperclip size={16} />
+              </button>
+
+              {/* Slash Command Helper */}
+              <button
+                type="button"
+                onClick={() => setQuery('/')}
+                className="p-2 rounded-xl text-[#6B7280] hover:text-[#111827] hover:bg-[#FAFAFB] transition-colors"
+                title="Slash commands"
+              >
+                <Slash size={14} />
               </button>
 
               {/* Audio Playback Stop / Replay */}
@@ -95,7 +107,7 @@ export function AiCopilot() {
                   type="button"
                   onClick={stopSpeaking}
                   className="p-2 rounded-xl bg-purple-50 text-purple-600 border border-purple-200 animate-pulse"
-                  title="Stop AI Voice Playback"
+                  title="Stop Voice Playback"
                 >
                   <Square size={14} />
                 </button>
@@ -110,7 +122,7 @@ export function AiCopilot() {
                 </button>
               ) : null}
 
-              {/* Command Badge */}
+              {/* Keyboard Shortcut */}
               <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[#FAFAFB] text-[10px] text-[#6B7280] font-mono border border-[#ECECEC]">
                 <Command size={10} /> K
               </kbd>
@@ -127,7 +139,7 @@ export function AiCopilot() {
           </div>
         </form>
 
-        {/* 5 Suggestion Chips Below Command Bar */}
+        {/* Suggested Prompt Chips */}
         <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar px-1 text-xs">
           {PROMPT_CHIPS.map((chip) => (
             <button
