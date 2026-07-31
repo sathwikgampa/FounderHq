@@ -28,13 +28,12 @@ const ChecklistCard = ({ title, items }: { title: string; items: Item[] }) => {
       {expanded && (
         <div className="p-4 flex flex-col gap-3 focus:outline-none">
           {items.map((item, i) => (
-            <div key={i} className="flex items-start gap-3 group cursor-pointer">
+            <div key={i} onClick={() => { console.log(`Checklist item clicked: ${item.text}`); alert('Status transition received.'); }} className="flex items-start gap-3 group cursor-pointer">
               <div
-                className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center shrink-0 border transition-colors ${
-                  item.checked
+                className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center shrink-0 border transition-colors ${item.checked
                     ? 'bg-emerald-500 border-emerald-500'
                     : 'border-muted-foreground group-hover:border-primary'
-                }`}
+                  }`}
               >
                 {item.checked && <Check size={12} className="text-white" />}
               </div>

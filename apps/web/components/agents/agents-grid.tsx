@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import {
   CircleDollarSign,
   Users,
@@ -77,61 +78,55 @@ const agents = [
 ];
 
 export function AgentsGrid() {
-  const router = useRouter();
-
-  const handleAgentClick = (agent: (typeof agents)[0]) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    router.push(agent.path as any);
-  };
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
       {agents.map((agent, i) => {
         const Icon = agent.icon;
 
         return (
-          <motion.div
-            key={agent.name}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: i * 0.05 }}
-            whileHover={{ y: -4, transition: { duration: 0.2 } }}
-            onClick={() => handleAgentClick(agent)}
-            className={`glass-card p-6 flex flex-col justify-between h-48 cursor-pointer relative transition-all group ${agent.borderHover} ${agent.active ? 'opacity-100 shadow-sm hover:shadow-md' : 'opacity-60 hover:opacity-100 bg-muted/30'}`}
-          >
-            <div className="flex justify-between items-start">
-              <div className={`w-10 h-10 rounded-xl ${agent.bg} flex items-center justify-center`}>
-                <Icon size={20} className={agent.color} />
-              </div>
-            </div>
-
-            <div className="mt-auto">
-              <h3 className="text-xl font-bold text-foreground tracking-tight mb-1">
-                {agent.name}
-              </h3>
-              <p className="text-[13px] text-muted-foreground mr-4 leading-relaxed mb-4">
-                {agent.desc}
-              </p>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5">
-                  <span
-                    className={`w-2 h-2 rounded-full ${agent.active ? 'bg-emerald-500' : 'bg-muted-foreground/50'}`}
-                  />
-                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    {agent.active ? 'Active' : 'Setup Required'}
-                  </span>
-                </div>
-                <div className="text-muted-foreground group-hover:text-foreground transition-colors shrink-0">
-                  {agent.active ? (
-                    <ChevronRight size={18} />
-                  ) : (
-                    <Lock size={16} className="text-muted-foreground/60" />
-                  )}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          <Link href={agent.path as any} key={agent.name} className="block group">
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: i * 0.05 }}
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              className={`glass-card p-6 flex flex-col justify-between h-48 relative transition-all ${agent.borderHover} ${agent.active ? 'opacity-100 shadow-sm hover:shadow-md' : 'opacity-60 hover:opacity-100 bg-muted/30'}`}
+            >
+              <div className="flex justify-between items-start">
+                <div className={`w-10 h-10 rounded-xl ${agent.bg} flex items-center justify-center`}>
+                  <Icon size={20} className={agent.color} />
                 </div>
               </div>
-            </div>
-          </motion.div>
+
+              <div className="mt-auto">
+                <h3 className="text-xl font-bold text-foreground tracking-tight mb-1">
+                  {agent.name}
+                </h3>
+                <p className="text-[13px] text-muted-foreground mr-4 leading-relaxed mb-4">
+                  {agent.desc}
+                </p>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className={`w-2 h-2 rounded-full ${agent.active ? 'bg-emerald-500' : 'bg-muted-foreground/50'}`}
+                    />
+                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      {agent.active ? 'Active' : 'Setup Required'}
+                    </span>
+                  </div>
+                  <div className="text-muted-foreground group-hover:text-foreground transition-colors shrink-0">
+                    {agent.active ? (
+                      <ChevronRight size={18} />
+                    ) : (
+                      <Lock size={16} className="text-muted-foreground/60" />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </Link>
         );
       })}
     </div>
