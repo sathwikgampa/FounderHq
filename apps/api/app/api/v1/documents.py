@@ -1,12 +1,19 @@
-"""Documents Router for storage metadata and vector indexing."""
+"""Documents Router for storage metadata, RAG querying, and vector indexing."""
 
 from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException, status
 
-from app.schemas.documents import DocumentResponse, DocumentUploadRequest, DocumentUploadResponse
+from app.schemas.documents import (
+    DocumentResponse,
+    DocumentUploadRequest,
+    DocumentUploadResponse,
+    RAGQueryRequest,
+    RAGQueryResponse,
+)
 from app.schemas.response import APIResponse
 from app.services.document_service import DocumentService
+from app.ai.memory.manager import rag_engine
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
 doc_service = DocumentService()
@@ -16,10 +23,36 @@ doc_service = DocumentService()
 async def upload_document_metadata(payload: DocumentUploadRequest):
     """Register uploaded document metadata and trigger vector indexing."""
     result = doc_service.upload_document(payload)
+    # Trigger RAG Engine ingestion
+    await rag_engine.ingest_document(
+        document_id=result.id,
+        workspace_id=payload.startupId,
+        owner_id="siddharth",
+        content=f"Sample parsed text content from document {payload.filename}",
+        file_name=payload.filename,
+        visibility=payload.visibility,
+        department=payload.department,
+    )
     return APIResponse(
         success=True,
         data=result,
         message="Document uploaded and indexed into Startup RAG memory",
+    )
+
+
+@router.post("/query", response_model=APIResponse[RAGQueryResponse])
+async def query_rag_knowledge_base(payload: RAGQueryRequest):
+    """Query Enterprise RAG Knowledge Engine with pre-retrieval permission scoping."""
+    rag_res = await rag_engine.query_knowledge_base(
+        user_prompt=payload.prompt,
+        user_id=payload.userId,
+        workspace_id=payload.workspaceId,
+        user_departments=payload.departments,
+    )
+    return APIResponse(
+        success=True,
+        data=RAGQueryResponse(**rag_res),
+        message="RAG knowledge retrieval complete",
     )
 
 

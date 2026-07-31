@@ -5,6 +5,7 @@ import { ProtectedRoute } from '@/features/auth/components/protected-route';
 import { FloatingSidebar } from '@/components/layout/floating-sidebar';
 import { TopNavbar } from '@/components/layout/top-navbar';
 import { AuraBackground } from '@/components/ui/aura-background';
+import { KnowledgeChatbot } from '@/components/rag/knowledge-chatbot';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -22,6 +23,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <main className="flex-1 w-full">{children}</main>
           </div>
         </div>
+
+        {/* Enterprise RAG Knowledge Chatbot Drawer */}
+        <KnowledgeChatbot />
       </div>
     </ProtectedRoute>
   );
