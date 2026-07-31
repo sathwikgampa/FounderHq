@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Sparkles, AlertTriangle, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import { Sparkles, ArrowRight } from 'lucide-react';
 import { GlowCard } from '@/components/ui/glow-card';
 import { toast } from 'sonner';
 

@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Sparkles, Mic, Paperclip, Send, Terminal, ArrowRight } from 'lucide-react';
+import { Sparkles, Mic, Paperclip, Send, Terminal } from 'lucide-react';
 import { toast } from 'sonner';
 
 const PROMPT_CHIPS = [

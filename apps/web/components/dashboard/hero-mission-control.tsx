@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Activity, ArrowUpRight, TrendingDown, Clock, ShieldAlert, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Activity, ArrowUpRight, TrendingDown, Clock, Sparkles, CheckCircle2 } from 'lucide-react';
 import { GlowCard } from '@/components/ui/glow-card';
 import { useAuth } from '@/providers/auth-provider';
 

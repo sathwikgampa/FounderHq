@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Bot, Cpu, Sparkles, CheckCircle2, Loader2, ArrowRight } from 'lucide-react';
+import { Bot, Cpu, CheckCircle2, Loader2, ArrowRight } from 'lucide-react';
 import { GlowCard } from '@/components/ui/glow-card';
 import { useRouter } from 'next/navigation';
 

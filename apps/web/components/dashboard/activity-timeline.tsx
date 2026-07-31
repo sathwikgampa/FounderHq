@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { GitCommit, Bot, FileCheck, Users, CircleDollarSign, CheckCircle2 } from 'lucide-react';
+import { GitCommit, FileCheck, Users, CircleDollarSign } from 'lucide-react';
 import { GlowCard } from '@/components/ui/glow-card';
 
 const ACTIVITIES = [

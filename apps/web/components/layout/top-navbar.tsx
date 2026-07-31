@@ -1,13 +1,11 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Search, Bell, Calendar, Command, Plus, Sparkles, Activity, ChevronsUpDown } from 'lucide-react';
-import { useAuth } from '@/providers/auth-provider';
+import React, { useState, useEffect } from 'react';
+import { Search, Bell, Command, Plus, Sparkles, Activity, ChevronsUpDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 export function TopNavbar() {
-  const { user } = useAuth();
   const router = useRouter();
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');

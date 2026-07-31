@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { CheckSquare, Clock, AlertTriangle, Sparkles, User } from 'lucide-react';
+import { CheckSquare, Clock, Sparkles, User } from 'lucide-react';
 import { GlowCard } from '@/components/ui/glow-card';
 
 interface Task {
