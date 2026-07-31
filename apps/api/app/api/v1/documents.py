@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from typing import List
 from fastapi import APIRouter, HTTPException, status
+
 from app.schemas.documents import DocumentResponse, DocumentUploadRequest, DocumentUploadResponse
 from app.schemas.response import APIResponse
 from app.services.document_service import DocumentService
@@ -23,7 +23,7 @@ async def upload_document_metadata(payload: DocumentUploadRequest):
     )
 
 
-@router.get("", response_model=APIResponse[List[DocumentResponse]])
+@router.get("", response_model=APIResponse[list[DocumentResponse]])
 async def list_documents(startupId: str = "startup-001"):
     """List documents uploaded for a specific startup."""
     docs = doc_service.list_documents(startupId)

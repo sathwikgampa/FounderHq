@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import Dict, List, Optional
 
 from app.schemas.notifications import NotificationResponse
 
-_NOTIFICATIONS_STORE: Dict[str, NotificationResponse] = {}
+_NOTIFICATIONS_STORE: dict[str, NotificationResponse] = {}
 
 def _seed_notifications():
     if not _NOTIFICATIONS_STORE:
@@ -37,14 +36,14 @@ _seed_notifications()
 
 
 class NotificationService:
-    def list_notifications(self, startup_id: str) -> List[NotificationResponse]:
+    def list_notifications(self, startup_id: str) -> list[NotificationResponse]:
         return [n for n in _NOTIFICATIONS_STORE.values() if n.startupId in (startup_id, "startup-001")]
 
-    def mark_as_read(self, notification_id: str) -> Optional[NotificationResponse]:
+    def mark_as_read(self, notification_id: str) -> NotificationResponse | None:
         notif = _NOTIFICATIONS_STORE.get(notification_id)
         if not notif:
             return None
-        
+
         data = notif.model_dump()
         data["isRead"] = True
         updated = NotificationResponse(**data)

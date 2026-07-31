@@ -6,7 +6,8 @@ import asyncio
 import json
 import logging
 import uuid
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
+
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import StreamingResponse
 from sse_starlette.sse import EventSourceResponse
@@ -103,7 +104,7 @@ async def get_stream_planner_execution(prompt: str = "Analyze runway and growth 
             ("Formulating Strategic Action Plan", 90),
             ("Execution Complete", 100),
         ]
-        
+
         for step_text, progress in steps:
             event_data = {
                 "step": step_text,

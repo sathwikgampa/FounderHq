@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import Optional
+
 from pydantic import BaseModel, Field
 
 
@@ -19,14 +19,14 @@ class StartupCreate(BaseModel):
 
 
 class StartupUpdate(BaseModel):
-    name: Optional[str] = None
-    industry: Optional[str] = None
-    stage: Optional[str] = None
-    mrr: Optional[float] = None
-    burnRate: Optional[float] = None
-    runwayMonths: Optional[float] = None
-    cashBalance: Optional[float] = None
-    teamSize: Optional[int] = None
+    name: str | None = None
+    industry: str | None = None
+    stage: str | None = None
+    mrr: float | None = None
+    burnRate: float | None = None
+    runwayMonths: float | None = None
+    cashBalance: float | None = None
+    teamSize: int | None = None
 
 
 class StartupResponse(BaseModel):

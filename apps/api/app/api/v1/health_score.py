@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
+
 from fastapi import APIRouter
+
 from app.schemas.health_score import CategoryHealthBreakdown, HealthScoreResponse
 from app.schemas.response import APIResponse
 from app.services.startup_service import StartupService

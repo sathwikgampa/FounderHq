@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from typing import List
 from fastapi import APIRouter, HTTPException, status
+
 from app.schemas.notifications import NotificationResponse
 from app.schemas.response import APIResponse
 from app.services.notification_service import NotificationService
@@ -12,7 +12,7 @@ router = APIRouter(prefix="/notifications", tags=["Notifications"])
 notif_service = NotificationService()
 
 
-@router.get("", response_model=APIResponse[List[NotificationResponse]])
+@router.get("", response_model=APIResponse[list[NotificationResponse]])
 async def list_notifications(startupId: str = "startup-001"):
     """Retrieve system notifications for a startup."""
     notifications = notif_service.list_notifications(startupId)

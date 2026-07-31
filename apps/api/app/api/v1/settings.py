@@ -2,14 +2,14 @@
 
 from __future__ import annotations
 
-from typing import Dict
 from fastapi import APIRouter
+
 from app.schemas.response import APIResponse
 from app.schemas.settings import SettingsResponse, SettingsUpdate
 
 router = APIRouter(prefix="/settings", tags=["Settings"])
 
-_SETTINGS_STORE: Dict[str, SettingsResponse] = {}
+_SETTINGS_STORE: dict[str, SettingsResponse] = {}
 
 def _get_settings() -> SettingsResponse:
     if "default" not in _SETTINGS_STORE:
@@ -35,7 +35,7 @@ async def update_settings(payload: SettingsUpdate):
     data = current.model_dump()
     update_data = payload.model_dump(exclude_unset=True)
     data.update(update_data)
-    
+
     updated = SettingsResponse(**data)
     _SETTINGS_STORE["default"] = updated
 

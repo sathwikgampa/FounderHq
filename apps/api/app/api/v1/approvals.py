@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from typing import List, Optional
 from fastapi import APIRouter, HTTPException, status
+
 from app.schemas.approvals import ApprovalActionRequest, ApprovalResponse
 from app.schemas.response import APIResponse
 from app.services.approval_service import ApprovalService
@@ -12,8 +12,8 @@ router = APIRouter(prefix="/approvals", tags=["Approvals"])
 approval_service = ApprovalService()
 
 
-@router.get("", response_model=APIResponse[List[ApprovalResponse]])
-async def list_approvals(startupId: str = "startup-001", status_filter: Optional[str] = None):
+@router.get("", response_model=APIResponse[list[ApprovalResponse]])
+async def list_approvals(startupId: str = "startup-001", status_filter: str | None = None):
     """List pending or past executive action approvals."""
     approvals = approval_service.list_approvals(startupId, status_filter)
     return APIResponse(
@@ -40,7 +40,7 @@ async def get_approval_by_id(id: str):
 
 
 @router.post("/{id}/approve", response_model=APIResponse[ApprovalResponse])
-async def approve_action(id: str, payload: Optional[ApprovalActionRequest] = None):
+async def approve_action(id: str, payload: ApprovalActionRequest | None = None):
     """Approve an executive agent action."""
     reason = payload.reason if payload else None
     approved = approval_service.approve_action(id, reason)
@@ -57,7 +57,7 @@ async def approve_action(id: str, payload: Optional[ApprovalActionRequest] = Non
 
 
 @router.post("/{id}/reject", response_model=APIResponse[ApprovalResponse])
-async def reject_action(id: str, payload: Optional[ApprovalActionRequest] = None):
+async def reject_action(id: str, payload: ApprovalActionRequest | None = None):
     """Reject an executive agent action."""
     reason = payload.reason if payload else None
     rejected = approval_service.reject_action(id, reason)

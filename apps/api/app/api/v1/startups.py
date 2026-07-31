@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from typing import List
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status
+
 from app.schemas.response import APIResponse
 from app.schemas.startups import StartupCreate, StartupResponse, StartupUpdate
 from app.services.startup_service import StartupService
@@ -23,7 +23,7 @@ async def create_startup(payload: StartupCreate):
     )
 
 
-@router.get("", response_model=APIResponse[List[StartupResponse]])
+@router.get("", response_model=APIResponse[list[StartupResponse]])
 async def list_startups():
     """List all startups for current workspace."""
     startups = startup_service.list_startups()

@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import Any, Optional
+from typing import Any
+
 from pydantic import BaseModel, Field
 
 
@@ -17,10 +18,10 @@ class ApprovalResponse(BaseModel):
     requestedByAgent: str = Field(default="CEO Planner")
     impactSummary: str
     status: str = Field(default="PENDING", description="Status: PENDING, APPROVED, REJECTED")
-    details: Optional[dict[str, Any]] = None
+    details: dict[str, Any] | None = None
     createdAt: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
-    resolvedAt: Optional[str] = None
+    resolvedAt: str | None = None
 
 
 class ApprovalActionRequest(BaseModel):
-    reason: Optional[str] = Field(default=None, description="Optional founder rationale for approval or rejection")
+    reason: str | None = Field(default=None, description="Optional founder rationale for approval or rejection")

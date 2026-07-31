@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import List
+
 from pydantic import BaseModel, Field
 
 
@@ -19,7 +19,7 @@ class HealthScoreResponse(BaseModel):
     overallScore: int = Field(..., ge=0, le=100, description="Overall health score (0 to 100)")
     grade: str = Field(default="A", description="Letter grade: A+, A, B, C, D, F")
     runwayMonths: float
-    categories: List[CategoryHealthBreakdown]
+    categories: list[CategoryHealthBreakdown]
     keyRisk: str
     keyOpportunity: str
     calculatedAt: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())

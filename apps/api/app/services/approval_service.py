@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import Dict, List, Optional
 
 from app.schemas.approvals import ApprovalResponse
 
-_APPROVALS_STORE: Dict[str, ApprovalResponse] = {}
+_APPROVALS_STORE: dict[str, ApprovalResponse] = {}
 
 def _seed_approvals():
     if not _APPROVALS_STORE:
@@ -30,20 +29,20 @@ _seed_approvals()
 
 
 class ApprovalService:
-    def list_approvals(self, startup_id: str, status_filter: Optional[str] = None) -> List[ApprovalResponse]:
+    def list_approvals(self, startup_id: str, status_filter: str | None = None) -> list[ApprovalResponse]:
         results = [a for a in _APPROVALS_STORE.values() if a.startupId in (startup_id, "startup-001")]
         if status_filter:
             results = [a for a in results if a.status.upper() == status_filter.upper()]
         return results
 
-    def get_approval(self, approval_id: str) -> Optional[ApprovalResponse]:
+    def get_approval(self, approval_id: str) -> ApprovalResponse | None:
         return _APPROVALS_STORE.get(approval_id)
 
-    def approve_action(self, approval_id: str, reason: Optional[str] = None) -> Optional[ApprovalResponse]:
+    def approve_action(self, approval_id: str, reason: str | None = None) -> ApprovalResponse | None:
         approval = self.get_approval(approval_id)
         if not approval:
             return None
-        
+
         data = approval.model_dump()
         data["status"] = "APPROVED"
         data["resolvedAt"] = datetime.now(UTC).isoformat()
@@ -54,7 +53,7 @@ class ApprovalService:
         _APPROVALS_STORE[approval_id] = updated
         return updated
 
-    def reject_action(self, approval_id: str, reason: Optional[str] = None) -> Optional[ApprovalResponse]:
+    def reject_action(self, approval_id: str, reason: str | None = None) -> ApprovalResponse | None:
         approval = self.get_approval(approval_id)
         if not approval:
             return None

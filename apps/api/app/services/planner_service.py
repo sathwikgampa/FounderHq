@@ -5,7 +5,6 @@ from __future__ import annotations
 import logging
 import uuid
 from datetime import UTC, datetime
-from typing import Dict, Optional
 
 from app.schemas.planner import (
     AgentStepResult,
@@ -15,18 +14,18 @@ from app.schemas.planner import (
 
 logger = logging.getLogger("founderhq.services.planner")
 
-_EXECUTIONS_STORE: Dict[str, PlannerExecutionResponse] = {}
+_EXECUTIONS_STORE: dict[str, PlannerExecutionResponse] = {}
 
 
 class PlannerService:
     def execute_command(self, payload: PlannerExecuteRequest) -> PlannerExecutionResponse:
         execution_id = f"exec-{uuid.uuid4().hex[:8]}"
         now = datetime.now(UTC).isoformat()
-        
+
         command_lower = payload.command.lower()
         requires_approval = False
         approval_id = None
-        
+
         # Check if action requires executive approval (e.g. hiring, large spend)
         if any(keyword in command_lower for keyword in ["hire", "hiring", "spend", "budget", "contract", "salary", "recruit"]):
             requires_approval = True
@@ -77,5 +76,5 @@ class PlannerService:
         _EXECUTIONS_STORE[execution_id] = response
         return response
 
-    def get_execution(self, execution_id: str) -> Optional[PlannerExecutionResponse]:
+    def get_execution(self, execution_id: str) -> PlannerExecutionResponse | None:
         return _EXECUTIONS_STORE.get(execution_id)

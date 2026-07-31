@@ -4,12 +4,11 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime
-from typing import Dict, List, Optional
 
 from app.schemas.startups import StartupCreate, StartupResponse, StartupUpdate
 
 # In-memory store for demonstration & fallback when Firestore is offline
-_STARTUP_STORE: Dict[str, StartupResponse] = {}
+_STARTUP_STORE: dict[str, StartupResponse] = {}
 
 # Seed default initial startup if empty
 def _seed_default_startup() -> StartupResponse:
@@ -40,7 +39,7 @@ class StartupService:
     def create_startup(self, payload: StartupCreate, workspace_id: str = "ws-default", user_id: str = "user-founder-001") -> StartupResponse:
         startup_id = f"startup-{uuid.uuid4().hex[:8]}"
         now = datetime.now(UTC).isoformat()
-        
+
         # Calculate runway if cashBalance and burnRate are provided
         runway = payload.runwayMonths
         if payload.burnRate > 0 and payload.cashBalance > 0:
@@ -64,7 +63,7 @@ class StartupService:
         _STARTUP_STORE[startup_id] = startup
         return startup
 
-    def get_startup(self, startup_id: str) -> Optional[StartupResponse]:
+    def get_startup(self, startup_id: str) -> StartupResponse | None:
         if startup_id in _STARTUP_STORE:
             return _STARTUP_STORE[startup_id]
         # Fallback to default startup if requested ID is default
@@ -72,7 +71,7 @@ class StartupService:
             return _seed_default_startup()
         return None
 
-    def update_startup(self, startup_id: str, payload: StartupUpdate) -> Optional[StartupResponse]:
+    def update_startup(self, startup_id: str, payload: StartupUpdate) -> StartupResponse | None:
         existing = self.get_startup(startup_id)
         if not existing:
             return None
@@ -90,5 +89,5 @@ class StartupService:
         _STARTUP_STORE[updated_startup.id] = updated_startup
         return updated_startup
 
-    def list_startups(self, workspace_id: str = "ws-default") -> List[StartupResponse]:
+    def list_startups(self, workspace_id: str = "ws-default") -> list[StartupResponse]:
         return [s for s in _STARTUP_STORE.values() if s.workspaceId == workspace_id] or [_seed_default_startup()]

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime
-from typing import Any, Generic, TypeVar
+from typing import Any, TypeVar
 
 from pydantic import BaseModel, Field
 
@@ -17,7 +17,7 @@ class APIErrorDetails(BaseModel):
     details: Any | None = Field(default=None, description="Optional granular error details")
 
 
-class APIResponse(BaseModel, Generic[T]):
+class APIResponse[T](BaseModel):
     success: bool = True
     data: T | None = None
     message: str = "Operation completed successfully"

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
 from pydantic import BaseModel, Field
 
 
@@ -17,9 +16,9 @@ class SettingsResponse(BaseModel):
 
 
 class SettingsUpdate(BaseModel):
-    workspaceName: Optional[str] = None
-    aiModelPreference: Optional[str] = None
-    autoApproveMinorActions: Optional[bool] = None
-    emailAlertsEnabled: Optional[bool] = None
-    slackIntegrationActive: Optional[bool] = None
-    currency: Optional[str] = None
+    workspaceName: str | None = None
+    aiModelPreference: str | None = None
+    autoApproveMinorActions: bool | None = None
+    emailAlertsEnabled: bool | None = None
+    slackIntegrationActive: bool | None = None
+    currency: str | None = None

@@ -4,11 +4,10 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime
-from typing import Dict, List, Optional
 
 from app.schemas.documents import DocumentResponse, DocumentUploadRequest, DocumentUploadResponse
 
-_DOCUMENTS_STORE: Dict[str, DocumentResponse] = {}
+_DOCUMENTS_STORE: dict[str, DocumentResponse] = {}
 
 class DocumentService:
     def upload_document(self, payload: DocumentUploadRequest, file_size: int = 1048576) -> DocumentUploadResponse:
@@ -41,10 +40,10 @@ class DocumentService:
             createdAt=doc.createdAt,
         )
 
-    def get_document(self, doc_id: str) -> Optional[DocumentResponse]:
+    def get_document(self, doc_id: str) -> DocumentResponse | None:
         return _DOCUMENTS_STORE.get(doc_id)
 
-    def list_documents(self, startup_id: str) -> List[DocumentResponse]:
+    def list_documents(self, startup_id: str) -> list[DocumentResponse]:
         return [doc for doc in _DOCUMENTS_STORE.values() if doc.startupId == startup_id]
 
     def delete_document(self, doc_id: str) -> bool:
