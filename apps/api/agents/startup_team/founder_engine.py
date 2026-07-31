@@ -27,8 +27,40 @@ if str(ROOT) not in sys.path:
 if str(API_ROOT) not in sys.path:
     sys.path.insert(0, str(API_ROOT))
 
-from google.adk.agents import Agent  # noqa: E402
-from google.adk.runners import InMemoryRunner  # noqa: E402
+try:
+    from google.adk.agents import Agent  # noqa: E402
+    from google.adk.runners import InMemoryRunner  # noqa: E402
+except ImportError:
+
+    class Agent:  # type: ignore[no-redef]
+        """Fallback Agent metadata class when google-adk is not installed."""
+
+        def __init__(
+            self,
+            name: str,
+            model: str = "",
+            description: str = "",
+            instruction: str = "",
+            sub_agents: list[Any] | None = None,
+            tools: list[Any] | None = None,
+            **kwargs: Any,
+        ) -> None:
+            self.name = name
+            self.model = model
+            self.description = description
+            self.instruction = instruction
+            self.sub_agents = sub_agents or []
+            self.tools = tools or []
+            self.extra = kwargs
+
+    class InMemoryRunner:  # type: ignore[no-redef]
+        """Fallback InMemoryRunner class when google-adk is not installed."""
+
+        def __init__(self, agent: Any = None) -> None:
+            self.agent = agent
+
+        def run(self, prompt: str) -> Any:
+            return f"Fallback engine execution for: {prompt}"
 
 
 class LocalRunner:
