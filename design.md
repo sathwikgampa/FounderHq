@@ -1,119 +1,129 @@
 ---
 version: 1.0.0
-name: Fluxora Design System
-description: A sophisticated, dark-mode aesthetic for high-tech AI products, featuring deep neutrals and vibrant blue accents.
+name: BlockNest Design System
+description: A futuristic Web3 landing page system featuring glass cards, depth effects, and neon-tinged lighting.
 colors:
-  background: '#0a0a0a'
-  foreground: '#ffffff'
-  neutral-950: '#0a0a0a'
-  neutral-900: '#171717'
-  neutral-300: '#d4d4d4'
-  blue-400: '#60a5fa'
-  blue-300: '#93c5fd'
-  emerald-400: '#34d399'
-  rose-400: '#fb7185'
-  white-5: 'rgba(255, 255, 255, 0.05)'
-  white-10: 'rgba(255, 255, 255, 0.1)'
+  background: '#05060E'
+  surface: '#0B0C15'
+  surface-glass: 'rgba(19, 20, 31, 0.7)'
+  primary: '#9333EA'
+  secondary: '#4F46E5'
+  accent-pink: '#F472B6'
+  accent-emerald: '#10B981'
+  text-main: '#FFFFFF'
+  text-muted: '#94A3B8'
+  border-low: 'rgba(255, 255, 255, 0.08)'
+  border-purple: 'rgba(168, 85, 247, 0.3)'
 typography:
-  family: 'Inter, system-ui, sans-serif'
+  family: "'Inter', sans-serif"
   h1:
-    size: '72px'
-    weight: '700'
-    tracking: '-0.05em'
-  h2:
-    size: '48px'
+    size: '4.5rem'
     weight: '600'
-    tracking: '-0.025em'
+    lineHeight: '1.1'
+    letterSpacing: '-0.025em'
+  h2:
+    size: '3.75rem'
+    weight: '600'
+    lineHeight: '1.1'
   body:
-    size: '16px'
+    size: '1.125rem'
     weight: '400'
-    lineHeight: '1.6'
+    lineHeight: '1.625'
   caption:
-    size: '11px'
+    size: '0.75rem'
     weight: '500'
-    tracking: '0.05em'
+    letterSpacing: '0.05em'
 spacing:
   xs: '4px'
-  sm: '8px'
-  md: '16px'
-  lg: '24px'
-  xl: '32px'
-  section: '96px'
+  sm: '12px'
+  md: '24px'
+  lg: '40px'
+  xl: '80px'
+  section-gap: '128px'
 rounded:
-  sm: '4px'
-  md: '8px'
-  lg: '12px'
-  xl: '16px'
-  card: '24px'
-  full: '9999px'
+  sm: '8px'
+  md: '12px'
+  lg: '16px'
+  xl: '24px'
+  full: '999px'
 components:
-  bento_grid:
-    gap: '24px'
-    item_bg: 'linear-gradient(225deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.0) 100%)'
-  buttons:
-    primary_bg: '#ffffff'
-    primary_text: '#171717'
-    glass_bg: 'rgba(255, 255, 255, 0.05)'
-  borders:
-    gradient: 'linear-gradient(225deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%)'
+  nav:
+    fixed: false
+    padding: '24px'
+    blur: 'none'
+  glass-card:
+    backdrop: 'blur(16px)'
+    border: '1px solid rgba(255, 255, 255, 0.08)'
+    shadow: '0 4px 30px rgba(0, 0, 0, 0.1)'
+  hero-button:
+    rounding: '999px'
+    gradient: 'from-purple-600 to-indigo-600'
+    shadow: '0 0 20px rgba(147, 51, 234, 0.4)'
+  stat-counter:
+    text-gradient: 'from-purple-300 via-pink-400 to-indigo-400'
+    font-size: '72px'
+  swap-interface:
+    nested-bg: '#0B0C15/50'
+    overlap-z: '20'
 motion:
-  standard_ease: 'ease-out'
-  duration: '0.8s'
-  fade_slide_y: '30px'
+  curve: 'cubic-bezier(0.16, 1, 0.3, 1)'
+  duration: '1000ms'
+  reveal-distance: '40px'
 ---
 
 ## Overview
 
-Fluxora is a high-contrast dark system designed for technical depth and clarity. It utilizes a grid-based architecture (bento grid) to organize complex data visualizations and technical content.
+BlockNest is a sophisticated visual language for the decentralized web. It focuses on the interplay between dark void space and vibrant, light-emitting components. The system uses a curved horizon motif to suggest scale and infinite potential.
 
 ## Colors
 
-The palette is rooted in `neutral-950` with high-opacity white overlays for depth. Primary action colors are `blue-400` for primary status and `emerald-400` for success. Warning and error states utilize `rose-400`.
+The palette is rooted in `#05060E` (Deep Space). It uses purple and indigo as the primary energy sources, with emerald and rose reserved for financial status indicators (up/down). Text uses slate-tinged whites to reduce high-contrast strain while maintaining readability.
 
 ## Typography
 
-Relies exclusively on **Inter**. Headings use extreme negative tracking and bold weights to imply precision. Small technical labels (10-11px) are used for metadata and status indicators.
+Relies exclusively on 'Inter'. Hierarchies are established through extreme scale shifts (e.g., 72px headings vs 12px captions). Tracking is tightened for headings (-0.025em) and loosened for uppercase labels (0.1em).
 
 ## Spacing
 
-A strict 4px/8px scale. Large sections are separated by 96px to 128px of vertical padding to maintain a premium feel.
+A generous spacing system that prioritizes negative space. Standard section vertical padding is 128px (32rem). Component gaps use a base-4 grid, primarily 24px and 40px.
 
 ## Layout
 
-- **Bento Grid**: Multi-column layouts that collapse from 12 columns to 1 column on mobile.
-- **Z-Index Layers**: Background (Grid Pattern) -> Midground (Bento Cards) -> Foreground (Sticky Nav & Modals).
-- **Layer Stacks**: Utilizes `backdrop-blur` (8px to 12px) on cards and navigation to create a sense of glass transparency over background patterns.
+- **Curved Horizon**: A fixed-position decorative arc creates a pseudo-3D ground plane.
+- **Masonry Grid**: Content cards use varied heights or offset positioning to feel organic.
+- **Perspective Stacks**: Dashboard previews use `perspective-1000` to tilt elements towards the viewer.
+- **Z-Index Strategy**: Background Spline (0) < Ambient Glows (5) < Curved Horizon (10) < Main Content (20) < Navigation (50).
 
 ## Elevation & Depth
 
-Depth is achieved through `border-gradient` techniques (1px stroke) and subtle inner shadows rather than heavy drop shadows. Backgrounds feature a fixed grid SVG pattern at 3% opacity.
+Depth is achieved through `backdrop-filter: blur(16px)` and variable border opacities. Shadows are rarely black; they are tinted with the primary purple glow to simulate light scattering in a dark environment.
 
 ## Shapes
 
-Cards and large containers use a specific `24px` (3xl) or `28px` corner radius. Buttons and pills use a fully rounded `9999px` profile. Inner components within cards (like code blocks) use `12px` or `16px` radii.
+Cards use a large 24px radius (`rounded-3xl`). Buttons use a pill-shaped `rounded-full` style. Icon containers use a smaller 12px radius to provide structural contrast.
 
 ## Components
 
-- **Nav**: Sticky or fixed top with backdrop-blur and a subtle bottom border.
-- **Bento Cards**: Feature a custom `::before` pseudo-element for 1px gradient borders.
-- **Pills**: Small status badges with low-opacity backgrounds (e.g., `bg-blue-400/20`).
-- **Data Visualizations**: Bar and line charts use solid blue or emerald fills with rounded ends.
+- **Glass Cards**: Semi-transparent containers with subtle top-weighted borders to simulate light catching the edge.
+- **Stats**: Oversized numbers with text-shadow and linear gradients.
+- **Swap Interface**: Layered inputs with absolute-positioned central icons for transaction flow.
+- **Partner Strip**: Grayscale logos with a hover-transition to brand colors.
 
 ## Motion
 
-- **Entry**: Global `fadeSlideIn` animation applying a 30px Y-offset and 8px blur transition.
-- **Hover**: Subtle vertical translation (`-translate-y-0.5`) and background opacity shifts.
-- **Marquee**: Continuous horizontal translation for social proof (testimonials).
+- **Scroll Reveal**: Elements use a combination of opacity and translation (up, right, or bottom-right).
+- **Staggering**: Sequential delays of 100ms units (delay-100 to delay-500) guide the user's eye.
+- **Interactive Hover**: Hovering over cards triggers a subtle -4px Y-axis lift and border color intensification.
 
 ## Do's and Don'ts
 
-- **Do**: Use high-contrast primary buttons for main CTAs.
-- **Do**: Apply `backdrop-blur` whenever content overlaps background gradients.
-- **Don't**: Use solid borders; prefer the 1px gradient stroke for cards.
-- **Don't**: Use vibrant background colors; keep the canvas `neutral-950`.
+- **Do**: Use text gradients for secondary headers and major stats.
+- **Do**: Apply glassmorphism to all floating interface elements.
+- **Don't**: Use solid white backgrounds; always use semi-transparent dark fills.
+- **Don't**: Use sharp 90-degree corners on primary UI containers.
 
 ## Accessibility
 
-- Minimum contrast is maintained via white text on neutral-950.
-- Interactive elements feature a minimum touch target of 40px.
-- Reduced motion is respected via `@media (prefers-reduced-motion)` which disables the marquee and entry animations.
+- Focus states must be indicated with a purple glow rather than a standard outline.
+- High-importance text must maintain a contrast ratio against the dark background by using Slate-200 or lighter.
+- Interactive zones (buttons/links) should have a minimum height of 44px.
