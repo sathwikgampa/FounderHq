@@ -13,7 +13,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger("founderhq.rag_engine")
 
@@ -24,12 +24,12 @@ class DocumentChunkMetadata:
     workspace_id: str
     owner_id: str
     visibility: str  # GLOBAL, TEAM, PRIVATE, SYSTEM
-    department: Optional[str] = None  # ENGINEERING, MARKETING, SALES, FINANCE, LEGAL, HR, OPERATIONS
+    department: str | None = None  # ENGINEERING, MARKETING, SALES, FINANCE, LEGAL, HR, OPERATIONS
     file_name: str = ""
     file_type: str = "pdf"
     page_number: int = 1
     chunk_number: int = 1
-    tags: List[str] = field(default_factory=list)
+    tags: list[str] = field(default_factory=list)
     created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
 
 
@@ -46,12 +46,12 @@ class PermissionResolver:
 
     @staticmethod
     def filter_accessible_chunks(
-        chunks: List[ChunkResult],
+        chunks: list[ChunkResult],
         user_id: str,
         workspace_id: str,
-        user_departments: List[str],
-    ) -> List[ChunkResult]:
-        allowed_chunks: List[ChunkResult] = []
+        user_departments: list[str],
+    ) -> list[ChunkResult]:
+        allowed_chunks: list[ChunkResult] = []
         for chunk in chunks:
             meta = chunk.metadata
             # Rule 1: Must match workspace or be SYSTEM knowledge
@@ -80,30 +80,30 @@ class QueryRewriter:
     """Classifies query intent and rewrites user questions into optimized RAG search terms."""
 
     @staticmethod
-    def rewrite_query(prompt: str) -> Dict[str, Any]:
+    def rewrite_query(prompt: str) -> dict[str, Any]:
         lower_p = prompt.lower()
         intent = "GENERAL"
         collections = ["GLOBAL", "SYSTEM"]
 
         if any(k in lower_p for k in ["runway", "burn", "cash", "finance", "revenue", "mrr"]):
-          intent = "FINANCE_QUERY"
-          collections.extend(["TEAM_FINANCE", "PRIVATE"])
+            intent = "FINANCE_QUERY"
+            collections.extend(["TEAM_FINANCE", "PRIVATE"])
         elif any(k in lower_p for k in ["candidate", "hire", "job", "salary", "recruiting"]):
-          intent = "HR_QUERY"
-          collections.extend(["TEAM_HR", "PRIVATE"])
+            intent = "HR_QUERY"
+            collections.extend(["TEAM_HR", "PRIVATE"])
         elif any(k in lower_p for k in ["safe", "contract", "nda", "tax", "legal", "83b"]):
-          intent = "LEGAL_QUERY"
-          collections.extend(["TEAM_LEGAL", "GLOBAL"])
+            intent = "LEGAL_QUERY"
+            collections.extend(["TEAM_LEGAL", "GLOBAL"])
         elif any(k in lower_p for k in ["pitch", "deck", "investor", "cap table", "valuation"]):
-          intent = "INVESTOR_QUERY"
-          collections.extend(["GLOBAL", "PRIVATE"])
+            intent = "INVESTOR_QUERY"
+            collections.extend(["GLOBAL", "PRIVATE"])
 
         # Query rewriting logic
         rewritten_query = prompt
         if "how much money" in lower_p:
-          rewritten_query = "Current cash balance, monthly net burn rate, and runway calculation"
+            rewritten_query = "Current cash balance, monthly net burn rate, and runway calculation"
         elif "meeting yesterday" in lower_p:
-          rewritten_query = "User meeting notes and transcripts recorded yesterday"
+            rewritten_query = "User meeting notes and transcripts recorded yesterday"
 
         return {
             "intent": intent,
@@ -116,7 +116,7 @@ class EnterpriseRAGEngine:
     """Central Intelligence Knowledge Layer for FounderHQ Multi-Agent System."""
 
     def __init__(self) -> None:
-        self._vector_store: List[ChunkResult] = []
+        self._vector_store: list[ChunkResult] = []
 
     async def ingest_document(
         self,
@@ -126,7 +126,7 @@ class EnterpriseRAGEngine:
         content: str,
         file_name: str,
         visibility: str = "GLOBAL",
-        department: Optional[str] = None,
+        department: str | None = None,
     ) -> int:
         """Semantic chunking and metadata indexing pipeline."""
         # Simple semantic paragraph chunking (300-700 token representation)
@@ -160,11 +160,11 @@ class EnterpriseRAGEngine:
         user_prompt: str,
         user_id: str,
         workspace_id: str,
-        user_departments: Optional[List[str]] = None,
-    ) -> Dict[str, Any]:
+        user_departments: list[str] | None = None,
+    ) -> dict[str, Any]:
         """Agentic Retrieval Pipeline execution."""
         user_depts = user_departments or ["GLOBAL"]
-        
+
         # 1. Intent Detection & Query Rewriting
         rewrite_res = QueryRewriter.rewrite_query(user_prompt)
 
@@ -190,7 +190,9 @@ class EnterpriseRAGEngine:
             for c in ranked_chunks
         ]
 
-        compressed_context = "\n\n".join([f"[{c.metadata.file_name}] {c.text}" for c in ranked_chunks])
+        compressed_context = "\n\n".join(
+            [f"[{c.metadata.file_name}] {c.text}" for c in ranked_chunks]
+        )
 
         return {
             "query": user_prompt,

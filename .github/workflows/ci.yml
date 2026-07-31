@@ -45,4 +45,6 @@ jobs:
         run: ruff check apps/api
 
       - name: Run Pytest Suite
+        env:
+          PYTHONPATH: .
         run: pytest apps/api/tests
