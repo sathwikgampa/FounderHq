@@ -51,6 +51,7 @@ export function StatsCards() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.15 + i * 0.05 }}
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            onClick={() => alert(`Connect an integration to view ${stat.title}.`)}
             className="glass-card p-5 flex flex-col justify-between h-32 group cursor-pointer relative"
           >
             <div className="flex justify-between items-start">

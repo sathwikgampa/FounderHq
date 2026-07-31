@@ -39,7 +39,7 @@ export function TopNavbar() {
       }
       console.log('User logged out');
     } finally {
-      // Small timeout for user state to clear 
+      // Small timeout for user state to clear
       setTimeout(() => {
         router.push('/login');
       }, 100);
@@ -59,6 +59,12 @@ export function TopNavbar() {
           </div>
           <input
             type="text"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                console.log('Search triggered:', e.currentTarget.value);
+                alert(`Search results for "${e.currentTarget.value}" coming soon!`);
+              }
+            }}
             className="w-full pl-10 pr-4 py-2 rounded-full border border-border bg-background/50 focus:bg-background focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all text-sm placeholder:text-muted-foreground"
             placeholder="Search FounderHQ (Press '/' to focus)"
           />
@@ -67,6 +73,7 @@ export function TopNavbar() {
 
       <div className="flex items-center gap-2 md:gap-4 ml-auto">
         <button
+          onClick={() => alert('Calendar scheduler coming soon!')}
           className="p-2 rounded-full text-muted-foreground hover:bg-[var(--glass-bg)] hover:text-foreground transition-colors relative group"
           aria-label="Calendar"
         >
@@ -74,6 +81,7 @@ export function TopNavbar() {
         </button>
 
         <button
+          onClick={() => alert('Notification center coming soon!')}
           className="p-2 rounded-full text-muted-foreground hover:bg-[var(--glass-bg)] hover:text-foreground transition-colors relative group"
           aria-label="Notifications"
         >
