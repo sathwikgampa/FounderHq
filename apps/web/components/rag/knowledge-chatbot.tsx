@@ -182,7 +182,7 @@ export function KnowledgeChatbot() {
       {/* Floating Chatbot Launcher Button with DotLottie Animation or Sparkles Fallback */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-40 p-2.5 rounded-3xl bg-[#0E1014]/90 border border-[#7C5CFF]/50 text-white shadow-2xl shadow-[#7C5CFF]/40 hover:scale-105 transition-all flex items-center gap-2 group backdrop-blur-xl"
+        className="fixed bottom-6 right-6 z-40 p-2.5 rounded-3xl bg-[#0E1014] border border-[#7C5CFF]/60 text-white shadow-2xl shadow-[#7C5CFF]/40 hover:scale-105 transition-all flex items-center gap-2 group backdrop-blur-xl"
       >
         <div className="w-10 h-10 overflow-hidden flex items-center justify-center shrink-0 bg-white rounded-full p-1">
           {!lottieError ? (
@@ -196,7 +196,7 @@ export function KnowledgeChatbot() {
             <Sparkles size={20} className="text-[#7C5CFF]" />
           )}
         </div>
-        <span className="font-bold text-xs pr-1">Knowledge AI</span>
+        <span className="font-bold text-xs pr-1 text-white select-none">Knowledge AI</span>
         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping mr-1" />
       </button>
 
@@ -207,10 +207,10 @@ export function KnowledgeChatbot() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-24 right-6 z-50 w-full max-w-lg h-[640px] bg-[#0E1014]/98 backdrop-blur-2xl border border-white/10 rounded-[28px] shadow-2xl flex flex-col overflow-hidden"
+            className="fixed bottom-24 right-6 z-50 w-full max-w-lg h-[640px] bg-[#0E1014] text-white backdrop-blur-2xl border border-white/15 rounded-[28px] shadow-2xl flex flex-col overflow-hidden"
           >
             {/* Chatbot Header */}
-            <div className="p-4 border-b border-white/10 bg-white/[0.02] flex items-center justify-between">
+            <div className="p-4 border-b border-white/10 bg-white/[0.04] flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-white border border-[#7C5CFF]/40 flex items-center justify-center text-[#7C5CFF] overflow-hidden shrink-0 p-1">
                   {!lottieError ? (
@@ -227,11 +227,11 @@ export function KnowledgeChatbot() {
                 <div>
                   <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
                     FounderHQ Knowledge Engine
-                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/40">
                       RAG v1.0
                     </span>
                   </h3>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-[11px] text-slate-300">
                     Security Scoped · Hybrid Search · Clickable Citations
                   </p>
                 </div>
@@ -239,7 +239,7 @@ export function KnowledgeChatbot() {
 
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
               >
                 <X size={16} />
               </button>
@@ -308,10 +308,10 @@ export function KnowledgeChatbot() {
                     className={`p-3.5 rounded-2xl max-w-[85%] leading-relaxed ${
                       msg.sender === 'user'
                         ? 'bg-[#7C5CFF] text-white rounded-br-none shadow-md shadow-[#7C5CFF]/20'
-                        : 'bg-white/[0.04] border border-white/8 text-slate-200 rounded-bl-none'
+                        : 'bg-[#181B22] border border-white/15 text-white rounded-bl-none'
                     }`}
                   >
-                    <p className="whitespace-pre-wrap">{msg.text}</p>
+                    <p className="whitespace-pre-wrap text-white font-normal">{msg.text}</p>
 
                     {/* Citations Box */}
                     {msg.citations && msg.citations.length > 0 && (
@@ -409,7 +409,7 @@ export function KnowledgeChatbot() {
                   placeholder={
                     isListening ? 'Listening...' : 'Ask your workspace knowledge base...'
                   }
-                  className="flex-1 bg-transparent text-xs text-white placeholder:text-slate-500 focus:outline-none"
+                  className="flex-1 bg-transparent text-xs text-white placeholder:text-slate-400 focus:outline-none"
                 />
 
                 <button
