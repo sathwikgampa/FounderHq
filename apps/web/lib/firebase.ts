@@ -1,8 +1,13 @@
-import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
-import { getAuth, Auth } from "firebase/auth";
-import { getFirestore, Firestore } from "firebase/firestore";
-import { getStorage, FirebaseStorage } from "firebase/storage";
-import { env } from "./env";
+import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
+import { getAuth, Auth } from 'firebase/auth';
+import { getFirestore, Firestore } from 'firebase/firestore';
+import { getStorage, FirebaseStorage } from 'firebase/storage';
+import { env } from './env';
+
+export const isFirebaseConfigured =
+  Boolean(env.NEXT_PUBLIC_FIREBASE_API_KEY) &&
+  env.NEXT_PUBLIC_FIREBASE_API_KEY !== 'mock-api-key' &&
+  !env.NEXT_PUBLIC_FIREBASE_API_KEY.startsWith('mock-');
 
 const firebaseConfig = {
   apiKey: env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -13,7 +18,12 @@ const firebaseConfig = {
   appId: env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-export const app: FirebaseApp = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-export const auth: Auth = getAuth(app);
-export const firestore: Firestore = getFirestore(app);
-export const storage: FirebaseStorage = getStorage(app);
+export const app: FirebaseApp | null = isFirebaseConfigured
+  ? getApps().length > 0
+    ? getApp()
+    : initializeApp(firebaseConfig)
+  : null;
+
+export const auth: Auth | null = app ? getAuth(app) : null;
+export const firestore: Firestore | null = app ? getFirestore(app) : null;
+export const storage: FirebaseStorage | null = app ? getStorage(app) : null;
