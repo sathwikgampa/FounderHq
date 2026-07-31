@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   Bot,
@@ -15,9 +15,7 @@ import {
   Briefcase,
   User,
   ChevronRight,
-  LogOut,
 } from 'lucide-react';
-import { useAuth } from '@/providers/auth-provider';
 
 const mainNavItems = [{ name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard }];
 
@@ -36,23 +34,20 @@ const secondaryNavItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const router = useRouter();
-  const { logout } = useAuth();
   const [agentsExpanded, setAgentsExpanded] = useState(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const NavItem = ({ item, isSub = false }: { item: any; isSub?: boolean }) => {
     const isActive = pathname === item.href;
     const Icon = item.icon;
     return (
       <Link
         href={item.href}
-        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${
-          isSub ? 'ml-6 text-sm' : ''
-        } ${
-          isActive
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${isSub ? 'ml-6 text-sm' : ''
+          } ${isActive
             ? 'bg-primary/10 text-primary font-medium'
             : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-        }`}
+          }`}
       >
         <Icon
           size={isSub ? 16 : 18}
@@ -82,23 +77,20 @@ export function Sidebar() {
         ))}
 
         <div className="mb-1">
-          <div
-            onClick={() => router.push('/agents')}
-            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 cursor-pointer group ${pathname.startsWith('/agents') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
-          >
-            <div className="flex items-center gap-3">
+          <div className={`w-full flex items-center justify-between rounded-xl transition-all duration-200 group ${pathname.startsWith('/agents') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}>
+            <Link
+              href="/agents"
+              className="flex-1 flex items-center gap-3 px-3 py-2.5"
+            >
               <Bot
                 size={18}
                 className={`transition-colors ${pathname.startsWith('/agents') ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`}
               />
               <span>Agents</span>
-            </div>
+            </Link>
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setAgentsExpanded(!agentsExpanded);
-              }}
-              className="p-1 -mr-1 rounded hover:bg-background/50 transition-colors"
+              onClick={() => setAgentsExpanded(!agentsExpanded)}
+              className="p-3 rounded-r-xl hover:bg-background/50 transition-colors"
             >
               <ChevronRight
                 size={16}
@@ -134,7 +126,7 @@ export function Sidebar() {
           </button>
         </div>
 
-        <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-muted transition-colors group">
+        <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-muted transition-colors cursor-pointer group">
           <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center border group-hover:border-primary/50 transition-colors">
             <User
               size={16}
@@ -145,13 +137,6 @@ export function Sidebar() {
             <p className="text-sm font-medium text-foreground truncate">Sarah Founder</p>
             <p className="text-xs text-muted-foreground truncate">CEO, Acme Inc</p>
           </div>
-          <button
-            onClick={() => logout()}
-            className="p-2 text-muted-foreground hover:text-destructive transition-colors ml-auto group/logout rounded-md hover:bg-destructive/10"
-            title="Log out"
-          >
-            <LogOut size={16} className="group-hover/logout:text-destructive" />
-          </button>
         </div>
       </div>
     </aside>

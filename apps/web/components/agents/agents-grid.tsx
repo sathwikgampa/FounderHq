@@ -80,6 +80,7 @@ export function AgentsGrid() {
   const router = useRouter();
 
   const handleAgentClick = (agent: (typeof agents)[0]) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     router.push(agent.path as any);
   };
 
