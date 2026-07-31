@@ -1,0 +1,37 @@
+"""Schemas for Document Uploads and RAG Metadata."""
+
+from __future__ import annotations
+
+from datetime import UTC, datetime
+from typing import Optional
+from pydantic import BaseModel, Field
+
+
+class DocumentUploadRequest(BaseModel):
+    filename: str = Field(..., description="Original name of the uploaded document", json_schema_extra={"example": "pitch_deck_2026.pdf"})
+    category: str = Field(default="general", description="Document category (pitch, financial, legal, technical)", json_schema_extra={"example": "pitch"})
+    startupId: str = Field(..., description="Target startup ID")
+
+
+class DocumentUploadResponse(BaseModel):
+    id: str
+    startupId: str
+    filename: str
+    category: str
+    storagePath: str
+    fileSizeBytes: int
+    indexingStatus: str = Field(default="COMPLETED", description="RAG indexing status (PENDING, INDEXING, COMPLETED, FAILED)")
+    chunkCount: int = Field(default=12, description="Number of vector chunks generated")
+    createdAt: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
+
+
+class DocumentResponse(BaseModel):
+    id: str
+    startupId: str
+    filename: str
+    category: str
+    storagePath: str
+    fileSizeBytes: int
+    indexingStatus: str
+    chunkCount: int
+    createdAt: str

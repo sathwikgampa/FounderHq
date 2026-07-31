@@ -138,6 +138,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+try:
+    from app.api import api_v1_router
+    app.include_router(api_v1_router, prefix="/api")
+except Exception as e:
+    logger.warning(f"⚠️ Could not mount modular api_v1_router: {e}")
+
+
 
 # ── Request Timing Middleware ──────────────────────────────────────────────────
 
