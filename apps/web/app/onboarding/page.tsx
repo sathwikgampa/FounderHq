@@ -5,7 +5,7 @@ import { AnimatePresence } from 'framer-motion';
 import { StepVision } from '@/components/onboarding/step-vision';
 import { StepDomain } from '@/components/onboarding/step-domain';
 import { AgentInitialization } from '@/components/onboarding/agent-initialization';
-import { OrbitBackground } from '@/components/ui/orbit-background';
+import { AuraBackground } from '@/components/ui/aura-background';
 
 type OnboardingStep = 'VISION' | 'DOMAIN' | 'INIT';
 
@@ -31,7 +31,7 @@ export default function OnboardingPage() {
 
   return (
     <div className="min-h-screen bg-[#030304] flex items-center justify-center p-6 relative overflow-hidden">
-      <OrbitBackground />
+      <AuraBackground />
 
       {/* Dark overlay to make form pop */}
       <div className="absolute inset-0 bg-[#030304]/60 backdrop-blur-[2px] z-0" />

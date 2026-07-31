@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { FloatingChatbot } from '@/components/chatbot/FloatingChatbot';
+import { AuraBackground } from '@/components/ui/aura-background';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -145,23 +146,8 @@ export default function LandingPage() {
         }
       `}</style>
 
-      {/* Background (component) added by Aura */}
-      <div
-        className="aura-background-component fixed top-0 w-full h-screen -z-10"
-        data-alpha-mask="80"
-        style={{
-          maskImage: 'linear-gradient(to bottom, transparent, black 0%, black 80%, transparent)',
-          WebkitMaskImage:
-            'linear-gradient(to bottom, transparent, black 0%, black 80%, transparent)',
-        }}
-      >
-        <div className="aura-background-component top-0 w-full -z-10 absolute h-full">
-          <div
-            data-us-project="ILgOO23w4wEyPQOKyLO4"
-            className="absolute w-full h-full left-0 top-0 -z-10"
-          />
-        </div>
-      </div>
+      {/* Background component */}
+      <AuraBackground />
 
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#030304]/80 backdrop-blur-md transition-all duration-300 reveal active">
