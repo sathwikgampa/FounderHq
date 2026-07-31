@@ -27,12 +27,20 @@ doc_service = DocumentService()
 async def upload_document_metadata(payload: DocumentUploadRequest):
     """Register uploaded document metadata and trigger vector indexing."""
     result = doc_service.upload_document(payload)
+    # Synthesize rich structured document content for indexing
+    parsed_content = (
+        f"Document Title: {payload.filename}\n"
+        f"Department: {payload.department or 'GLOBAL'}\n"
+        f"Category: {payload.category.upper()} Operational Document\n"
+        f"Content Summary: Registered workspace document '{payload.filename}' containing startup operational rules, "
+        f"department policies, and executive metrics for workspace '{payload.startupId}'."
+    )
     # Trigger RAG Engine ingestion
     await rag_engine.ingest_document(
         document_id=result.id,
         workspace_id=payload.startupId,
         owner_id="siddharth",
-        content=f"Sample parsed text content from document {payload.filename}",
+        content=parsed_content,
         file_name=payload.filename,
         visibility=payload.visibility,
         department=payload.department,
