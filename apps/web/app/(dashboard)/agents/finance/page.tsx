@@ -12,6 +12,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { GlowCard } from '@/components/ui/glow-card';
+import { AgentOverviewBanner } from '@/components/agents/agent-overview-banner';
 import { toast } from 'sonner';
 
 export default function FinancePage() {
@@ -33,6 +34,7 @@ export default function FinancePage() {
 
   return (
     <div className="space-y-8 pb-12">
+      <AgentOverviewBanner agentId="finance" />
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div>

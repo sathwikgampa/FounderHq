@@ -120,9 +120,8 @@ export function createSpeechRecognizer(
 ) {
   if (typeof window === 'undefined') return null;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const SpeechRecognition =
-    (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+  const win = window as unknown as Record<string, any>;
+  const SpeechRecognition = win.SpeechRecognition || win.webkitSpeechRecognition;
   if (!SpeechRecognition) return null;
 
   const recognition = new SpeechRecognition();

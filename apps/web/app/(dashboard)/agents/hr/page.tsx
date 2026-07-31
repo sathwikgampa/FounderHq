@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Users, Sparkles, Plus, Search } from 'lucide-react';
 import { GlowCard } from '@/components/ui/glow-card';
+import { AgentOverviewBanner } from '@/components/agents/agent-overview-banner';
 import { toast } from 'sonner';
 
 const CANDIDATES = [
@@ -45,6 +46,7 @@ export default function HiringPage() {
 
   return (
     <div className="space-y-8 pb-12">
+      <AgentOverviewBanner agentId="hr" />
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div>
