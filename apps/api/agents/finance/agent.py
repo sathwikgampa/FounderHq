@@ -1,11 +1,8 @@
-from typing import Any
+from __future__ import annotations
 
+from apps.api.agents.startup_team.agent import FinanceAgent as ADKFinanceAgent
+from apps.api.agents.startup_team.agent import calculate_bootstrap_runway, check_runway
 
-class FinanceAgent:
-    """Finance Executive Agent Placeholder."""
+FinanceAgent = ADKFinanceAgent
 
-    def __init__(self) -> None:
-        self.name = "Finance Agent"
-
-    async def run(self) -> dict[str, Any]:
-        return {"agent": self.name, "status": "PLACEHOLDER"}
+__all__ = ["FinanceAgent", "calculate_bootstrap_runway", "check_runway"]
