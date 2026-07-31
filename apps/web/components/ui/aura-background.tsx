@@ -134,13 +134,21 @@ export function AuraBackground({
     let script = document.getElementById(scriptId) as HTMLScriptElement | null;
 
     const initUnicorn = () => {
-      const win = window as unknown as { UnicornStudio?: { init?: () => void } };
-      if (win.UnicornStudio && typeof win.UnicornStudio.init === 'function') {
-        try {
-          win.UnicornStudio.init();
-        } catch (e) {
-          console.warn('UnicornStudio initialization caught error:', e);
+      const runInit = () => {
+        const win = window as unknown as { UnicornStudio?: { init?: () => void } };
+        if (win.UnicornStudio && typeof win.UnicornStudio.init === 'function') {
+          try {
+            win.UnicornStudio.init();
+          } catch (e) {
+            console.warn('UnicornStudio initialization caught error:', e);
+          }
         }
+      };
+
+      if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+        window.requestIdleCallback(() => runInit(), { timeout: 1000 });
+      } else {
+        setTimeout(runInit, 100);
       }
     };
 
@@ -150,6 +158,7 @@ export function AuraBackground({
       script.src =
         'https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js';
       script.async = true;
+      script.defer = true;
       script.onload = () => {
         initUnicorn();
       };
