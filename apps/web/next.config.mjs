@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   reactStrictMode: true,
   compress: true,
   transpilePackages: ["@founderhq/ui", "@founderhq/types", "@founderhq/shared"],
