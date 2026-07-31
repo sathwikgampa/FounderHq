@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export function FounderOSNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -18,22 +19,18 @@ export function FounderOSNavbar() {
     <header className="sticky top-0 z-50 w-full h-[80px] bg-[#0B0F19]/80 backdrop-blur-xl border-b border-white/10 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
         {/* LEFT: FounderOS Logo & Brand */}
-        <Link href="/" className="flex items-center space-x-3 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#6C63FF] via-[#7C4DFF] to-[#8B5CF6] flex items-center justify-center text-white shadow-lg shadow-[#6C63FF]/30 group-hover:scale-105 transition-transform duration-300">
-            <svg
-              className="w-5 h-5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-            </svg>
+        <Link href="/" className="flex items-center space-x-2.5 group">
+          <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center p-1 group-hover:bg-white/15 transition-colors shadow-lg shadow-[#6C63FF]/20">
+            <Image
+              src="/logo.svg"
+              alt="FounderHQ"
+              width={24}
+              height={24}
+              className="object-contain"
+            />
           </div>
           <span className="text-xl font-bold tracking-tight text-white flex items-center gap-1.5">
-            Founder<span className="text-[#6C63FF]">OS</span>
+            Founder<span className="text-[#6C63FF]">HQ</span>
           </span>
         </Link>
 

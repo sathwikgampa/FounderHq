@@ -11,12 +11,9 @@ import {
   FileText,
   Loader2,
   X,
-  Lock,
-  Globe,
-  Users,
-  BookOpen,
   Volume2,
   ExternalLink,
+  Bot,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Citation } from '@/lib/rag-engine';
@@ -39,17 +36,15 @@ export function KnowledgeChatbot() {
     {
       id: 'init-1',
       sender: 'assistant',
-      text: "Hello! I'm the FounderHQ Enterprise RAG Knowledge Assistant. I can retrieve information across your Global Workspace Docs, Team Knowledge, Private Notes, and Built-in FounderHQ Guides with full security metadata protection. What would you like to search today?",
+      text: "Hey there! 👋 I'm your FounderHQ Knowledge Assistant. Ask me anything about your workspace docs, team notes, or startup guides!",
       timestamp: 'Just now',
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedLayer, setSelectedLayer] = useState<
-    'ALL' | 'GLOBAL' | 'TEAM' | 'PRIVATE' | 'SYSTEM'
-  >('ALL');
   const [uploadingFile, setUploadingFile] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [uploadStep, setUploadStep] = useState<string>('');
+  const [lottieError, setLottieError] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -85,7 +80,6 @@ export function KnowledgeChatbot() {
     setIsLoading(true);
 
     try {
-      // Call the real backend RAG pipeline
       const res = await fetch('http://localhost:8000/api/v1/documents/query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -104,11 +98,10 @@ export function KnowledgeChatbot() {
       if (res.ok) {
         const json = await res.json();
         const data = json.data;
-        // Prefer LLM-generated answer; fall back to raw compressed context
         assistantText =
           data.generated_answer?.trim() ||
           data.compressed_context?.slice(0, 600) ||
-          "I couldn't find relevant information in your workspace documents.";
+          "I couldn't find relevant info in your workspace. Try uploading a document!";
         intent = data.intent || 'GENERAL';
         msgCitations = (data.citations || []).map(
           (c: { file_name: string; page_number: number; visibility: string }) => ({
@@ -120,7 +113,7 @@ export function KnowledgeChatbot() {
         );
       } else {
         assistantText =
-          "Couldn't reach the knowledge base right now. Please ensure the backend server is running.";
+          "Hmm, I can't reach the knowledge base right now. Make sure the backend is running! 🔌";
       }
 
       const assistantMsg: ChatMessage = {
@@ -140,7 +133,7 @@ export function KnowledgeChatbot() {
         {
           id: `msg-err-${Date.now()}`,
           sender: 'assistant',
-          text: "Connection error: couldn't reach the backend. Make sure the API server is running.",
+          text: 'Connection error — make sure the API server is running! 🚀',
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         },
       ]);
@@ -155,36 +148,32 @@ export function KnowledgeChatbot() {
 
     setUploadingFile(file.name);
     setUploadProgress(10);
-    setUploadStep('Extracting text & OCR...');
+    setUploadStep('Reading document...');
 
     setTimeout(() => {
       setUploadProgress(50);
-      setUploadStep('Generating vector embeddings...');
+      setUploadStep('Generating embeddings...');
     }, 800);
-
     setTimeout(() => {
       setUploadProgress(85);
-      setUploadStep('Indexing into RAG Memory...');
+      setUploadStep('Indexing into memory...');
     }, 1500);
-
     setTimeout(() => {
       setUploadProgress(100);
-      setUploadStep('Knowledge Indexed!');
-      toast.success(`Indexed "${file.name}" into RAG Knowledge Engine!`, { icon: '📄' });
+      setUploadStep('Done! ✨');
+      toast.success(`"${file.name}" indexed into your knowledge base!`, { icon: '📄' });
       setTimeout(() => setUploadingFile(null), 1000);
     }, 2200);
   };
 
-  const [lottieError, setLottieError] = useState(false);
-
   return (
     <>
-      {/* Floating Chatbot Launcher Button with DotLottie Animation or Sparkles Fallback */}
+      {/* Launcher Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-40 p-2.5 rounded-3xl bg-[#0E1014] border border-[#7C5CFF]/60 text-white shadow-2xl shadow-[#7C5CFF]/40 hover:scale-105 transition-all flex items-center gap-2 group backdrop-blur-xl"
+        className="fixed bottom-5 right-5 z-40 flex items-center gap-2 px-3 py-2 rounded-2xl bg-violet-600 hover:bg-violet-500 text-white shadow-lg shadow-violet-500/30 hover:shadow-violet-500/50 hover:scale-105 active:scale-95 transition-all duration-200"
       >
-        <div className="w-10 h-10 overflow-hidden flex items-center justify-center shrink-0 bg-white rounded-full p-1">
+        <div className="w-7 h-7 overflow-hidden flex items-center justify-center shrink-0 bg-white/20 rounded-xl p-0.5">
           {!lottieError ? (
             <DotLottieReact
               src="/knowledge-ai.lottie"
@@ -193,233 +182,213 @@ export function KnowledgeChatbot() {
               onError={() => setLottieError(true)}
             />
           ) : (
-            <Sparkles size={20} className="text-[#7C5CFF]" />
+            <Bot size={16} />
           )}
         </div>
-        <span className="font-bold text-xs pr-1 text-white select-none">Knowledge AI</span>
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping mr-1" />
+        <span className="text-xs font-semibold">Ask AI</span>
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
       </button>
 
-      {/* Floating Chatbot Drawer Modal */}
+      {/* Chat Window */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            initial={{ opacity: 0, y: 12, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-24 right-6 z-50 w-full max-w-lg h-[640px] bg-[#0E1014] text-white backdrop-blur-2xl border border-white/15 rounded-[28px] shadow-2xl flex flex-col overflow-hidden"
+            exit={{ opacity: 0, y: 12, scale: 0.97 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            className="fixed bottom-20 right-5 z-50 w-80 sm:w-96 flex flex-col rounded-2xl overflow-hidden shadow-2xl shadow-black/20"
+            style={{ height: '480px', background: '#1c1828' }}
           >
-            {/* Chatbot Header */}
-            <div className="p-4 border-b border-white/10 bg-white/[0.04] flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white border border-[#7C5CFF]/40 flex items-center justify-center text-[#7C5CFF] overflow-hidden shrink-0 p-1">
-                  {!lottieError ? (
-                    <DotLottieReact
-                      src="/knowledge-ai.lottie"
-                      loop
-                      autoplay
-                      onError={() => setLottieError(true)}
-                    />
-                  ) : (
-                    <Sparkles size={20} className="text-[#7C5CFF]" />
-                  )}
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
-                    FounderHQ Knowledge Engine
-                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/40">
-                      RAG v1.0
-                    </span>
-                  </h3>
-                  <p className="text-[11px] text-slate-300">
-                    Security Scoped · Hybrid Search · Clickable Citations
-                  </p>
-                </div>
+            {/* Header */}
+            <div
+              className="flex items-center gap-2.5 px-4 py-3 border-b border-white/[0.07]"
+              style={{ background: '#221e32' }}
+            >
+              <div className="w-8 h-8 rounded-xl bg-violet-600 flex items-center justify-center overflow-hidden shrink-0 p-0.5">
+                {!lottieError ? (
+                  <DotLottieReact
+                    src="/knowledge-ai.lottie"
+                    loop
+                    autoplay
+                    onError={() => setLottieError(true)}
+                  />
+                ) : (
+                  <Sparkles size={14} className="text-white" />
+                )}
               </div>
-
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-semibold text-slate-100 leading-tight">
+                  Knowledge AI
+                </p>
+                <p className="text-[10px] text-slate-400 leading-tight">FounderHQ · RAG-powered</p>
+              </div>
+              <span className="flex items-center gap-1 text-[10px] text-emerald-400 font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Online
+              </span>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+                className="p-1 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-white/5 transition-colors ml-1"
               >
-                <X size={16} />
+                <X size={14} />
               </button>
             </div>
 
-            {/* Knowledge Filter Chips */}
-            <div className="flex items-center gap-1.5 px-4 py-2 bg-white/[0.01] border-b border-white/5 text-[11px]">
-              {[
-                { id: 'ALL', label: 'All Knowledge', icon: Globe },
-                { id: 'GLOBAL', label: 'Global', icon: Globe },
-                { id: 'TEAM', label: 'Team', icon: Users },
-                { id: 'PRIVATE', label: 'Private', icon: Lock },
-                { id: 'SYSTEM', label: 'System', icon: BookOpen },
-              ].map((layer) => {
-                const Icon = layer.icon;
-                const isSel = selectedLayer === layer.id;
-                return (
-                  <button
-                    key={layer.id}
-                    onClick={() =>
-                      setSelectedLayer(layer.id as 'GLOBAL' | 'TEAM' | 'PRIVATE' | 'SYSTEM')
-                    }
-                    className={`px-2.5 py-1 rounded-full border transition-all flex items-center gap-1 shrink-0 ${
-                      isSel
-                        ? 'bg-[#7C5CFF] text-white border-[#7C5CFF]'
-                        : 'bg-white/5 text-slate-400 border-white/8 hover:text-white'
-                    }`}
-                  >
-                    <Icon size={10} />
-                    <span>{layer.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Document Uploading Progress Indicator */}
+            {/* Upload Progress */}
             {uploadingFile && (
-              <div className="p-3 bg-indigo-500/10 border-b border-indigo-500/20 text-xs space-y-1.5">
-                <div className="flex justify-between text-indigo-300 font-semibold">
-                  <span className="flex items-center gap-1.5">
-                    <FileText size={14} /> Uploading {uploadingFile}
+              <div className="px-4 py-2.5 bg-violet-500/10 border-b border-violet-500/20 text-[11px] space-y-1.5">
+                <div className="flex justify-between text-violet-300 font-medium">
+                  <span className="flex items-center gap-1">
+                    <FileText size={11} /> {uploadingFile}
                   </span>
                   <span>{uploadProgress}%</span>
                 </div>
-                <div className="w-full bg-white/10 rounded-full h-1 overflow-hidden">
+                <div className="w-full bg-white/10 rounded-full h-0.5 overflow-hidden">
                   <div
-                    className="bg-indigo-400 h-full transition-all duration-300"
+                    className="bg-violet-400 h-full transition-all duration-300"
                     style={{ width: `${uploadProgress}%` }}
                   />
                 </div>
                 <p className="text-[10px] text-slate-400 flex items-center gap-1">
-                  <Loader2 size={10} className="animate-spin text-indigo-400" />
-                  {uploadStep}
+                  <Loader2 size={9} className="animate-spin text-violet-400" /> {uploadStep}
                 </p>
               </div>
             )}
 
-            {/* Chat Messages Body */}
-            <div className="flex-1 p-4 overflow-y-auto custom-scrollbar space-y-4 text-xs">
+            {/* Messages */}
+            <div
+              className="flex-1 overflow-y-auto px-3 py-3 space-y-3 text-[12px]"
+              style={{ scrollbarWidth: 'thin', scrollbarColor: '#3d3557 transparent' }}
+            >
               {messages.map((msg) => (
                 <div
                   key={msg.id}
-                  className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'} space-y-1.5`}
+                  className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'} gap-1`}
                 >
                   <div
-                    className={`p-3.5 rounded-2xl max-w-[85%] leading-relaxed ${
+                    className={`px-3 py-2.5 rounded-2xl max-w-[82%] leading-relaxed ${
                       msg.sender === 'user'
-                        ? 'bg-[#7C5CFF] text-white rounded-br-none shadow-md shadow-[#7C5CFF]/20'
-                        : 'bg-[#181B22] border border-white/15 text-white rounded-bl-none'
+                        ? 'bg-violet-600 text-white rounded-br-sm'
+                        : 'text-slate-200 rounded-bl-sm border border-white/[0.06]'
                     }`}
+                    style={msg.sender === 'assistant' ? { background: '#2a2440' } : {}}
                   >
-                    <p className="whitespace-pre-wrap text-white font-normal">{msg.text}</p>
+                    <p className="whitespace-pre-wrap">{msg.text}</p>
 
-                    {/* Citations Box */}
+                    {/* Citations */}
                     {msg.citations && msg.citations.length > 0 && (
-                      <div className="mt-3 pt-2.5 border-t border-white/10 space-y-1.5">
-                        <span className="text-[10px] font-bold text-[#7C5CFF] uppercase tracking-wider block">
-                          Retrieved Sources & Citations:
-                        </span>
-                        <div className="space-y-1">
-                          {msg.citations.map((cite, idx) => (
-                            <div
-                              key={idx}
-                              onClick={() =>
-                                toast.info(`Viewing ${cite.fileName} (Page ${cite.pageNumber})`)
-                              }
-                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/8 text-[11px] text-slate-300 flex items-center justify-between cursor-pointer transition-colors"
-                            >
-                              <span className="flex items-center gap-1 truncate font-medium">
-                                <FileText size={12} className="text-indigo-400 shrink-0" />
-                                <span className="truncate">{cite.fileName}</span>
-                              </span>
-                              <span className="text-[10px] text-slate-400 shrink-0 flex items-center gap-1">
-                                Page {cite.pageNumber} <ExternalLink size={10} />
-                              </span>
-                            </div>
-                          ))}
-                        </div>
+                      <div className="mt-2 pt-2 border-t border-white/10 space-y-1">
+                        <p className="text-[9px] font-semibold text-violet-400 uppercase tracking-wider">
+                          Sources
+                        </p>
+                        {msg.citations.map((cite, idx) => (
+                          <div
+                            key={idx}
+                            onClick={() => toast.info(`${cite.fileName} · Page ${cite.pageNumber}`)}
+                            className="flex items-center justify-between gap-2 p-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.09] border border-white/[0.06] cursor-pointer transition-colors"
+                          >
+                            <span className="flex items-center gap-1 truncate text-slate-300">
+                              <FileText size={9} className="text-violet-400 shrink-0" />
+                              <span className="truncate text-[10px]">{cite.fileName}</span>
+                            </span>
+                            <ExternalLink size={9} className="text-slate-500 shrink-0" />
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
-
-                  <span className="text-[9px] text-slate-500 px-1">{msg.timestamp}</span>
+                  <span className="text-[9px] text-slate-600 px-1">{msg.timestamp}</span>
                 </div>
               ))}
 
               {isLoading && (
-                <div className="flex items-center gap-2 text-xs text-indigo-400 p-2">
-                  <Loader2 size={14} className="animate-spin" />
-                  <span>Searching RAG vector collections & reranking context...</span>
+                <div className="flex items-start gap-2">
+                  <div
+                    className="px-3 py-2.5 rounded-2xl rounded-bl-sm border border-white/[0.06] flex items-center gap-2"
+                    style={{ background: '#2a2440' }}
+                  >
+                    <span className="flex gap-0.5">
+                      {[0, 1, 2].map((i) => (
+                        <span
+                          key={i}
+                          className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-bounce"
+                          style={{ animationDelay: `${i * 0.15}s` }}
+                        />
+                      ))}
+                    </span>
+                    <span className="text-[11px] text-slate-400">Searching knowledge base…</span>
+                  </div>
                 </div>
               )}
               <div ref={messagesEndRef} />
             </div>
 
-            {/* TTS Playing Indicator */}
+            {/* TTS indicator */}
             {isSpeaking && (
-              <div className="px-4 py-1.5 bg-[#7C5CFF]/15 border-t border-[#7C5CFF]/30 flex items-center justify-between text-xs text-[#7C5CFF]">
-                <span className="flex items-center gap-1.5">
-                  <Volume2 size={12} className="animate-bounce" /> Playing ElevenLabs Executive
-                  Voice...
+              <div
+                className="px-4 py-1.5 flex items-center justify-between text-[10px] text-violet-400 border-t border-white/[0.06]"
+                style={{ background: '#221e32' }}
+              >
+                <span className="flex items-center gap-1">
+                  <Volume2 size={10} className="animate-bounce" /> Speaking…
                 </span>
-                <button onClick={stopSpeaking} className="text-[10px] underline">
+                <button
+                  onClick={stopSpeaking}
+                  className="underline text-slate-400 hover:text-slate-200 transition-colors"
+                >
                   Stop
                 </button>
               </div>
             )}
 
-            {/* Input Form Footer */}
+            {/* Input */}
             <form
               onSubmit={handleSend}
-              className="p-3 border-t border-white/10 bg-white/[0.02] space-y-2"
+              className="px-3 py-2.5 border-t border-white/[0.07] flex items-center gap-2"
+              style={{ background: '#221e32' }}
             >
-              <div className="flex items-center gap-2">
-                {/* File Upload Trigger */}
-                <label
-                  className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 cursor-pointer transition-colors"
-                  title="Upload Document into RAG Engine"
-                >
-                  <Upload size={16} />
-                  <input
-                    type="file"
-                    onChange={handleFileUpload}
-                    className="hidden"
-                    accept=".pdf,.docx,.pptx,.txt"
-                  />
-                </label>
-
-                {/* Mic STT Trigger */}
-                <button
-                  type="button"
-                  onClick={toggleListening}
-                  className={`p-2 rounded-xl transition-all ${
-                    isListening
-                      ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse'
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
-                  }`}
-                  title={isListening ? 'Stop Listening' : 'Voice Input'}
-                >
-                  {isListening ? <MicOff size={16} /> : <Mic size={16} />}
-                </button>
-
+              <label
+                className="p-1.5 rounded-lg text-slate-500 hover:text-violet-400 hover:bg-violet-500/10 cursor-pointer transition-colors"
+                title="Upload document"
+              >
+                <Upload size={13} />
                 <input
-                  type="text"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder={
-                    isListening ? 'Listening...' : 'Ask your workspace knowledge base...'
-                  }
-                  className="flex-1 bg-transparent text-xs text-white placeholder:text-slate-400 focus:outline-none"
+                  type="file"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  accept=".pdf,.docx,.pptx,.txt"
                 />
+              </label>
 
-                <button
-                  type="submit"
-                  disabled={isLoading || !query.trim()}
-                  className="p-2 rounded-xl bg-[#7C5CFF] hover:bg-[#6b49f3] text-white disabled:opacity-40 transition-all shadow-md shadow-[#7C5CFF]/30"
-                >
-                  <Send size={14} />
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={toggleListening}
+                className={`p-1.5 rounded-lg transition-all ${
+                  isListening
+                    ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30 animate-pulse'
+                    : 'text-slate-500 hover:text-violet-400 hover:bg-violet-500/10'
+                }`}
+                title={isListening ? 'Stop' : 'Voice input'}
+              >
+                {isListening ? <MicOff size={13} /> : <Mic size={13} />}
+              </button>
+
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={isListening ? 'Listening…' : 'Ask anything…'}
+                className="flex-1 bg-white/[0.05] rounded-xl px-3 py-1.5 text-[12px] text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-violet-500/40 border border-white/[0.06] transition-all"
+              />
+
+              <button
+                type="submit"
+                disabled={isLoading || !query.trim()}
+                className="p-1.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white disabled:opacity-30 transition-all"
+              >
+                <Send size={13} />
+              </button>
             </form>
           </motion.div>
         )}

@@ -157,14 +157,16 @@ export default function LandingPage() {
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 border-b border-white/10 bg-[#0d0d12]/90 backdrop-blur-xl transition-all duration-300 reveal active">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-            <Image
-              src="/logo.svg"
-              alt="FounderHQ"
-              width={32}
-              height={32}
-              className="object-contain group-hover:opacity-80 transition-opacity"
-            />
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center p-1 group-hover:bg-white/15 transition-colors">
+              <Image
+                src="/logo.svg"
+                alt="FounderHQ"
+                width={24}
+                height={24}
+                className="object-contain"
+              />
+            </div>
             <span className="text-white font-medium tracking-tight text-sm group-hover:opacity-80 transition-opacity">
               FOUNDERHQ
             </span>
