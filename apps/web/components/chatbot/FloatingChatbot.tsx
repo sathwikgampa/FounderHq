@@ -139,16 +139,6 @@ export function FloatingChatbot() {
                   className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-<<<<<<< HEAD
-                    className={`flex max-w-[85%] space-x-2 ${msg.role === "user" ? "flex-row-reverse space-x-reverse" : "flex-row"
-                      }`}
-                  >
-                    <div
-                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${msg.role === "user"
-                        ? "bg-accent text-foreground"
-                        : "bg-primary/10 text-primary border border-primary/20"
-                        }`}
-=======
                     className={`flex max-w-[85%] space-x-2 ${
                       msg.role === 'user' ? 'flex-row-reverse space-x-reverse' : 'flex-row'
                     }`}
@@ -159,7 +149,6 @@ export function FloatingChatbot() {
                           ? 'bg-accent text-foreground'
                           : 'bg-primary/10 text-primary border border-primary/20'
                       }`}
->>>>>>> 5eaafcb (fix(ci): resolve frontend lint and typecheck errors for CI pipeline)
                     >
                       {msg.role === 'user' ? (
                         <User className="h-3.5 w-3.5" />
@@ -168,17 +157,6 @@ export function FloatingChatbot() {
                       )}
                     </div>
                     <div
-<<<<<<< HEAD
-                      className={`rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed ${msg.role === "user"
-                        ? "bg-primary text-primary-foreground rounded-tr-none shadow-sm"
-                        : "bg-muted/60 text-foreground border border-border/50 rounded-tl-none"
-                        }`}
-                    >
-                      <div className="whitespace-pre-wrap">{msg.content}</div>
-                      <div
-                        className={`mt-1 text-[10px] ${msg.role === "user" ? "text-primary-foreground/70" : "text-muted-foreground"
-                          }`}
-=======
                       className={`rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed ${
                         msg.role === 'user'
                           ? 'bg-primary text-primary-foreground rounded-tr-none shadow-sm'
@@ -192,7 +170,6 @@ export function FloatingChatbot() {
                             ? 'text-primary-foreground/70'
                             : 'text-muted-foreground'
                         }`}
->>>>>>> 5eaafcb (fix(ci): resolve frontend lint and typecheck errors for CI pipeline)
                       >
                         {msg.timestamp}
                       </div>
