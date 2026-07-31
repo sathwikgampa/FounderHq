@@ -5,6 +5,7 @@ import { WelcomeSection } from '@/components/dashboard/welcome-section';
 import { StatsCards } from '@/components/dashboard/stats-cards';
 import { MiddleRowCards } from '@/components/dashboard/middle-row-cards';
 import { AiChatWidget } from '@/components/dashboard/ai-chat-widget';
+import { LiveAgentDemo } from '@/components/dashboard/live-agent-demo';
 import { ApprovalQueue } from '@/features/approvals/components/approval-queue';
 import { CEOPlannerStream } from '@/features/planner/components/ceo-planner-stream';
 
@@ -19,6 +20,9 @@ export default function DashboardPage() {
     <div className="w-full relative pb-16 space-y-8">
       <WelcomeSection />
       <StatsCards />
+
+      {/* Featured 9-Agent Live Demo Engine */}
+      <LiveAgentDemo onApprovalTriggered={handleApprovalEnqueued} />
 
       {/* CEO Planner Live Agent Streaming Component */}
       <CEOPlannerStream onApprovalEnqueued={handleApprovalEnqueued} />

@@ -1,4 +1,4 @@
-import { API_BASE_URL } from './api-client';
+import { getApiBaseUrl } from './api-client';
 
 export interface PlannerStreamEvent {
   event:
@@ -9,6 +9,7 @@ export interface PlannerStreamEvent {
     | 'final_brief'
     | 'error'
     | string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: Record<string, any>;
 }
 
@@ -19,7 +20,8 @@ export async function streamPlannerExecution(
   onComplete?: () => void,
   onError?: (err: Error) => void,
 ): Promise<void> {
-  const url = `${API_BASE_URL}/api/v1/planner/stream`;
+  const baseUrl = getApiBaseUrl();
+  const url = `${baseUrl}/api/v1/planner/stream`;
 
   try {
     const response = await fetch(url, {
