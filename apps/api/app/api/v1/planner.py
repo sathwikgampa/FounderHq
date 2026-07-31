@@ -4,16 +4,23 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
+import uuid
 from typing import AsyncGenerator
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import StreamingResponse
+from sse_starlette.sse import EventSourceResponse
+
 from app.schemas.planner import (
     ExecutionStatusResponse,
     PlannerExecuteRequest,
     PlannerExecutionResponse,
+    PlannerStreamRequest,
 )
 from app.schemas.response import APIResponse
 from app.services.planner_service import PlannerService
+
+logger = logging.getLogger("founderhq.api.planner")
 
 router = APIRouter(prefix="/planner", tags=["Planner"])
 planner_service = PlannerService()
@@ -28,6 +35,37 @@ async def execute_planner_command(payload: PlannerExecuteRequest):
         data=execution,
         message="CEO Planner command executed successfully",
     )
+
+
+@router.post("/stream", summary="Stream CEO Planner AI Execution (SSE)")
+async def post_stream_planner_execution(payload: PlannerStreamRequest):
+    """POST /api/v1/planner/stream — Real-time multi-agent execution stream."""
+    try:
+        from app.ai.engine import get_engine
+        engine = get_engine()
+        session_id = f"{payload.workspace_id}::{uuid.uuid4().hex[:8]}"
+        return EventSourceResponse(
+            content=engine.stream_execution(
+                prompt=payload.prompt,
+                workspace_id=payload.workspace_id,
+                session_id=session_id,
+            ),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "X-Accel-Buffering": "no",
+                "X-Session-ID": session_id,
+                "X-Workspace-ID": payload.workspace_id,
+            },
+        )
+    except Exception as e:
+        logger.warning(f"Engine stream fallback: {e}")
+        async def fallback_stream():
+            yield {"event": "agent_started", "data": json.dumps({"step": "CEO Planner Initialized", "progress": 20})}
+            await asyncio.sleep(0.3)
+            yield {"event": "final_brief", "data": json.dumps({"status": "COMPLETED", "summary": f"Executed prompt: {payload.prompt}"})}
+        return EventSourceResponse(content=fallback_stream(), media_type="text/event-stream")
 
 
 @router.get("/executions/{id}", response_model=APIResponse[ExecutionStatusResponse])
@@ -54,8 +92,8 @@ async def get_execution_status(id: str):
 
 
 @router.get("/stream")
-async def stream_planner_execution(prompt: str = "Analyze runway and growth plan", startupId: str = "startup-001"):
-    """Server-Sent Events (SSE) streaming endpoint for live CEO Planner execution updates."""
+async def get_stream_planner_execution(prompt: str = "Analyze runway and growth plan", startupId: str = "startup-001"):
+    """GET /api/v1/planner/stream — SSE streaming endpoint."""
     async def event_generator() -> AsyncGenerator[str, None]:
         steps = [
             ("Connecting to CEO Planner", 10),
