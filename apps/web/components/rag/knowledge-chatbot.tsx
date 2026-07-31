@@ -138,19 +138,26 @@ export function KnowledgeChatbot() {
     }, 2200);
   };
 
+  const [lottieError, setLottieError] = useState(false);
+
   return (
     <>
-      {/* Floating Chatbot Launcher Button with DotLottie Animation */}
+      {/* Floating Chatbot Launcher Button with DotLottie Animation or Sparkles Fallback */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-6 right-6 z-40 p-2.5 rounded-3xl bg-[#0E1014]/90 border border-[#7C5CFF]/50 text-white shadow-2xl shadow-[#7C5CFF]/40 hover:scale-105 transition-all flex items-center gap-2 group backdrop-blur-xl"
       >
         <div className="w-10 h-10 overflow-hidden flex items-center justify-center shrink-0">
-          <DotLottieReact
-            src="https://lottie.host/53761f30-4dd3-42a6-a300-fcc52365776f/42HptGJW1u.lottie"
-            loop
-            autoplay
-          />
+          {!lottieError ? (
+            <DotLottieReact
+              src="https://lottie.host/53761f30-4dd3-42a6-a300-fcc52365776f/42HptGJW1u.lottie"
+              loop
+              autoplay
+              onError={() => setLottieError(true)}
+            />
+          ) : (
+            <Sparkles size={20} className="text-[#7C5CFF]" />
+          )}
         </div>
         <span className="font-bold text-xs pr-1">Knowledge AI</span>
         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping mr-1" />
@@ -169,11 +176,16 @@ export function KnowledgeChatbot() {
             <div className="p-4 border-b border-white/10 bg-white/[0.02] flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-[#7C5CFF]/20 border border-[#7C5CFF]/40 flex items-center justify-center text-[#7C5CFF] overflow-hidden shrink-0">
-                  <DotLottieReact
-                    src="https://lottie.host/53761f30-4dd3-42a6-a300-fcc52365776f/42HptGJW1u.lottie"
-                    loop
-                    autoplay
-                  />
+                  {!lottieError ? (
+                    <DotLottieReact
+                      src="https://lottie.host/53761f30-4dd3-42a6-a300-fcc52365776f/42HptGJW1u.lottie"
+                      loop
+                      autoplay
+                      onError={() => setLottieError(true)}
+                    />
+                  ) : (
+                    <Sparkles size={20} className="text-[#7C5CFF]" />
+                  )}
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-white flex items-center gap-1.5">

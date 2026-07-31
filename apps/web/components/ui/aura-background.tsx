@@ -155,6 +155,10 @@ export function AuraBackground({
       script.onload = () => {
         initUnicorn();
       };
+      script.onerror = () => {
+        // Blocked by client ad-blocker gracefully handled
+        console.info('CDN script blocked by client extension, fallback background active.');
+      };
       document.head.appendChild(script);
     } else {
       initUnicorn();
