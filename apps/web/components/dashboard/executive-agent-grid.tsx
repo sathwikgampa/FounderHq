@@ -100,30 +100,26 @@ const AGENTS = [
 
 export function ExecutiveAgentGrid() {
   const router = useRouter();
+  const [isOpen, setIsOpen] = React.useState(true);
 
   return (
-    <div className="space-y-4 my-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-            <Cpu className="text-[#7C5CFF]" size={20} />
-            Executive Agent Network
-          </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
-            10 specialized Google ADK micro-agents operating under CEO Planner orchestration.
-          </p>
+    <div className="space-y-4 my-6">
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center justify-between p-4 rounded-2xl bg-[#0E1014] border border-white/[0.06] cursor-pointer hover:bg-white/[0.04] transition-all"
+      >
+        <div className="flex items-center gap-2">
+          <Cpu className="text-[#7C5CFF]" size={18} />
+          <h2 className="text-sm font-bold text-white tracking-tight">Executive Agents</h2>
         </div>
-
-        <button
-          onClick={() => router.push('/agents')}
-          className="text-xs text-[#7C5CFF] hover:text-[#9478FF] font-semibold inline-flex items-center gap-1 transition-colors"
-        >
-          View Full Agent Network
-          <ArrowRight size={14} />
-        </button>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-slate-400">10 Agents Active</span>
+          <span className={`text-slate-400 transform transition-transform ${isOpen ? 'rotate-180' : ''}`}>▼</span>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      {isOpen && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {AGENTS.map((agent) => {
           const isWorking = agent.status === 'Working';
           const isThinking = agent.status === 'Thinking';
@@ -180,6 +176,7 @@ export function ExecutiveAgentGrid() {
           );
         })}
       </div>
+      )}
     </div>
   );
 }

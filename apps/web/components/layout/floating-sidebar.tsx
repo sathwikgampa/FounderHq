@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 import {
   LayoutDashboard,
   Building2,
@@ -226,22 +227,41 @@ export function FloatingSidebar() {
         })}
       </nav>
 
+      {/* Pro Plan Card */}
+      {!collapsed && (
+        <div className="p-3 my-2 rounded-2xl bg-white/[0.03] border border-white/[0.06] space-y-2">
+          <div className="flex justify-between items-center text-xs">
+            <span className="font-bold text-white">Pro Plan</span>
+            <span className="text-[10px] text-slate-400">14 trial days remaining</span>
+          </div>
+          <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
+            <div className="bg-gradient-to-r from-[#7C5CFF] to-indigo-400 h-full w-[65%]" />
+          </div>
+          <button
+            onClick={() => toast.info('Upgrade to FounderHQ Enterprise Plan')}
+            className="w-full py-1.5 text-center text-xs font-semibold text-[#7C5CFF] bg-[#7C5CFF]/10 hover:bg-[#7C5CFF]/20 border border-[#7C5CFF]/30 rounded-xl transition-colors"
+          >
+            Upgrade Plan
+          </button>
+        </div>
+      )}
+
       {/* Profile & Logout Section */}
       <div className="pt-3 border-t border-white/[0.06] mt-auto">
         <div
           className={`flex items-center gap-3 p-2 rounded-2xl bg-white/[0.03] border border-white/5 ${collapsed ? 'justify-center' : ''}`}
         >
           <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
-            {user?.displayName ? user.displayName.charAt(0) : <User size={14} />}
+            {user?.displayName ? user.displayName.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() : 'GS'}
           </div>
 
           {!collapsed && (
             <div className="flex-1 min-w-0">
               <p className="text-xs font-bold text-white truncate">
-                {user?.displayName || 'Siddharth'}
+                {user?.displayName || 'Gilakethi Siddhartha'}
               </p>
               <p className="text-[10px] text-slate-400 truncate">
-                {user?.email || 'founder@acme.com'}
+                {user?.email || 'gilasidh@gmail.com'}
               </p>
             </div>
           )}

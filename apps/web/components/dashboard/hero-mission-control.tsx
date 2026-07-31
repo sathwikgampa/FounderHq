@@ -2,17 +2,29 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Activity, ArrowUpRight, TrendingDown, Clock, Sparkles, CheckCircle2 } from 'lucide-react';
+import { ArrowUpRight, TrendingDown, Clock, Sparkles, Mic, MicOff, Send, Volume2, Square, ChevronDown, CircleDollarSign, Flame } from 'lucide-react';
 import { GlowCard } from '@/components/ui/glow-card';
 import { useAuth } from '@/providers/auth-provider';
+import { useVoice } from '@/hooks/use-voice';
+import { toast } from 'sonner';
 
 export function HeroMissionControl() {
   const { user } = useAuth();
-  const orbCanvasRef = useRef<HTMLCanvasElement>(null);
-  const [orbHovered, setOrbHovered] = useState(false);
-
-  // Time of day greeting
   const [greeting, setGreeting] = useState('Good Evening');
+  const [query, setQuery] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [lastResponse, setLastResponse] = useState<string | null>(null);
+
+  const { isListening, isSpeaking, transcript, toggleListening, speak, stopSpeaking } = useVoice(
+    (finalText) => {
+      if (finalText) setQuery(finalText);
+    }
+  );
+
+  useEffect(() => {
+    if (transcript) setQuery(transcript);
+  }, [transcript]);
+
   useEffect(() => {
     const hour = new Date().getHours();
     if (hour < 12) setGreeting('Good Morning');
@@ -20,182 +32,226 @@ export function HeroMissionControl() {
     else setGreeting('Good Evening');
   }, []);
 
-  // 3D Canvas Radial Health Orb Animation
-  useEffect(() => {
-    const canvas = orbCanvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!query.trim()) return;
+    setIsProcessing(true);
+    const userPrompt = query;
 
-    let frameId: number;
-    let time = 0;
-    const size = (canvas.width = canvas.height = 240);
-
-    const renderOrb = () => {
-      time += 0.02;
-      ctx.clearRect(0, 0, size, size);
-
-      const cx = size / 2;
-      const cy = size / 2;
-      const radius = 75;
-
-      // Outer Glowing Ring
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius + Math.sin(time) * 4, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(124, 92, 255, 0.3)';
-      ctx.lineWidth = 4;
-      ctx.stroke();
-
-      // Pulsing Core Gradient
-      const grad = ctx.createRadialGradient(cx, cy, 5, cx, cy, radius);
-      grad.addColorStop(0, 'rgba(124, 92, 255, 0.8)');
-      grad.addColorStop(0.5, 'rgba(139, 92, 246, 0.4)');
-      grad.addColorStop(1, 'rgba(124, 92, 255, 0)');
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Rotating Accent Arcs
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius + 12, time, time + Math.PI * 1.2);
-      ctx.strokeStyle = 'rgba(34, 197, 94, 0.8)';
-      ctx.lineWidth = 3;
-      ctx.stroke();
-
-      // Secondary Arc
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius + 18, -time * 0.8, -time * 0.8 + Math.PI * 0.8);
-      ctx.strokeStyle = 'rgba(165, 180, 252, 0.6)';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      frameId = requestAnimationFrame(renderOrb);
-    };
-
-    renderOrb();
-    return () => cancelAnimationFrame(frameId);
-  }, []);
+    setTimeout(async () => {
+      setIsProcessing(false);
+      const responseText = `CEO Planner evaluated: "${userPrompt}". All 10 executive agents dispatched parallel tasks. Runway buffer remains healthy at 16 months.`;
+      setLastResponse(responseText);
+      toast.success(`CEO Planner processed: "${userPrompt}"`, { icon: '✨' });
+      setQuery('');
+      await speak(responseText);
+    }, 1000);
+  };
 
   const userName = user?.displayName ? user.displayName.split(' ')[0] : 'Siddharth';
 
   return (
     <div className="space-y-6">
-      {/* Hero Container */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left 2 Cols: Mission Control Greeting & Core Metrics */}
-        <div className="lg:col-span-2 space-y-6">
-          <GlowCard glowColor="rgba(124, 92, 255, 0.15)">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#7C5CFF]/15 border border-[#7C5CFF]/30 text-[#7C5CFF] text-xs font-semibold">
-                <Sparkles size={14} />
-                <span>CEO Planner Mission Control</span>
-              </div>
+      {/* 1. Header Row: Greeting Title (Left) + Startup Health Widget (Right) */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <h1 className="text-3xl lg:text-4xl font-extrabold text-white tracking-tight flex items-center gap-2">
+            {greeting}, {userName} <span className="inline-block animate-bounce">👋</span>
+          </h1>
+          <p className="text-slate-400 text-sm mt-1">Your startup is running smoothly.</p>
+        </div>
 
-              <div>
-                <h1 className="text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
-                  {greeting}, {userName}
-                </h1>
-                <p className="text-slate-400 text-sm mt-1 leading-relaxed">
-                  Your AI executive team is running 10 parallel workflows. 2 items require your
-                  approval today.
-                </p>
-              </div>
-
-              {/* Today's Priorities */}
-              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] space-y-2.5">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block">
-                  Today&apos;s Focus
-                </span>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                  <div className="flex items-center gap-2 text-slate-200">
-                    <CheckCircle2 size={14} className="text-emerald-400 shrink-0" />
-                    <span>Approve Series A SAFE Term Sheet ($1.7M)</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-slate-200">
-                    <CheckCircle2 size={14} className="text-indigo-400 shrink-0" />
-                    <span>Review Senior AI Engineer Offer ($165k)</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </GlowCard>
-
-          {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <GlowCard glowColor="rgba(34, 197, 94, 0.15)">
-              <div className="text-xs text-slate-400 font-medium mb-1">Monthly Revenue</div>
-              <div className="text-2xl font-extrabold text-white tracking-tight">$28,450</div>
-              <div className="mt-2 flex items-center gap-1.5 text-xs text-emerald-400 font-semibold">
-                <ArrowUpRight size={14} />
-                <span>+18% vs last mo</span>
-              </div>
-            </GlowCard>
-
-            <GlowCard glowColor="rgba(245, 158, 11, 0.15)">
-              <div className="text-xs text-slate-400 font-medium mb-1">Monthly Net Burn</div>
-              <div className="text-2xl font-extrabold text-white tracking-tight">-$8,100</div>
-              <div className="mt-2 flex items-center gap-1.5 text-xs text-amber-400 font-semibold">
-                <TrendingDown size={14} />
-                <span>Improving (Extended 2.5 mo)</span>
-              </div>
-            </GlowCard>
-
-            <GlowCard glowColor="rgba(124, 92, 255, 0.15)">
-              <div className="text-xs text-slate-400 font-medium mb-1">Cash Runway</div>
-              <div className="text-2xl font-extrabold text-white tracking-tight">16 Months</div>
-              <div className="mt-2 flex items-center gap-1.5 text-xs text-indigo-300 font-semibold">
-                <Clock size={14} />
-                <span>Healthy Buffer</span>
-              </div>
-            </GlowCard>
+        {/* Startup Health Widget */}
+        <GlowCard glowColor="rgba(34, 197, 94, 0.15)" className="p-4 w-full md:w-64 shrink-0">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-semibold text-slate-300 flex items-center gap-1">
+              Startup Health <ChevronDown size={12} className="text-slate-400" />
+            </span>
           </div>
-        </div>
 
-        {/* Right 1 Col: Animated Startup Health Orb */}
-        <div className="relative">
-          <GlowCard
-            onMouseEnter={() => setOrbHovered(true)}
-            onMouseLeave={() => setOrbHovered(false)}
-            className="h-full flex flex-col items-center justify-center text-center relative overflow-hidden"
-          >
-            <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
-              <Activity size={14} className="text-emerald-400" />
-              Startup Health Index
-            </div>
-
-            {/* Canvas Orb */}
-            <div className="relative my-2 flex items-center justify-center">
-              <canvas ref={orbCanvasRef} className="w-[180px] h-[180px] pointer-events-none" />
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-4xl font-black text-white tracking-tight">92%</span>
-                <span className="text-[10px] text-emerald-400 font-semibold uppercase tracking-widest mt-0.5">
-                  Optimal
-                </span>
+          <div className="flex items-center gap-4">
+            {/* Radial 92% Gauge */}
+            <div className="relative w-14 h-14 flex items-center justify-center shrink-0">
+              <svg className="w-14 h-14 transform -rotate-90">
+                <circle cx="28" cy="28" r="22" stroke="rgba(255,255,255,0.1)" strokeWidth="4" fill="transparent" />
+                <circle
+                  cx="28"
+                  cy="28"
+                  r="22"
+                  stroke="url(#healthGrad)"
+                  strokeWidth="4"
+                  fill="transparent"
+                  strokeDasharray="138"
+                  strokeDashoffset="11"
+                  strokeLinecap="round"
+                />
+                <defs>
+                  <linearGradient id="healthGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#22C55E" />
+                    <stop offset="100%" stopColor="#06B6D4" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-xs font-extrabold text-white">92%</span>
               </div>
             </div>
 
-            {/* Hover Expansion Metrics */}
-            {orbHovered ? (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="w-full text-xs space-y-1.5 pt-2 border-t border-white/10"
+            <div>
+              <span className="text-xs font-bold text-white block">Optimal</span>
+              <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1 mt-0.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                All systems operating well
+              </span>
+            </div>
+          </div>
+        </GlowCard>
+      </div>
+
+      {/* 2. Hero Command Box Directly Below Name */}
+      <div className="w-full relative">
+        <div className="absolute -inset-1 bg-gradient-to-r from-[#7C5CFF]/30 via-indigo-500/20 to-purple-500/30 rounded-[28px] blur-lg opacity-50 pointer-events-none" />
+
+        <form
+          onSubmit={handleSubmit}
+          className="relative bg-[#0E1014]/95 backdrop-blur-2xl border border-white/10 rounded-[24px] p-4 shadow-2xl space-y-3 z-10"
+        >
+          <div className="flex items-center gap-3 px-2">
+            <div className="w-8 h-8 rounded-xl bg-[#7C5CFF]/20 border border-[#7C5CFF]/40 flex items-center justify-center text-[#7C5CFF] shrink-0">
+              <Sparkles size={16} />
+            </div>
+
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={isListening ? 'Listening to voice input...' : 'Ask FounderHQ anything... (e.g. analyze runway, build MVP roadmap, review contracts)'}
+              className="flex-1 bg-transparent text-sm text-white placeholder:text-slate-500 focus:outline-none"
+            />
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={toggleListening}
+                className={`p-2 rounded-xl transition-all ${
+                  isListening
+                    ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse'
+                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                }`}
+                title={isListening ? 'Stop Voice Recording' : 'Voice Input (ElevenLabs STT & Groq Whisper)'}
               >
-                <div className="flex justify-between text-slate-300">
-                  <span>Finance: 95%</span>
-                  <span>Product: 94%</span>
-                </div>
-                <div className="flex justify-between text-slate-300">
-                  <span>Marketing: 92%</span>
-                  <span>Legal: 88%</span>
-                </div>
-              </motion.div>
-            ) : (
-              <p className="text-[11px] text-slate-400 mt-2">Hover to view domain breakdown</p>
-            )}
-          </GlowCard>
-        </div>
+                {isListening ? <MicOff size={16} /> : <Mic size={16} />}
+              </button>
+
+              {isSpeaking ? (
+                <button
+                  type="button"
+                  onClick={stopSpeaking}
+                  className="p-2 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/40 animate-pulse"
+                  title="Stop AI Voice Playback"
+                >
+                  <Square size={14} />
+                </button>
+              ) : lastResponse ? (
+                <button
+                  type="button"
+                  onClick={() => speak(lastResponse)}
+                  className="p-2 rounded-xl text-slate-400 hover:text-[#7C5CFF] hover:bg-white/5 transition-colors"
+                  title="Replay ElevenLabs Voice Response"
+                >
+                  <Volume2 size={16} />
+                </button>
+              ) : null}
+
+              <button
+                type="submit"
+                disabled={isProcessing || !query.trim()}
+                className="p-2.5 rounded-xl bg-[#7C5CFF] hover:bg-[#6b49f3] text-white disabled:opacity-40 transition-all shadow-md shadow-[#7C5CFF]/30"
+              >
+                <Send size={14} />
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      {/* 3. 4 Key Metric Cards Row (Revenue, Burn Rate, Cash Runway, MRR) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Card 1: Revenue */}
+        <GlowCard glowColor="rgba(124, 92, 255, 0.15)">
+          <div className="flex items-center justify-between text-slate-400 text-xs font-medium mb-2">
+            <span className="flex items-center gap-1.5">
+              <span className="p-1 rounded-md bg-[#7C5CFF]/20 text-[#7C5CFF]"><CircleDollarSign size={12} /></span>
+              Revenue
+            </span>
+          </div>
+          <div className="text-2xl font-extrabold text-white tracking-tight">$28,450</div>
+          <div className="mt-2 flex items-center justify-between text-xs">
+            <span className="text-emerald-400 font-semibold flex items-center gap-1">
+              <ArrowUpRight size={12} /> ↑ 18% vs last month
+            </span>
+            <svg className="w-16 h-6 text-[#7C5CFF]" viewBox="0 0 100 30" fill="none">
+              <path d="M0 25 C 20 20, 40 10, 60 15 C 80 5, 90 2, 100 0" stroke="currentColor" strokeWidth="2" fill="none" />
+            </svg>
+          </div>
+        </GlowCard>
+
+        {/* Card 2: Burn Rate */}
+        <GlowCard glowColor="rgba(245, 158, 11, 0.15)">
+          <div className="flex items-center justify-between text-slate-400 text-xs font-medium mb-2">
+            <span className="flex items-center gap-1.5">
+              <span className="p-1 rounded-md bg-amber-500/20 text-amber-400"><Flame size={12} /></span>
+              Burn Rate
+            </span>
+          </div>
+          <div className="text-2xl font-extrabold text-white tracking-tight">-$8,100</div>
+          <div className="mt-2 flex items-center justify-between text-xs">
+            <span className="text-amber-400 font-semibold flex items-center gap-1">
+              <TrendingDown size={12} /> ↓ 12% vs last month
+            </span>
+            <svg className="w-16 h-6 text-amber-400" viewBox="0 0 100 30" fill="none">
+              <path d="M0 10 C 20 15, 40 25, 60 20 C 80 28, 90 25, 100 30" stroke="currentColor" strokeWidth="2" fill="none" />
+            </svg>
+          </div>
+        </GlowCard>
+
+        {/* Card 3: Cash Runway */}
+        <GlowCard glowColor="rgba(34, 197, 94, 0.15)">
+          <div className="flex items-center justify-between text-slate-400 text-xs font-medium mb-2">
+            <span className="flex items-center gap-1.5">
+              <span className="p-1 rounded-md bg-emerald-500/20 text-emerald-400"><Clock size={12} /></span>
+              Cash Runway
+            </span>
+          </div>
+          <div className="text-2xl font-extrabold text-white tracking-tight">16 Months</div>
+          <div className="mt-2 flex items-center justify-between text-xs">
+            <span className="text-emerald-400 font-semibold flex items-center gap-1">
+              <ArrowUpRight size={12} /> ↑ 2 months vs last month
+            </span>
+            <svg className="w-16 h-6 text-emerald-400" viewBox="0 0 100 30" fill="none">
+              <path d="M0 28 C 30 25, 50 15, 70 18 C 90 8, 95 5, 100 0" stroke="currentColor" strokeWidth="2" fill="none" />
+            </svg>
+          </div>
+        </GlowCard>
+
+        {/* Card 4: MRR */}
+        <GlowCard glowColor="rgba(59, 130, 246, 0.15)">
+          <div className="flex items-center justify-between text-slate-400 text-xs font-medium mb-2">
+            <span className="flex items-center gap-1.5">
+              <span className="p-1 rounded-md bg-blue-500/20 text-blue-400"><CircleDollarSign size={12} /></span>
+              MRR
+            </span>
+          </div>
+          <div className="text-2xl font-extrabold text-white tracking-tight">$42,680</div>
+          <div className="mt-2 flex items-center justify-between text-xs">
+            <span className="text-blue-400 font-semibold flex items-center gap-1">
+              <ArrowUpRight size={12} /> ↑ 14% vs last month
+            </span>
+            <svg className="w-16 h-6 text-blue-400" viewBox="0 0 100 30" fill="none">
+              <path d="M0 20 C 25 18, 45 10, 65 12 C 85 4, 95 2, 100 0" stroke="currentColor" strokeWidth="2" fill="none" />
+            </svg>
+          </div>
+        </GlowCard>
       </div>
     </div>
   );

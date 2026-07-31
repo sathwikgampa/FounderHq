@@ -29,8 +29,26 @@ const INSIGHTS = [
 ];
 
 export function AiInsightsPanel() {
+  const [isOpen, setIsOpen] = React.useState(true);
+
   return (
-    <GlowCard glowColor="rgba(124, 92, 255, 0.2)" className="space-y-4">
+    <div className="space-y-4 my-6">
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center justify-between p-4 rounded-2xl bg-[#0E1014] border border-white/[0.06] cursor-pointer hover:bg-white/[0.04] transition-all"
+      >
+        <div className="flex items-center gap-2">
+          <Sparkles size={18} className="text-[#7C5CFF]" />
+          <h2 className="text-sm font-bold text-white tracking-tight">Insights</h2>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-slate-400">2 Alerts</span>
+          <span className={`text-slate-400 transform transition-transform ${isOpen ? 'rotate-180' : ''}`}>▼</span>
+        </div>
+      </div>
+
+      {isOpen && (
+        <GlowCard glowColor="rgba(124, 92, 255, 0.2)" className="space-y-4">
       <div className="flex items-center justify-between border-b border-white/10 pb-3">
         <h3 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
           <Sparkles size={18} className="text-[#7C5CFF]" />
@@ -82,6 +100,8 @@ export function AiInsightsPanel() {
           </div>
         ))}
       </div>
-    </GlowCard>
+      </GlowCard>
+      )}
+    </div>
   );
 }

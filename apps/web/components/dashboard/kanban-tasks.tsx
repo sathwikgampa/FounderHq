@@ -89,21 +89,26 @@ const COLUMNS: { id: string; title: string; tasks: Task[] }[] = [
 ];
 
 export function KanbanTasks() {
+  const [isOpen, setIsOpen] = React.useState(true);
+
   return (
-    <div className="space-y-4 my-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-            <CheckSquare className="text-emerald-400" size={20} />
-            Execution Tasks (Kanban)
-          </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Auto-assigned sprint tasks coordinated by COO Operations Agent.
-          </p>
+    <div className="space-y-4 my-6">
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center justify-between p-4 rounded-2xl bg-[#0E1014] border border-white/[0.06] cursor-pointer hover:bg-white/[0.04] transition-all"
+      >
+        <div className="flex items-center gap-2">
+          <CheckSquare className="text-emerald-400" size={18} />
+          <h2 className="text-sm font-bold text-white tracking-tight">Tasks</h2>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-slate-400">COO Board</span>
+          <span className={`text-slate-400 transform transition-transform ${isOpen ? 'rotate-180' : ''}`}>▼</span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {isOpen && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {COLUMNS.map((col) => (
           <div key={col.id} className="space-y-3">
             <div className="flex items-center justify-between px-2 text-xs font-semibold text-slate-400">
@@ -155,6 +160,7 @@ export function KanbanTasks() {
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 }
