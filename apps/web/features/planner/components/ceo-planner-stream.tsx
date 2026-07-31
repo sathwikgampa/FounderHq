@@ -77,12 +77,12 @@ export function CEOPlannerStream({
           (evt.event === 'agent_started' || evt.event === 'agent_start') &&
           (evt.data?.agent || evt.data?.agent_name)
         ) {
-          const agentName = evt.data.agent || evt.data.agent_name;
+          const agentName = String(evt.data.agent ?? evt.data.agent_name ?? '');
           setActiveAgents((prev) => (prev.includes(agentName) ? prev : [...prev, agentName]));
         }
 
         if (evt.event === 'routing_decision' && Array.isArray(evt.data?.selected_agents)) {
-          setActiveAgents(evt.data.selected_agents);
+          setActiveAgents((evt.data.selected_agents as string[]).filter((a) => typeof a === 'string'));
         }
 
         if (evt.event === 'approval_required' || evt.event === 'approval_flag') {
@@ -90,11 +90,11 @@ export function CEOPlannerStream({
         }
 
         if (evt.event === 'final_brief' && (evt.data?.executive_summary || evt.data?.summary)) {
-          setFinalBrief(evt.data.executive_summary || evt.data.summary);
+          setFinalBrief(String(evt.data.executive_summary ?? evt.data.summary ?? ''));
         }
 
         if (evt.event === 'error' && evt.data?.error) {
-          setErrorMsg(evt.data.error);
+          setErrorMsg(String(evt.data.error));
         }
       },
       () => {

@@ -35,6 +35,22 @@ const AuthContext = createContext<AuthContextType>({
   signInWithGoogle: async () => {},
 });
 
+// ---------------------------------------------------------------------------
+// Session cookie helpers (read by Next.js Edge Middleware for route protection)
+// ---------------------------------------------------------------------------
+
+function setSessionCookie(token: string) {
+  // SameSite=Lax prevents CSRF on top-level navigations while allowing same-site
+  // subresource requests. Secure is a no-op on HTTP but required on HTTPS.
+  document.cookie = `__session=${token}; path=/; SameSite=Lax; Secure`;
+}
+
+function clearSessionCookie() {
+  document.cookie = '__session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+}
+
+// ---------------------------------------------------------------------------
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>({
     user: null,
@@ -77,6 +93,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (firebaseUser) {
         localStorage.removeItem('founderhq_demo_user');
         const token = await firebaseUser.getIdToken();
+
+        // Set session cookie so Edge Middleware can detect auth state
+        setSessionCookie(token);
+
         const userProfile: UserProfile = {
           id: firebaseUser.uid,
           email: firebaseUser.email || '',
@@ -86,7 +106,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
-
         setState({
           user: userProfile,
           token,
@@ -95,6 +114,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           isDemo: false,
         });
       } else {
+        // Clear session cookie on sign-out
+        clearSessionCookie();
+
         const savedDemo = localStorage.getItem('founderhq_demo_user');
         if (savedDemo) {
           try {
@@ -111,7 +133,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             localStorage.removeItem('founderhq_demo_user');
           }
         }
-
         setState({
           user: null,
           token: null,
@@ -136,7 +157,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-
     localStorage.setItem('founderhq_demo_user', JSON.stringify(demoUser));
     setState({
       user: demoUser,
@@ -149,6 +169,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     localStorage.removeItem('founderhq_demo_user');
+    clearSessionCookie();
     setState({
       user: null,
       token: null,
@@ -160,24 +181,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         await firebaseSignOut(auth);
       } catch {
-        // Ignore if unauthenticated
+        // Ignore if already unauthenticated
       }
     }
   };
 
+  // Auth methods — throw real errors instead of silently falling back to demo
   const signInWithEmail = async (email: string, pass: string) => {
-    localStorage.removeItem('founderhq_demo_user');
-    if (!auth) {
-      throw new Error('Firebase Auth is not initialized. Check API keys.');
-    }
+    if (!auth) throw new Error('Firebase Auth is not configured. Check your environment variables.');
     await signInWithEmailAndPassword(auth, email, pass);
   };
 
   const signUpWithEmail = async (email: string, pass: string, name: string) => {
-    localStorage.removeItem('founderhq_demo_user');
-    if (!auth) {
-      throw new Error('Firebase Auth is not initialized. Check API keys.');
-    }
+    if (!auth) throw new Error('Firebase Auth is not configured. Check your environment variables.');
     const creds = await createUserWithEmailAndPassword(auth, email, pass);
     if (creds.user) {
       await updateProfile(creds.user, { displayName: name });
@@ -185,10 +201,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signInWithGoogle = async () => {
-    localStorage.removeItem('founderhq_demo_user');
-    if (!auth) {
-      throw new Error('Firebase Auth is not initialized. Check API keys.');
-    }
+    if (!auth) throw new Error('Firebase Auth is not configured. Check your environment variables.');
     const provider = new GoogleAuthProvider();
     await signInWithPopup(auth, provider);
   };

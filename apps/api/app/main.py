@@ -2,12 +2,14 @@ import time
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 from app.api import api_v1_router
 from app.core.config import settings
 from app.core.logging import logger
 from app.middleware.cors import setup_cors
-from app.middleware.rate_limiter import RateLimiterMiddleware
+from app.middleware.rate_limiter import RateLimiterMiddleware, limiter
 from app.middleware.security import SecurityHeadersMiddleware
 from app.middleware.workspace import WorkspaceContextMiddleware
 
@@ -20,11 +22,16 @@ app = FastAPI(
     description="FounderHQ Production-Grade FastAPI Backend & AI Agent Engine Foundation",
 )
 
-# Setup Middleware
+# Attach slowapi limiter state so @limiter.limit() decorators work on routes
+app.state.limiter = limiter
+# Translate RateLimitExceeded → HTTP 429 JSON response
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Setup Middleware (order matters — outermost wraps first)
 setup_cors(app)
 app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(WorkspaceContextMiddleware)
-app.add_middleware(RateLimiterMiddleware)
+app.add_middleware(RateLimiterMiddleware)  # global per-IP sliding-window gate
 
 
 @app.middleware("http")
