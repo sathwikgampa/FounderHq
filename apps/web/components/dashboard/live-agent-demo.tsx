@@ -55,14 +55,20 @@ interface Scenario {
   workflowType: 'SEQUENTIAL' | 'PARALLEL';
 }
 
+interface LogItem {
+  id: string;
+  event: string;
+  time: string;
+  text: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+}
+
 export function LiveAgentDemo({ onApprovalTriggered }: LiveAgentDemoProps) {
   const [selectedScenarioId, setSelectedScenarioId] = useState<string>('tech-expansion');
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [workflowType, setWorkflowType] = useState<'SEQUENTIAL' | 'PARALLEL' | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [logs, setLogs] = useState<
-    Array<{ id: string; event: string; time: string; text: string; data?: any }>
-  >([]);
+  const [logs, setLogs] = useState<LogItem[]>([]);
   const [finalSummary, setFinalSummary] = useState<string | null>(null);
 
   const initialAgents: Record<string, AgentNode> = {

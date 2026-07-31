@@ -1,49 +1,41 @@
-"use client";
+'use client';
 
-import React, { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  MessageSquare,
-  X,
-  Send,
-  Bot,
-  User,
-  Sparkles,
-  Trash2,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MessageSquare, X, Send, Bot, User, Sparkles, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface Message {
   id: string;
-  role: "user" | "assistant";
+  role: 'user' | 'assistant';
   content: string;
   timestamp: string;
 }
 
 const DEFAULT_SUGGESTIONS = [
-  "How does the CEO Planner orchestrate startup agents?",
-  "What is the burn rate and runway summary?",
-  "Explain the multi-tenant workspace security model.",
-  "How do human approval queues work for high-risk actions?",
+  'How does the CEO Planner orchestrate startup agents?',
+  'What is the burn rate and runway summary?',
+  'Explain the multi-tenant workspace security model.',
+  'How do human approval queues work for high-risk actions?',
 ];
 
 export function FloatingChatbot() {
   const [isOpen, setIsOpen] = useState(false);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: "1",
-      role: "assistant",
+      id: '1',
+      role: 'assistant',
       content:
-        "Hello! I am the **FounderHQ CEO Planner AI Assistant**. How can I help optimize your startup strategy or platform navigation today?",
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        'Hello! I am the **FounderHQ CEO Planner AI Assistant**. How can I help optimize your startup strategy or platform navigation today?',
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
@@ -58,22 +50,22 @@ export function FloatingChatbot() {
 
     const userMsg: Message = {
       id: Date.now().toString(),
-      role: "user",
+      role: 'user',
       content: query,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
 
     setMessages((prev) => [...prev, userMsg]);
-    if (!textToSend) setInput("");
+    if (!textToSend) setInput('');
     setIsTyping(true);
 
     // Simulated UI AI response placeholder
     setTimeout(() => {
       const botMsg: Message = {
         id: (Date.now() + 1).toString(),
-        role: "assistant",
+        role: 'assistant',
         content: `**[CEO Planner Response Placeholder]**\n\nI have received your request regarding: "${query}".\n\nThe FounderHQ multi-agent execution pipeline is online and ready for full backend integration in Phase 2.`,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
       setMessages((prev) => [...prev, botMsg]);
       setIsTyping(false);
@@ -115,9 +107,12 @@ export function FloatingChatbot() {
                     setMessages([
                       {
                         id: Date.now().toString(),
-                        role: "assistant",
-                        content: "Chat context cleared. How can I help you?",
-                        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                        role: 'assistant',
+                        content: 'Chat context cleared. How can I help you?',
+                        timestamp: new Date().toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        }),
                       },
                     ])
                   }
@@ -141,9 +136,10 @@ export function FloatingChatbot() {
               {messages.map((msg) => (
                 <div
                   key={msg.id}
-                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
+<<<<<<< HEAD
                     className={`flex max-w-[85%] space-x-2 ${msg.role === "user" ? "flex-row-reverse space-x-reverse" : "flex-row"
                       }`}
                   >
@@ -152,10 +148,27 @@ export function FloatingChatbot() {
                         ? "bg-accent text-foreground"
                         : "bg-primary/10 text-primary border border-primary/20"
                         }`}
+=======
+                    className={`flex max-w-[85%] space-x-2 ${
+                      msg.role === 'user' ? 'flex-row-reverse space-x-reverse' : 'flex-row'
+                    }`}
+                  >
+                    <div
+                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${
+                        msg.role === 'user'
+                          ? 'bg-accent text-foreground'
+                          : 'bg-primary/10 text-primary border border-primary/20'
+                      }`}
+>>>>>>> 5eaafcb (fix(ci): resolve frontend lint and typecheck errors for CI pipeline)
                     >
-                      {msg.role === "user" ? <User className="h-3.5 w-3.5" /> : <Bot className="h-3.5 w-3.5" />}
+                      {msg.role === 'user' ? (
+                        <User className="h-3.5 w-3.5" />
+                      ) : (
+                        <Bot className="h-3.5 w-3.5" />
+                      )}
                     </div>
                     <div
+<<<<<<< HEAD
                       className={`rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed ${msg.role === "user"
                         ? "bg-primary text-primary-foreground rounded-tr-none shadow-sm"
                         : "bg-muted/60 text-foreground border border-border/50 rounded-tl-none"
@@ -165,6 +178,21 @@ export function FloatingChatbot() {
                       <div
                         className={`mt-1 text-[10px] ${msg.role === "user" ? "text-primary-foreground/70" : "text-muted-foreground"
                           }`}
+=======
+                      className={`rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed ${
+                        msg.role === 'user'
+                          ? 'bg-primary text-primary-foreground rounded-tr-none shadow-sm'
+                          : 'bg-muted/60 text-foreground border border-border/50 rounded-tl-none'
+                      }`}
+                    >
+                      <div className="whitespace-pre-wrap">{msg.content}</div>
+                      <div
+                        className={`mt-1 text-[10px] ${
+                          msg.role === 'user'
+                            ? 'text-primary-foreground/70'
+                            : 'text-muted-foreground'
+                        }`}
+>>>>>>> 5eaafcb (fix(ci): resolve frontend lint and typecheck errors for CI pipeline)
                       >
                         {msg.timestamp}
                       </div>
@@ -222,7 +250,12 @@ export function FloatingChatbot() {
                   placeholder="Ask CEO Planner..."
                   className="flex-1 bg-background border border-input rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
                 />
-                <Button type="submit" size="icon" className="h-8 w-8 shrink-0 rounded-xl" disabled={!input.trim()}>
+                <Button
+                  type="submit"
+                  size="icon"
+                  className="h-8 w-8 shrink-0 rounded-xl"
+                  disabled={!input.trim()}
+                >
                   <Send className="h-3.5 w-3.5" />
                 </Button>
               </form>
