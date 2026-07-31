@@ -25,24 +25,94 @@ import {
   LogOut,
   User,
   ChevronsUpDown,
+  Users,
+  Handshake,
+  Grip,
 } from 'lucide-react';
 import { useAuth } from '@/providers/auth-provider';
 
 const NAV_ITEMS = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Workspace', href: '/workspace', icon: Building2 },
-  { name: 'AI Agents', href: '/agents', icon: Bot },
+  {
+    name: 'AI Agents',
+    href: '/agents',
+    icon: Bot,
+    subItems: [
+      { name: 'Finance', href: '/agents/finance', icon: CircleDollarSign },
+      { name: 'HR', href: '/agents/hr', icon: Users },
+      { name: 'Growth', href: '/agents/growth', icon: TrendingUp },
+      { name: 'Legal', href: '/agents/legal', icon: Scale },
+      { name: 'Sales', href: '/agents/sales', icon: Handshake },
+      { name: 'Other', href: '/agents/other', icon: Grip },
+    ]
+  },
   { name: 'Memory', href: '/memory', icon: Brain },
   { name: 'Tasks', href: '/tasks', icon: CheckSquare },
-  { name: 'Finance', href: '/finance', icon: CircleDollarSign },
   { name: 'Marketing', href: '/marketing', icon: Megaphone },
-  { name: 'Sales', href: '/sales', icon: TrendingUp },
-  { name: 'Legal', href: '/legal', icon: Scale },
   { name: 'Documents', href: '/documents', icon: FileText },
   { name: 'Integrations', href: '/integrations', icon: Plug },
   { name: 'Analytics', href: '/reports', icon: BarChart3 },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
+
+const AgentNavGroup = ({ item, collapsed, pathname }: any) => {
+  const isActive = pathname.startsWith(item.href);
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div className="mb-1">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className={`w-full relative flex items-center justify-between gap-3 px-3 py-2.5 rounded-2xl transition-all group ${isActive
+            ? 'text-white font-semibold'
+            : 'text-slate-400 hover:text-white hover:bg-white/5'
+          }`}
+        title={collapsed ? item.name : undefined}
+      >
+        {isActive && (
+          <motion.div
+            layoutId="activePill"
+            className="absolute inset-0 bg-[#7C5CFF]/15 border border-[#7C5CFF]/40 rounded-2xl -z-10"
+            transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+          />
+        )}
+        <div className="flex items-center gap-3">
+          <item.icon
+            size={18}
+            className={`shrink-0 transition-transform group-hover:scale-110 ${isActive ? 'text-[#7C5CFF]' : 'text-slate-400 group-hover:text-white'
+              }`}
+          />
+          {!collapsed && <span className="text-xs tracking-tight">{item.name}</span>}
+        </div>
+        {!collapsed && (
+          <ChevronRight size={14} className={`transition-transform duration-200 ${expanded ? 'rotate-90' : ''}`} />
+        )}
+      </button>
+
+      {expanded && !collapsed && (
+        <div className="mt-1 space-y-1">
+          {item.subItems.map((sub: any) => {
+            const isSubActive = pathname === sub.href;
+            return (
+              <Link
+                key={sub.name}
+                href={sub.href}
+                className={`relative flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all group ml-6 text-sm ${isSubActive
+                    ? 'text-white font-semibold bg-white/10'
+                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  }`}
+              >
+                <sub.icon size={16} className={isSubActive ? 'text-[#7C5CFF]' : 'text-slate-400 group-hover:text-white'} />
+                <span className="text-[11px] tracking-tight">{sub.name}</span>
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export function FloatingSidebar() {
   const pathname = usePathname();
@@ -54,9 +124,8 @@ export function FloatingSidebar() {
     <motion.aside
       initial={{ x: -20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
-      className={`fixed left-6 top-6 bottom-6 z-40 hidden lg:flex flex-col bg-[#0E1014]/90 backdrop-blur-2xl border border-white/[0.06] rounded-[28px] shadow-2xl transition-all duration-300 ${
-        collapsed ? 'w-20 p-3' : 'w-64 p-4'
-      }`}
+      className={`fixed left-6 top-6 bottom-6 z-40 hidden lg:flex flex-col bg-[#0E1014]/90 backdrop-blur-2xl border border-white/[0.06] rounded-[28px] shadow-2xl transition-all duration-300 ${collapsed ? 'w-20 p-3' : 'w-64 p-4'
+        }`}
     >
       {/* Brand & Workspace Switcher */}
       <div className="flex items-center justify-between pb-4 border-b border-white/[0.06]">
@@ -114,7 +183,13 @@ export function FloatingSidebar() {
 
       {/* Navigation List */}
       <nav className="flex-1 my-2 space-y-1 overflow-y-auto custom-scrollbar pr-1">
-        {NAV_ITEMS.map((item) => {
+        {NAV_ITEMS.map((item: any) => {
+          if (item.subItems) {
+            return (
+              <AgentNavGroup key={item.name} item={item} collapsed={collapsed} pathname={pathname} />
+            );
+          }
+
           const isActive =
             pathname === item.href ||
             (item.href !== '/dashboard' && pathname.startsWith(item.href));
@@ -123,12 +198,11 @@ export function FloatingSidebar() {
           return (
             <Link
               key={item.name}
-              href={item.href as any}
-              className={`relative flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all group ${
-                isActive
+              href={item.href}
+              className={`relative flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all group ${isActive
                   ? 'text-white font-semibold'
                   : 'text-slate-400 hover:text-white hover:bg-white/5'
-              }`}
+                }`}
               title={collapsed ? item.name : undefined}
             >
               {/* Active Pill Indicator */}
@@ -142,9 +216,8 @@ export function FloatingSidebar() {
 
               <Icon
                 size={18}
-                className={`shrink-0 transition-transform group-hover:scale-110 ${
-                  isActive ? 'text-[#7C5CFF]' : 'text-slate-400 group-hover:text-white'
-                }`}
+                className={`shrink-0 transition-transform group-hover:scale-110 ${isActive ? 'text-[#7C5CFF]' : 'text-slate-400 group-hover:text-white'
+                  }`}
               />
 
               {!collapsed && <span className="text-xs tracking-tight">{item.name}</span>}
