@@ -1,7 +1,17 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Mic, MicOff, Paperclip, Send, Command, Slash, Volume2, Square } from 'lucide-react';
+import {
+  Sparkles,
+  Mic,
+  MicOff,
+  Paperclip,
+  Send,
+  Command,
+  Slash,
+  Volume2,
+  Square,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { useVoice } from '@/hooks/use-voice';
 
@@ -22,7 +32,7 @@ export function AiCopilot() {
   const { isListening, isSpeaking, transcript, toggleListening, speak, stopSpeaking } = useVoice(
     (finalText) => {
       if (finalText) setQuery(finalText);
-    }
+    },
   );
 
   useEffect(() => {
@@ -63,7 +73,7 @@ export function AiCopilot() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={isListening ? 'Listening to voice...' : 'Ask FounderHQ anything...'}
-              className="flex-1 bg-transparent text-sm font-medium text-[#111827] placeholder:text-[#6B7280] focus:outline-none"
+              className="flex-1 bg-transparent text-base font-semibold text-[#0F172A] placeholder:text-[#64748B] focus:outline-none"
             />
 
             <div className="flex items-center gap-2">

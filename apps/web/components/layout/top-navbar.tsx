@@ -78,7 +78,7 @@ export function TopNavbar() {
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 placeholder="Type a command or search..."
-                className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#6B7280] focus:outline-none"
+                className="w-full bg-transparent text-sm font-medium text-[#0F172A] placeholder:text-[#64748B] focus:outline-none"
               />
               <kbd className="text-[10px] text-[#6B7280] uppercase">ESC to close</kbd>
             </div>
