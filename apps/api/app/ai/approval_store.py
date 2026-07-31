@@ -35,6 +35,17 @@ class ApprovalStore:
 
     def __init__(self) -> None:
         self._items: dict[str, ApprovalItem] = {}
+        self.enqueue(
+            session_id="sess-default",
+            workspace_id="ws-default",
+            agent="TalentAgent",
+            tool="draft_job_posting",
+            payload={
+                "role_title": "Senior AI Engineer",
+                "annual_salary_usd": 130000,
+                "approval_status": "HOLD_FOR_HUMAN_APPROVAL",
+            },
+        )
 
     def enqueue(
         self,

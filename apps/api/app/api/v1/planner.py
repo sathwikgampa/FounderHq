@@ -43,7 +43,7 @@ async def execute_planner_command(payload: PlannerExecuteRequest):
 @router.post("/stream", summary="Stream CEO Planner AI Execution (SSE)")
 async def post_stream_planner_execution(payload: PlannerStreamRequest):
     """POST /api/v1/planner/stream — Real-time multi-agent execution stream."""
-    from main import _planner_event_stream
+    from app.services.planner_service import _planner_event_stream
 
     session_id = f"{payload.workspace_id}::{uuid.uuid4().hex[:8]}"
     return EventSourceResponse(

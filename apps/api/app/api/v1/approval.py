@@ -69,3 +69,41 @@ async def submit_approval_decision(
         data=item.to_dict(),
         message=f"Approval item '{item_id}' marked as {item.status}.",
     )
+
+
+@router.post(
+    "/{item_id}/approve",
+    response_model=APIResponseEnvelope[dict[str, Any]],
+    summary="Approve Item Alias",
+)
+async def approve_item_alias(item_id: str) -> APIResponseEnvelope[dict[str, Any]]:
+    """POST /api/v1/approvals/{item_id}/approve — Approve item directly."""
+    item = approval_store.decide(item_id, "APPROVE")
+    if not item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Approval item '{item_id}' not found.",
+        )
+    return APIResponseEnvelope(
+        data=item.to_dict(),
+        message=f"Approval item '{item_id}' marked as APPROVED.",
+    )
+
+
+@router.post(
+    "/{item_id}/reject",
+    response_model=APIResponseEnvelope[dict[str, Any]],
+    summary="Reject Item Alias",
+)
+async def reject_item_alias(item_id: str) -> APIResponseEnvelope[dict[str, Any]]:
+    """POST /api/v1/approvals/{item_id}/reject — Reject item directly."""
+    item = approval_store.decide(item_id, "REJECT")
+    if not item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Approval item '{item_id}' not found.",
+        )
+    return APIResponseEnvelope(
+        data=item.to_dict(),
+        message=f"Approval item '{item_id}' marked as REJECTED.",
+    )
