@@ -2,118 +2,42 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import {
   LayoutDashboard,
   Building2,
-  Bot,
-  Brain,
+  Cpu,
+  Database,
   CheckSquare,
   CircleDollarSign,
   Megaphone,
-  TrendingUp,
-  Scale,
+  ShoppingCart,
   FileText,
-  Plug,
-  BarChart3,
+  FileBarChart,
   Settings,
-  Sparkles,
   ChevronLeft,
   ChevronRight,
   LogOut,
-  User,
+  Sparkles,
   ChevronsUpDown,
-  Users,
-  Handshake,
-  Grip,
 } from 'lucide-react';
 import { useAuth } from '@/providers/auth-provider';
 
 const NAV_ITEMS = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Workspace', href: '/workspace', icon: Building2 },
-  {
-    name: 'AI Agents',
-    href: '/agents',
-    icon: Bot,
-    subItems: [
-      { name: 'Finance', href: '/agents/finance', icon: CircleDollarSign },
-      { name: 'HR', href: '/agents/hr', icon: Users },
-      { name: 'Growth', href: '/agents/growth', icon: TrendingUp },
-      { name: 'Legal', href: '/agents/legal', icon: Scale },
-      { name: 'Sales', href: '/agents/sales', icon: Handshake },
-      { name: 'Other', href: '/agents/other', icon: Grip },
-    ]
-  },
-  { name: 'Memory', href: '/memory', icon: Brain },
+  { name: 'AI Agents', href: '/agents', icon: Cpu },
+  { name: 'Memory', href: '/memory', icon: Database },
   { name: 'Tasks', href: '/tasks', icon: CheckSquare },
+  { name: 'Finance', href: '/finance', icon: CircleDollarSign },
   { name: 'Marketing', href: '/marketing', icon: Megaphone },
+  { name: 'Sales', href: '/sales', icon: ShoppingCart },
   { name: 'Documents', href: '/documents', icon: FileText },
-  { name: 'Integrations', href: '/integrations', icon: Plug },
-  { name: 'Analytics', href: '/reports', icon: BarChart3 },
+  { name: 'Reports', href: '/reports', icon: FileBarChart },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
-
-const AgentNavGroup = ({ item, collapsed, pathname }: any) => {
-  const isActive = pathname.startsWith(item.href);
-  const [expanded, setExpanded] = useState(false);
-
-  return (
-    <div className="mb-1">
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className={`w-full relative flex items-center justify-between gap-3 px-3 py-2.5 rounded-2xl transition-all group ${isActive
-            ? 'text-white font-semibold'
-            : 'text-slate-400 hover:text-white hover:bg-white/5'
-          }`}
-        title={collapsed ? item.name : undefined}
-      >
-        {isActive && (
-          <motion.div
-            layoutId="activePill"
-            className="absolute inset-0 bg-[#7C5CFF]/15 border border-[#7C5CFF]/40 rounded-2xl -z-10"
-            transition={{ type: 'spring', stiffness: 350, damping: 30 }}
-          />
-        )}
-        <div className="flex items-center gap-3">
-          <item.icon
-            size={18}
-            className={`shrink-0 transition-transform group-hover:scale-110 ${isActive ? 'text-[#7C5CFF]' : 'text-slate-400 group-hover:text-white'
-              }`}
-          />
-          {!collapsed && <span className="text-xs tracking-tight">{item.name}</span>}
-        </div>
-        {!collapsed && (
-          <ChevronRight size={14} className={`transition-transform duration-200 ${expanded ? 'rotate-90' : ''}`} />
-        )}
-      </button>
-
-      {expanded && !collapsed && (
-        <div className="mt-1 space-y-1">
-          {item.subItems.map((sub: any) => {
-            const isSubActive = pathname === sub.href;
-            return (
-              <Link
-                key={sub.name}
-                href={sub.href}
-                className={`relative flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all group ml-6 text-sm ${isSubActive
-                    ? 'text-white font-semibold bg-white/10'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
-                  }`}
-              >
-                <sub.icon size={16} className={isSubActive ? 'text-[#7C5CFF]' : 'text-slate-400 group-hover:text-white'} />
-                <span className="text-[11px] tracking-tight">{sub.name}</span>
-              </Link>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-};
 
 export function FloatingSidebar() {
   const pathname = usePathname();
@@ -121,35 +45,31 @@ export function FloatingSidebar() {
   const { user, logout } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
 
+  const userInitials = user?.displayName
+    ? user.displayName.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase()
+    : 'GS';
+
   return (
     <motion.aside
       initial={{ x: -20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
-      className={`fixed left-6 top-6 bottom-6 z-40 hidden lg:flex flex-col bg-[#0E1014]/90 backdrop-blur-2xl border border-white/[0.06] rounded-[28px] shadow-2xl transition-all duration-300 ${collapsed ? 'w-20 p-3' : 'w-64 p-4'
-        }`}
+      className={`fixed left-4 top-4 bottom-4 z-40 bg-white border border-[#ECECEC] rounded-[24px] shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col p-4 transition-all duration-300 ${
+        collapsed ? 'w-20' : 'w-64'
+      }`}
     >
-      {/* Brand & Workspace Switcher */}
-      <div className="flex items-center justify-between pb-4 border-b border-white/[0.06]">
-        <Link href="/dashboard" className="flex items-center gap-3 group px-2">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#7C5CFF] to-indigo-500 flex items-center justify-center text-white font-bold shrink-0 shadow-lg shadow-[#7C5CFF]/20 group-hover:scale-105 transition-transform">
-            <Image
-              src="/logo.svg"
-              alt="FounderHQ"
-              width={20}
-              height={20}
-              className="object-contain"
-            />
+      {/* Brand Header */}
+      <div className="flex items-center justify-between pb-4 border-b border-[#ECECEC]">
+        <Link href="/dashboard" className="flex items-center gap-3 overflow-hidden">
+          <div className="w-9 h-9 rounded-xl bg-[#6C63FF] flex items-center justify-center text-white font-bold text-xs shrink-0 shadow-sm shadow-[#6C63FF]/20">
+            FH
           </div>
           {!collapsed && (
             <div className="flex flex-col min-w-0">
-              <span className="font-bold text-sm text-white tracking-tight leading-none flex items-center gap-1.5">
+              <span className="font-bold text-sm text-[#111827] tracking-tight leading-none">
                 FounderHQ
-                <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#7C5CFF]/20 text-[#7C5CFF] border border-[#7C5CFF]/30">
-                  v1.0
-                </span>
               </span>
-              <span className="text-[11px] text-slate-400 truncate mt-1 flex items-center gap-1">
-                Acme Inc. <ChevronsUpDown size={10} className="text-slate-500" />
+              <span className="text-[11px] text-[#6B7280] truncate mt-1 flex items-center gap-1">
+                Acme Inc. <ChevronsUpDown size={10} />
               </span>
             </div>
           )}
@@ -157,71 +77,38 @@ export function FloatingSidebar() {
 
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors border border-white/5 shrink-0"
+          className="p-1.5 rounded-xl bg-[#FAFAFB] hover:bg-[#F3F4F6] text-[#6B7280] hover:text-[#111827] transition-colors border border-[#ECECEC] shrink-0"
+          aria-label="Toggle collapse"
         >
           {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>
       </div>
 
-      {/* AI Quick Launcher Button */}
-      {!collapsed ? (
-        <button
-          onClick={() => router.push('/dashboard#copilot')}
-          className="mt-4 mb-2 w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-2xl bg-gradient-to-r from-[#7C5CFF] to-indigo-600 text-white font-semibold text-xs shadow-lg shadow-[#7C5CFF]/25 hover:opacity-95 transition-all group"
-        >
-          <Sparkles size={14} className="group-hover:rotate-12 transition-transform" />
-          <span>Launch AI Copilot</span>
-        </button>
-      ) : (
-        <button
-          onClick={() => router.push('/dashboard#copilot')}
-          className="mt-4 mb-2 mx-auto w-10 h-10 rounded-2xl bg-[#7C5CFF] text-white flex items-center justify-center shadow-lg shadow-[#7C5CFF]/25"
-          title="Launch AI Copilot"
-        >
-          <Sparkles size={16} />
-        </button>
-      )}
-
       {/* Navigation List */}
-      <nav className="flex-1 my-2 space-y-1 overflow-y-auto custom-scrollbar pr-1">
-        {NAV_ITEMS.map((item: any) => {
-          if (item.subItems) {
-            return (
-              <AgentNavGroup key={item.name} item={item} collapsed={collapsed} pathname={pathname} />
-            );
-          }
-
+      <nav className="flex-1 my-3 space-y-1 overflow-y-auto custom-scrollbar pr-0.5">
+        {NAV_ITEMS.map((item) => {
           const isActive =
-            pathname === item.href ||
-            (item.href !== '/dashboard' && pathname.startsWith(item.href));
+            pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
           const Icon = item.icon;
 
           return (
             <Link
               key={item.name}
-              href={item.href}
-              className={`relative flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all group ${isActive
-                  ? 'text-white font-semibold'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
-                }`}
+              href={item.href as any}
+              className={`relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all group ${
+                isActive
+                  ? 'bg-[#6C63FF]/10 text-[#6C63FF] font-semibold'
+                  : 'text-[#6B7280] hover:text-[#111827] hover:bg-[#FAFAFB]'
+              }`}
               title={collapsed ? item.name : undefined}
             >
-              {/* Active Pill Indicator */}
-              {isActive && (
-                <motion.div
-                  layoutId="activePill"
-                  className="absolute inset-0 bg-[#7C5CFF]/15 border border-[#7C5CFF]/40 rounded-2xl -z-10"
-                  transition={{ type: 'spring', stiffness: 350, damping: 30 }}
-                />
-              )}
-
               <Icon
                 size={18}
-                className={`shrink-0 transition-transform group-hover:scale-110 ${isActive ? 'text-[#7C5CFF]' : 'text-slate-400 group-hover:text-white'
-                  }`}
+                className={`shrink-0 transition-transform group-hover:scale-105 ${
+                  isActive ? 'text-[#6C63FF]' : 'text-[#6B7280] group-hover:text-[#111827]'
+                }`}
               />
-
-              {!collapsed && <span className="text-xs tracking-tight">{item.name}</span>}
+              {!collapsed && <span className="tracking-tight">{item.name}</span>}
             </Link>
           );
         })}
@@ -229,38 +116,40 @@ export function FloatingSidebar() {
 
       {/* Pro Plan Card */}
       {!collapsed && (
-        <div className="p-3 my-2 rounded-2xl bg-white/[0.03] border border-white/[0.06] space-y-2">
+        <div className="p-3.5 my-2 rounded-2xl bg-[#FAFAFB] border border-[#ECECEC] space-y-2">
           <div className="flex justify-between items-center text-xs">
-            <span className="font-bold text-white">Pro Plan</span>
-            <span className="text-[10px] text-slate-400">14 trial days remaining</span>
+            <span className="font-bold text-[#111827]">Pro Plan</span>
+            <span className="text-[10px] text-[#6B7280]">14 trial days left</span>
           </div>
-          <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
-            <div className="bg-gradient-to-r from-[#7C5CFF] to-indigo-400 h-full w-[65%]" />
+          <div className="w-full bg-[#ECECEC] rounded-full h-1.5 overflow-hidden">
+            <div className="bg-[#6C63FF] h-full w-[65%]" />
           </div>
           <button
-            onClick={() => toast.info('Upgrade to FounderHQ Enterprise Plan')}
-            className="w-full py-1.5 text-center text-xs font-semibold text-[#7C5CFF] bg-[#7C5CFF]/10 hover:bg-[#7C5CFF]/20 border border-[#7C5CFF]/30 rounded-xl transition-colors"
+            onClick={() => toast.info('Upgrade to FounderHQ Pro Plan')}
+            className="w-full py-1.5 text-center text-xs font-semibold text-[#6C63FF] bg-[#6C63FF]/10 hover:bg-[#6C63FF]/20 border border-[#6C63FF]/20 rounded-xl transition-colors"
           >
             Upgrade Plan
           </button>
         </div>
       )}
 
-      {/* Profile & Logout Section */}
-      <div className="pt-3 border-t border-white/[0.06] mt-auto">
+      {/* User Profile Section */}
+      <div className="pt-3 border-t border-[#ECECEC] mt-auto">
         <div
-          className={`flex items-center gap-3 p-2 rounded-2xl bg-white/[0.03] border border-white/5 ${collapsed ? 'justify-center' : ''}`}
+          className={`flex items-center gap-3 p-2 rounded-2xl bg-[#FAFAFB] border border-[#ECECEC] ${
+            collapsed ? 'justify-center' : ''
+          }`}
         >
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
-            {user?.displayName ? user.displayName.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() : 'GS'}
+          <div className="w-8 h-8 rounded-xl bg-[#6C63FF]/15 border border-[#6C63FF]/30 text-[#6C63FF] font-bold text-xs flex items-center justify-center shrink-0">
+            {userInitials}
           </div>
 
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold text-white truncate">
+              <p className="text-xs font-bold text-[#111827] truncate">
                 {user?.displayName || 'Gilakethi Siddhartha'}
               </p>
-              <p className="text-[10px] text-slate-400 truncate">
+              <p className="text-[10px] text-[#6B7280] truncate">
                 {user?.email || 'gilasidh@gmail.com'}
               </p>
             </div>
@@ -272,7 +161,7 @@ export function FloatingSidebar() {
                 await logout();
                 router.push('/login');
               }}
-              className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors shrink-0"
+              className="p-1.5 text-[#6B7280] hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors shrink-0"
               title="Log out"
             >
               <LogOut size={14} />
