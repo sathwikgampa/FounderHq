@@ -417,7 +417,7 @@ export function LiveAgentDemo({ onApprovalTriggered }: LiveAgentDemoProps) {
             }
           } else if (evt.event === 'final_brief') {
             updateAgentState('CEOAgent', 'COMPLETED');
-            const sum = data.summary || data.executive_summary;
+            const sum = data.synthesis || data.executive_summary || data.summary || data.raw_brief;
             if (sum) setFinalSummary(sum);
             appendLog('final_brief', sum || 'Executive Brief synthesized successfully.', data);
           }
