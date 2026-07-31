@@ -2,6 +2,7 @@ import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 import { getStorage, FirebaseStorage } from 'firebase/storage';
+import { getAnalytics, Analytics, isSupported } from 'firebase/analytics';
 import { env } from './env';
 
 export const isFirebaseConfigured =
@@ -16,6 +17,7 @@ const firebaseConfig = {
   storageBucket: env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 export const app: FirebaseApp | null = isFirebaseConfigured
@@ -27,3 +29,12 @@ export const app: FirebaseApp | null = isFirebaseConfigured
 export const auth: Auth | null = app ? getAuth(app) : null;
 export const firestore: Firestore | null = app ? getFirestore(app) : null;
 export const storage: FirebaseStorage | null = app ? getStorage(app) : null;
+
+export let analytics: Analytics | null = null;
+if (typeof window !== 'undefined' && app) {
+  isSupported().then((supported) => {
+    if (supported && app) {
+      analytics = getAnalytics(app);
+    }
+  });
+}
