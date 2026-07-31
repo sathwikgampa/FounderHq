@@ -235,6 +235,7 @@ async def _planner_event_stream(
         analyze_and_route_workflow,
         build_gtm_launch_plan,
         calculate_bootstrap_runway,
+        calculate_cap_table_dilution,
         draft_job_posting,
         estimate_cloud_cost,
         evaluate_lead_and_pricing,
@@ -246,6 +247,9 @@ async def _planner_event_stream(
     route_info = analyze_and_route_workflow(prompt)
     selected_agents: list[str] = route_info["selected_agents"]
     workflow_type: str = route_info["workflow_type"]
+    routing_rationale: str = route_info.get(
+        "routing_rationale", f"Routed {len(selected_agents)} sub-agents."
+    )
 
     yield {
         "event": "routing_decision",
@@ -253,6 +257,9 @@ async def _planner_event_stream(
             {
                 "selected_agents": selected_agents,
                 "workflow_type": workflow_type,
+                "routing_rationale": routing_rationale,
+                "intent_category": route_info.get("intent_category", "GENERAL_EXECUTIVE_COMMAND"),
+                "confidence_score": route_info.get("confidence_score", 0.98),
             }
         ),
     }
@@ -265,22 +272,20 @@ async def _planner_event_stream(
     gtm_res = build_gtm_launch_plan(ctx["target_audience"], 1000.0)
     fin_res = calculate_bootstrap_runway(ctx["initial_capital"], ctx["est_monthly_cost"])
     leg_res = generate_incorporation_checklist("Delaware, USA", ctx["has_co_founders"])
+    talent_res = draft_job_posting(f"Senior Engineer ({ctx['target_audience'][:25]})", 130000.0)
+    sales_res = evaluate_lead_and_pricing(15000.0, 50)
+    tech_res = estimate_cloud_cost(20000, "AWS Serverless")
+    ir_res = calculate_cap_table_dilution(2000000.0, 500000.0)
 
     tool_map = {
         "ProductAgent": ("generate_mvp_spec", lambda: mvp_res),
         "GrowthAgent": ("build_gtm_launch_plan", lambda: gtm_res),
         "FinanceAgent": ("calculate_bootstrap_runway", lambda: fin_res),
         "LegalAgent": ("generate_incorporation_checklist", lambda: leg_res),
-        "TalentAgent": (
-            "draft_job_posting",
-            lambda: draft_job_posting("Senior AI Engineer", 130000.0),
-        ),
-        "SalesAgent": ("evaluate_lead_and_pricing", lambda: evaluate_lead_and_pricing(15000.0, 50)),
-        "TechArchitectAgent": (
-            "estimate_cloud_cost",
-            lambda: estimate_cloud_cost(20000, "AWS Serverless"),
-        ),
-        "InvestmentAgent": ("investor_update", lambda: {"status": "Investor update drafted"}),
+        "TalentAgent": ("draft_job_posting", lambda: talent_res),
+        "SalesAgent": ("evaluate_lead_and_pricing", lambda: sales_res),
+        "TechArchitectAgent": ("estimate_cloud_cost", lambda: tech_res),
+        "InvestmentAgent": ("calculate_cap_table_dilution", lambda: ir_res),
     }
 
     next_steps: list[str] = []
@@ -394,6 +399,30 @@ async def _planner_event_stream(
         f"• 🛡️ IP Protection: {leg_res.get('ip_protection', '100% IP assigned to startup legal entity')}\n"
         f"• ✅ Next Legal Step: {legal_action} (⚠️ HOLD FOR HUMAN APPROVAL)"
     )
+
+    if "TalentAgent" in selected_agents:
+        synthesis_markdown += (
+            f"\n\n👥 TALENT & HIRING STRATEGY\n"
+            f"• 💼 Open Role: {talent_res.get('role_title', 'Key Technical Hire')}\n"
+            f"• 💵 Annual Salary Impact: ${talent_res.get('annual_salary_usd', 130000):,.2f}\n"
+            f"• ⚠️ Approval Status: {talent_res.get('approval_status', 'HOLD_FOR_HUMAN_APPROVAL')}"
+        )
+
+    if "TechArchitectAgent" in selected_agents:
+        synthesis_markdown += (
+            f"\n\n☁️ TECH SCALING & INFRASTRUCTURE\n"
+            f"• 📊 MAU Capacity: {tech_res.get('monthly_active_users', 20000):,} Users\n"
+            f"• ⚙️ Infrastructure: {tech_res.get('infrastructure_type', 'AWS Serverless')}\n"
+            f"• 💡 CTO Recommendation: {tech_res.get('cto_recommendation', 'Keep serverless architecture lean.')}"
+        )
+
+    if "InvestmentAgent" in selected_agents:
+        synthesis_markdown += (
+            f"\n\n📈 INVESTOR RELATIONS & CAP TABLE\n"
+            f"• 💰 Post-Money Valuation: ${ir_res.get('post_money_valuation_usd', 2500000.0):,.2f}\n"
+            f"• 📊 Investor Ownership: {ir_res.get('investor_ownership_pct', '20.0%')}\n"
+            f"• 🛡️ Post-Round Founder Equity: {ir_res.get('post_round_founder_equity_pct', '70.0%')}"
+        )
 
     # 5. event: final_brief
     yield {
