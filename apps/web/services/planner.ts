@@ -48,6 +48,7 @@ export async function streamPlannerExecution(
     const reader = response.body.getReader();
     const decoder = new TextDecoder('utf-8');
     let buffer = '';
+    let currentEvent = 'message';
 
     while (true) {
       const { done, value } = await reader.read();
@@ -57,28 +58,28 @@ export async function streamPlannerExecution(
       const lines = buffer.split('\n');
       buffer = lines.pop() || ''; // keep incomplete trailing line in buffer
 
-      let currentEvent = '';
       for (const line of lines) {
         const trimmed = line.trim();
         if (!trimmed) continue;
 
         if (trimmed.startsWith('event:')) {
           currentEvent = trimmed.substring('event:'.length).trim();
-        } else if (trimmed.startsWith('data:') && currentEvent) {
+        } else if (trimmed.startsWith('data:')) {
           const rawData = trimmed.substring('data:'.length).trim();
+          const evtName = currentEvent || 'message';
           try {
             const parsedData = JSON.parse(rawData);
             onEvent({
-              event: currentEvent,
+              event: evtName,
               data: parsedData,
             });
           } catch {
             onEvent({
-              event: currentEvent,
+              event: evtName,
               data: { raw: rawData },
             });
           }
-          currentEvent = '';
+          currentEvent = 'message';
         }
       }
     }
