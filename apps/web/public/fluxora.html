@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fluxora — Next-Gen AI Infrastructure & Autonomous Execution</title>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Iconify CDN (3.1.0) -->
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- UnicornStudio.js (v1.4.29) -->
+  <script src="https://cdn.unicorn.studio/v1.4.29/unicornStudio.umd.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            neutral: {
+              950: '#0a0a0a',
+              900: '#171717',
+              850: '#1c1c1c',
+              800: '#262626',
+              300: '#d4d4d4',
+            },
+            blue: {
+              300: '#93c5fd',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+            },
+            emerald: {
+              400: '#34d399',
+              500: '#10b981',
+            },
+            rose: {
+              400: '#fb7185',
+              500: '#f43f5e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0a0a0a;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    /* Custom Border Gradient Class */
+    .border-gradient {
+      position: relative;
+      border-radius: inherit;
+    }
+    .border-gradient::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(225deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.22) 50%, rgba(255, 255, 255, 0) 100%);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    /* Entry Animation Keyframe */
+    @keyframes fadeSlideIn {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+        filter: blur(8px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+    .animate-fade-slide-in {
+      animation: fadeSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Scroll Observer Fade Target */
+    .fade-slide-target {
+      opacity: 0;
+      transform: translateY(30px);
+      filter: blur(8px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .fade-slide-target.animate {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    /* Marquee Animations */
+    @keyframes marqueeRtl {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+    @keyframes marqueeLtr {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0%); }
+    }
+    .animate-marquee-rtl {
+      display: flex;
+      width: max-content;
+      animation: marqueeRtl 35s linear infinite;
+    }
+    .animate-marquee-ltr {
+      display: flex;
+      width: max-content;
+      animation: marqueeLtr 35s linear infinite;
+    }
+    .animate-marquee-rtl:hover,
+    .animate-marquee-ltr:hover {
+      animation-play-state: paused;
+    }
+
+    /* Bento Grid Bottom Mask */
+    .bento-mask {
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 100%);
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 100%);
+    }
+
+    /* Glass Effect Utilities */
+    .glass-card {
+      background: linear-gradient(225deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.06) 50%, rgba(255, 255, 255, 0.01) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+  </style>
+</head>
+
+<body class="bg-neutral-950 text-white antialiased selection:bg-blue-500/30 selection:text-blue-200">
+
+  <!-- ================= LAYER 1: AURA BACKGROUND (FIXED Z-0) ================= -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[1200px] h-[600px] bg-blue-600/15 blur-[160px] rounded-full brightness-50 saturate-50"></div>
+    <div class="absolute top-[40%] right-[-10%] w-[800px] h-[600px] bg-indigo-600/10 blur-[180px] rounded-full brightness-50 saturate-50"></div>
+    <div class="absolute bottom-[-10%] left-[-10%] w-[800px] h-[600px] bg-blue-500/10 blur-[180px] rounded-full brightness-50 saturate-50"></div>
+  </div>
+
+  <!-- ================= LAYER 2: SVG GRID PATTERN (FIXED -Z-10) ================= -->
+  <div class="fixed inset-0 pointer-events-none z-[-10] opacity-[0.03] bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:64px_64px]"></div>
+
+  <!-- ================= LAYER 3: CONTENT WRAPPER (RELATIVE Z-10) ================= -->
+  <div class="relative z-10">
+
+    <!-- ================= STICKY NAVIGATION ================= -->
+    <header class="sticky top-0 z-50 w-full border-b border-white/10 bg-neutral-950/80 backdrop-blur-xl transition-all">
+      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between w-full">
+          <!-- Logo Left -->
+          <a href="#" class="flex items-center space-x-3 group">
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 via-blue-500 to-indigo-400 flex items-center justify-center text-white shadow-lg shadow-blue-500/25 group-hover:scale-105 transition-transform">
+              <span class="iconify text-xl" data-icon="solar:star-fall-minimalistic-2-bold-duotone"></span>
+            </div>
+            <span class="text-lg font-bold tracking-tight text-white flex items-center gap-1.5">
+              Fluxora <span class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">AI</span>
+            </span>
+          </a>
+
+          <!-- Links Center (Hidden Mobile) -->
+          <nav class="hidden md:flex items-center space-x-8 text-xs font-medium text-neutral-300">
+            <a href="#hero" class="hover:text-white transition-colors">Overview</a>
+            <a href="#bento" class="hover:text-white transition-colors">Infrastructure</a>
+            <a href="#marquee" class="hover:text-white transition-colors">Testimonials</a>
+            <a href="#trading" class="hover:text-white transition-colors">Auden Engine</a>
+            <a href="#mentorship" class="hover:text-white transition-colors">Program</a>
+          </nav>
+
+          <!-- Right Status & Button -->
+          <div class="flex items-center space-x-4">
+            <div class="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-mono text-emerald-400">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              <span>Online</span>
+            </div>
+
+            <button class="inline-flex items-center gap-2 bg-white text-neutral-950 hover:bg-neutral-200 font-semibold rounded-full px-5 py-2 text-xs backdrop-blur-xl transition-all hover:-translate-y-0.5 shadow-lg shadow-white/10 active:scale-95">
+              <span>Contact Team</span>
+              <span class="iconify" data-icon="solar:arrow-right-linear"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ================= SECTION 1: HERO & BENTO CONTAINER ================= -->
+    <section id="hero" class="pt-16 pb-24 px-6 max-w-7xl mx-auto space-y-16 animate-fade-slide-in">
+      
+      <!-- Top Hero Header -->
+      <div class="text-center space-y-8 max-w-4xl mx-auto">
+        <!-- Pill Badge -->
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 backdrop-blur-xl text-xs font-mono text-blue-300 border-gradient">
+          <span class="iconify text-blue-400" data-icon="solar:star-fall-minimalistic-2-bold-duotone"></span>
+          <span>New | Simple pricing for autonomous AI execution</span>
+        </div>
+
+        <!-- Main Heading -->
+        <h1 class="text-5xl sm:text-7xl font-extrabold tracking-tighter leading-[1.08] bg-gradient-to-b from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent">
+          Powering the next wave of intelligent software.
+        </h1>
+
+        <!-- Subheading -->
+        <p class="text-base sm:text-lg text-neutral-300 max-w-2xl mx-auto font-normal leading-relaxed">
+          High-performance AI infrastructure designed for latency-critical applications, multi-agent orchestration, and real-time financial execution.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-wrap justify-center items-center gap-4 pt-2">
+          <button class="inline-flex items-center gap-2.5 bg-white text-neutral-950 hover:bg-neutral-200 font-semibold text-sm rounded-full px-8 py-3.5 backdrop-blur-xl hover:-translate-y-0.5 shadow-xl shadow-white/10 transition-all active:scale-95">
+            <span>Deploy Model</span>
+            <span class="iconify text-base" data-icon="solar:arrow-right-bold"></span>
+          </button>
+          
+          <button class="inline-flex items-center gap-2 bg-white/5 hover:bg-white/10 text-white font-medium text-sm rounded-full px-7 py-3.5 border border-white/10 backdrop-blur-xl hover:-translate-y-0.5 transition-all">
+            <span class="iconify text-blue-400 text-base" data-icon="solar:code-bold-duotone"></span>
+            <span>Read Docs</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= SECTION 2: BENTO GRID (FIXED H-[800PX]) ================= -->
+      <div id="bento" class="bento-mask h-[800px] overflow-hidden rounded-[28px] border-gradient relative fade-slide-target">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 p-6 h-full bg-neutral-950/40 backdrop-blur-md overflow-hidden">
+
+          <!-- CARD 1: STAT CARD (SPAN 3) -->
+          <div class="md:col-span-3 rounded-[24px] bg-white text-neutral-900 p-8 flex flex-col justify-between shadow-2xl relative overflow-hidden group">
+            <div class="space-y-4">
+              <div class="w-10 h-10 rounded-full bg-neutral-900 text-white flex items-center justify-center">
+                <span class="iconify text-xl" data-icon="solar:users-group-two-rounded-bold-duotone"></span>
+              </div>
+              <h3 class="text-5xl font-extrabold tracking-tighter text-neutral-950 font-mono">140+</h3>
+              <p class="text-xs text-neutral-600 font-medium leading-relaxed">
+                Active enterprise customer deployments running real-time autonomous workloads.
+              </p>
+            </div>
+
+            <div class="pt-6 border-t border-neutral-200 flex items-center justify-between">
+              <!-- Avatar Stack -->
+              <div class="flex -space-x-2 overflow-hidden">
+                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/61cab6ed-972d-4d76-8094-1a3b9bbab509_100w.webp" alt="Avatar 1" />
+                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/2f999a94-4340-424d-b6bd-1e2df830c25a_100w.webp" alt="Avatar 2" />
+                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/08b00610-8646-44ce-a131-48226b9e2898_100w.webp" alt="Avatar 3" />
+                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/4c9aa348-ff35-430c-abeb-a6b169fb665d_100w.webp" alt="Avatar 4" />
+              </div>
+              <span class="text-[11px] font-mono font-bold text-neutral-900 uppercase">Verified</span>
+            </div>
+          </div>
+
+          <!-- CARD 2: CODE SNIPPET CARD (SPAN 6) -->
+          <div class="md:col-span-6 rounded-[24px] glass-card border-gradient p-6 flex flex-col justify-between relative overflow-hidden">
+            <div class="flex items-center justify-between border-b border-white/10 pb-4">
+              <div class="flex items-center space-x-2 font-mono text-xs text-neutral-300">
+                <span class="iconify text-blue-400" data-icon="solar:code-bold-duotone"></span>
+                <span>config.tsx</span>
+              </div>
+              <div class="flex items-center space-x-1.5">
+                <div class="w-2.5 h-2.5 rounded-full bg-rose-500/80"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-amber-500/80"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></div>
+              </div>
+            </div>
+
+            <!-- Edge Runtime Code Block -->
+            <pre class="font-mono text-xs text-neutral-300 bg-neutral-950/80 p-5 rounded-2xl border border-white/10 overflow-x-auto my-4 leading-relaxed">
+<span class="text-blue-400">import</span> { FluxoraEngine } <span class="text-blue-400">from</span> <span class="text-emerald-400">'@fluxora/core'</span>;
+
+<span class="text-neutral-500">// Edge Runtime Configuration</span>
+<span class="text-blue-400">export const</span> runtime = <span class="text-emerald-400">'edge'</span>;
+
+<span class="text-blue-400">export async function</span> <span class="text-amber-300">POST</span>(req: Request) {
+  <span class="text-blue-400">const</span> engine = <span class="text-blue-400">new</span> <span class="text-amber-300">FluxoraEngine</span>({
+    telemetry: <span class="text-emerald-400">true</span>,
+    maxLatencyMs: <span class="text-purple-400">12</span>,
+  });
+
+  <span class="text-blue-400">return</span> await engine.<span class="text-amber-300">orchestrate</span>(req);
+}</pre>
+
+            <div class="flex items-center justify-between text-xs text-neutral-400 font-mono">
+              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Edge Latency &lt; 12ms</span>
+              <span class="text-blue-400">V8 Isolated Runtime</span>
+            </div>
+          </div>
+
+          <!-- CARD 3: DELIVERY SUCCESS CHART (SPAN 3) -->
+          <div class="md:col-span-3 rounded-[24px] glass-card border-gradient p-6 flex flex-col justify-between space-y-4">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono uppercase tracking-wider text-neutral-400">SLA Metric</span>
+                <span class="inline-flex items-center gap-1 text-xs font-bold text-emerald-400">
+                  <span class="iconify" data-icon="solar:trending-up-bold-duotone"></span> 97.8%
+                </span>
+              </div>
+              <h4 class="text-lg font-bold text-white">Delivery Success Rate</h4>
+            </div>
+
+            <!-- Chart Canvas -->
+            <div class="relative w-full h-[180px]">
+              <canvas id="slaChart"></canvas>
+            </div>
+
+            <div class="pt-3 border-t border-white/10 flex items-center justify-between text-[11px] font-mono text-neutral-400">
+              <span>Past 7 Days</span>
+              <span class="text-white font-bold">Zero Dropped Signals</span>
+            </div>
+          </div>
+
+          <!-- CARD 4: GLOBAL BADGES & GLOBE (SPAN 6) -->
+          <div class="md:col-span-6 rounded-[24px] glass-card border-gradient p-6 relative overflow-hidden flex flex-col justify-between min-h-[300px] group">
+            <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/d25a1767-0ea8-4aac-b981-6afd67dc79a6_800w.webp" alt="Global Network Globe" class="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-700 pointer-events-none" />
+            
+            <div class="relative z-10 space-y-2">
+              <span class="text-xs font-mono uppercase tracking-wider text-blue-400">Global Mesh</span>
+              <h4 class="text-2xl font-bold text-white tracking-tight">Distributed Edge Network</h4>
+            </div>
+
+            <!-- Floating Location Badges -->
+            <div class="relative z-10 flex flex-wrap gap-2 pt-12">
+              <span class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs font-mono flex items-center gap-1.5 backdrop-blur-xl">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping"></span> Tokyo, Japan
+              </span>
+              <span class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs font-mono flex items-center gap-1.5 backdrop-blur-xl">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span> Toronto, Canada
+              </span>
+              <span class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs font-mono flex items-center gap-1.5 backdrop-blur-xl">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span> Lisbon, Portugal
+              </span>
+              <span class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs font-mono flex items-center gap-1.5 backdrop-blur-xl">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span> London, UK
+              </span>
+              <span class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs font-mono flex items-center gap-1.5 backdrop-blur-xl">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span> Frankfurt, Germany
+              </span>
+            </div>
+          </div>
+
+          <!-- CARD 5: ORBIT ANIMATION CARD (SPAN 6) -->
+          <div class="md:col-span-6 rounded-[24px] glass-card border-gradient p-6 flex flex-col justify-between items-center text-center relative overflow-hidden min-h-[300px]">
+            <!-- Concentric Pulsing Circles -->
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div class="w-[280px] h-[280px] rounded-full border border-blue-500/20 animate-pulse"></div>
+              <div class="absolute w-[200px] h-[200px] rounded-full border border-blue-400/30 animate-ping opacity-25"></div>
+              <div class="absolute w-[120px] h-[120px] rounded-full border border-indigo-400/40"></div>
+            </div>
+
+            <!-- Orbit Center Icon -->
+            <div class="relative z-10 my-auto w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white flex items-center justify-center shadow-xl shadow-blue-500/30">
+              <span class="iconify text-3xl" data-icon="solar:code-bold-duotone"></span>
+            </div>
+
+            <div class="relative z-10 space-y-1">
+              <h4 class="text-lg font-bold text-white">Autonomous Agent Loop</h4>
+              <p class="text-xs text-neutral-400 max-w-sm">Continuous evaluation, sub-second error resolution, and self-healing deployment scripts.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 3: MARQUEE TESTIMONIALS ================= -->
+    <section id="marquee" class="py-24 border-y border-white/10 bg-neutral-950 relative overflow-hidden fade-slide-target">
+      <!-- Glow Accent Top Right -->
+      <div class="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 blur-3xl rounded-full pointer-events-none"></div>
+
+      <div class="max-w-7xl mx-auto px-6 mb-12 text-center space-y-3">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-mono text-blue-300">
+          <span>TRUSTED BY BUILDERS WORLDWIDE</span>
+        </div>
+        <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white">
+          Loved by engineers & AI founders.
+        </h2>
+      </div>
+
+      <!-- ROW 1: MARQUEE LTR -->
+      <div class="relative w-full overflow-hidden mb-6">
+        <div class="animate-marquee-ltr space-x-6">
+          <!-- CARD 1 -->
+          <article class="w-[420px] shrink-0 rounded-2xl bg-white/5 p-6 ring-1 ring-white/10 border-gradient space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/61cab6ed-972d-4d76-8094-1a3b9bbab509_100w.webp" alt="User 1" class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/30" />
+                <div>
+                  <h4 class="text-sm font-bold text-white">Alexandre Chen</h4>
+                  <p class="text-xs text-neutral-400">CTO @ Autonomous.io</p>
+                </div>
+              </div>
+              <span class="iconify text-emerald-400 text-lg" data-icon="solar:verified-check-bold-duotone"></span>
+            </div>
+            <p class="text-xs text-neutral-300 leading-relaxed font-normal">
+              "Fluxora reduced our multi-agent orchestration latency from 450ms to under 14ms. It's the most reliable infrastructure block in our AI stack."
+            </p>
+          </article>
+
+          <!-- CARD 2 -->
+          <article class="w-[420px] shrink-0 rounded-2xl bg-white/5 p-6 ring-1 ring-white/10 border-gradient space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/2f999a94-4340-424d-b6bd-1e2df830c25a_100w.webp" alt="User 2" class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/30" />
+                <div>
+                  <h4 class="text-sm font-bold text-white">Sophia Martinez</h4>
+                  <p class="text-xs text-neutral-400">Head of Infra @ ScaleAI</p>
+                </div>
+              </div>
+              <span class="iconify text-emerald-400 text-lg" data-icon="solar:verified-check-bold-duotone"></span>
+            </div>
+            <p class="text-xs text-neutral-300 leading-relaxed font-normal">
+              "The edge runtime isolation and 1px border gradient design language make Fluxora both functionally superior and visually stunning."
+            </p>
+          </article>
+
+          <!-- CARD 3 -->
+          <article class="w-[420px] shrink-0 rounded-2xl bg-white/5 p-6 ring-1 ring-white/10 border-gradient space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/08b00610-8646-44ce-a131-48226b9e2898_100w.webp" alt="User 3" class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/30" />
+                <div>
+                  <h4 class="text-sm font-bold text-white">David K. Vance</h4>
+                  <p class="text-xs text-neutral-400">Founder @ Auden Engine</p>
+                </div>
+              </div>
+              <span class="iconify text-emerald-400 text-lg" data-icon="solar:verified-check-bold-duotone"></span>
+            </div>
+            <p class="text-xs text-neutral-300 leading-relaxed font-normal">
+              "We migrated all candlestick execution pipelines onto Fluxora. Our automated trading signals gained a 4.2x speed boost."
+            </p>
+          </article>
+
+          <!-- DUPLICATE CARDS FOR SEAMLESS INFINITE LOOP -->
+          <article class="w-[420px] shrink-0 rounded-2xl bg-white/5 p-6 ring-1 ring-white/10 border-gradient space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/61cab6ed-972d-4d76-8094-1a3b9bbab509_100w.webp" alt="User 1" class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/30" />
+                <div>
+                  <h4 class="text-sm font-bold text-white">Alexandre Chen</h4>
+                  <p class="text-xs text-neutral-400">CTO @ Autonomous.io</p>
+                </div>
+              </div>
+              <span class="iconify text-emerald-400 text-lg" data-icon="solar:verified-check-bold-duotone"></span>
+            </div>
+            <p class="text-xs text-neutral-300 leading-relaxed font-normal">
+              "Fluxora reduced our multi-agent orchestration latency from 450ms to under 14ms. It's the most reliable infrastructure block in our AI stack."
+            </p>
+          </article>
+
+          <article class="w-[420px] shrink-0 rounded-2xl bg-white/5 p-6 ring-1 ring-white/10 border-gradient space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/2f999a94-4340-424d-b6bd-1e2df830c25a_100w.webp" alt="User 2" class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/30" />
+                <div>
+                  <h4 class="text-sm font-bold text-white">Sophia Martinez</h4>
+                  <p class="text-xs text-neutral-400">Head of Infra @ ScaleAI</p>
+                </div>
+              </div>
+              <span class="iconify text-emerald-400 text-lg" data-icon="solar:verified-check-bold-duotone"></span>
+            </div>
+            <p class="text-xs text-neutral-300 leading-relaxed font-normal">
+              "The edge runtime isolation and 1px border gradient design language make Fluxora both functionally superior and visually stunning."
+            </p>
+          </article>
+
+          <article class="w-[420px] shrink-0 rounded-2xl bg-white/5 p-6 ring-1 ring-white/10 border-gradient space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/08b00610-8646-44ce-a131-48226b9e2898_100w.webp" alt="User 3" class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/30" />
+                <div>
+                  <h4 class="text-sm font-bold text-white">David K. Vance</h4>
+                  <p class="text-xs text-neutral-400">Founder @ Auden Engine</p>
+                </div>
+              </div>
+              <span class="iconify text-emerald-400 text-lg" data-icon="solar:verified-check-bold-duotone"></span>
+            </div>
+            <p class="text-xs text-neutral-300 leading-relaxed font-normal">
+              "We migrated all candlestick execution pipelines onto Fluxora. Our automated trading signals gained a 4.2x speed boost."
+            </p>
+          </article>
+        </div>
+      </div>
+
+      <!-- ROW 2: MARQUEE RTL -->
+      <div class="relative w-full overflow-hidden">
+        <div class="animate-marquee-rtl space-x-6">
+          <!-- CARD 4 -->
+          <article class="w-[420px] shrink-0 rounded-2xl bg-white/5 p-6 ring-1 ring-white/10 border-gradient space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/4c9aa348-ff35-430c-abeb-a6b169fb665d_100w.webp" alt="User 4" class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/30" />
+                <div>
+                  <h4 class="text-sm font-bold text-white">Elena Rostova</h4>
+                  <p class="text-xs text-neutral-400">Lead AI Engineer @ FinEdge</p>
+                </div>
+              </div>
+              <span class="iconify text-emerald-400 text-lg" data-icon="solar:verified-check-bold-duotone"></span>
+            </div>
+            <p class="text-xs text-neutral-300 leading-relaxed font-normal">
+              "Zero dropped signals across 14 million daily API calls. The zero-trust multi-tenant isolation gives our enterprise team complete peace of mind."
+            </p>
+          </article>
+
+          <!-- CARD 5 -->
+          <article class="w-[420px] shrink-0 rounded-2xl bg-white/5 p-6 ring-1 ring-white/10 border-gradient space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/67ea0bb9-c020-4357-bb6a-54070a7b9ce7_100w.webp" alt="User 5" class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/30" />
+                <div>
+                  <h4 class="text-sm font-bold text-white">Marcus Sterling</h4>
+                  <p class="text-xs text-neutral-400">VP Product @ QuantumFlow</p>
+                </div>
+              </div>
+              <span class="iconify text-emerald-400 text-lg" data-icon="solar:verified-check-bold-duotone"></span>
+            </div>
+            <p class="text-xs text-neutral-300 leading-relaxed font-normal">
+              "The candlestick visual simulation and automated signal dispatch allowed us to launch our trading platform 3 months ahead of schedule."
+            </p>
+          </article>
+
+          <!-- CARD 6 -->
+          <article class="w-[420px] shrink-0 rounded-2xl bg-white/5 p-6 ring-1 ring-white/10 border-gradient space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/357cb3d1-9f65-4810-884b-f0072a65193d_1600w.webp" alt="User 6" class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/30" />
+                <div>
+                  <h4 class="text-sm font-bold text-white">Satoshi Nakamura</h4>
+                  <p class="text-xs text-neutral-400">Principal Architect @ EdgeAI</p>
+                </div>
+              </div>
+              <span class="iconify text-emerald-400 text-lg" data-icon="solar:verified-check-bold-duotone"></span>
+            </div>
+            <p class="text-xs text-neutral-300 leading-relaxed font-normal">
+              "Deploying V8 isolated code snippets with 12ms global latency is game-changing. Fluxora is unmatched."
+            </p>
+          </article>
+
+          <!-- DUPLICATE CARDS FOR SEAMLESS INFINITE LOOP -->
+          <article class="w-[420px] shrink-0 rounded-2xl bg-white/5 p-6 ring-1 ring-white/10 border-gradient space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/4c9aa348-ff35-430c-abeb-a6b169fb665d_100w.webp" alt="User 4" class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/30" />
+                <div>
+                  <h4 class="text-sm font-bold text-white">Elena Rostova</h4>
+                  <p class="text-xs text-neutral-400">Lead AI Engineer @ FinEdge</p>
+                </div>
+              </div>
+              <span class="iconify text-emerald-400 text-lg" data-icon="solar:verified-check-bold-duotone"></span>
+            </div>
+            <p class="text-xs text-neutral-300 leading-relaxed font-normal">
+              "Zero dropped signals across 14 million daily API calls. The zero-trust multi-tenant isolation gives our enterprise team complete peace of mind."
+            </p>
+          </article>
+
+          <article class="w-[420px] shrink-0 rounded-2xl bg-white/5 p-6 ring-1 ring-white/10 border-gradient space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/67ea0bb9-c020-4357-bb6a-54070a7b9ce7_100w.webp" alt="User 5" class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/30" />
+                <div>
+                  <h4 class="text-sm font-bold text-white">Marcus Sterling</h4>
+                  <p class="text-xs text-neutral-400">VP Product @ QuantumFlow</p>
+                </div>
+              </div>
+              <span class="iconify text-emerald-400 text-lg" data-icon="solar:verified-check-bold-duotone"></span>
+            </div>
+            <p class="text-xs text-neutral-300 leading-relaxed font-normal">
+              "The candlestick visual simulation and automated signal dispatch allowed us to launch our trading platform 3 months ahead of schedule."
+            </p>
+          </article>
+
+          <article class="w-[420px] shrink-0 rounded-2xl bg-white/5 p-6 ring-1 ring-white/10 border-gradient space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/357cb3d1-9f65-4810-884b-f0072a65193d_1600w.webp" alt="User 6" class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/30" />
+                <div>
+                  <h4 class="text-sm font-bold text-white">Satoshi Nakamura</h4>
+                  <p class="text-xs text-neutral-400">Principal Architect @ EdgeAI</p>
+                </div>
+              </div>
+              <span class="iconify text-emerald-400 text-lg" data-icon="solar:verified-check-bold-duotone"></span>
+            </div>
+            <p class="text-xs text-neutral-300 leading-relaxed font-normal">
+              "Deploying V8 isolated code snippets with 12ms global latency is game-changing. Fluxora is unmatched."
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 4: TRADING SOLUTION (AUDEN ENGINE) ================= -->
+    <section id="trading" class="py-24 px-6 max-w-7xl mx-auto space-y-16 fade-slide-target">
+      <div className="text-center space-y-3 max-w-3xl mx-auto">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-mono text-emerald-400">
+          <span class="iconify" data-icon="solar:chart-square-bold-duotone"></span>
+          <span>AUDEN AUTONOMOUS ENGINE</span>
+        </div>
+        <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white">
+          Real-Time Candlestick Signal Execution
+        </h2>
+        <p class="text-sm sm:text-base text-neutral-400">
+          Automated pattern detection, sub-millisecond order execution, and AI risk mitigation.
+        </p>
+      </div>
+
+      <!-- Candlestick Visual Simulation Box -->
+      <div class="glass-card border-gradient p-8 rounded-[28px] relative overflow-hidden space-y-6">
+        
+        <!-- Header Controls -->
+        <div class="flex items-center justify-between border-b border-white/10 pb-4 text-xs font-mono text-neutral-400">
+          <div class="flex items-center space-x-3">
+            <span class="text-white font-bold text-sm">BTC/USD Live Stream</span>
+            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">$67,420.50</span>
+          </div>
+          <div class="flex items-center space-x-4">
+            <span>Interval: 1m</span>
+            <span>Signal: AUDEN_BULLISH</span>
+          </div>
+        </div>
+
+        <!-- Simulated Candlestick Bars Container -->
+        <div class="relative h-[220px] flex items-end justify-between gap-2 pt-8 pb-4">
+          <!-- BUY / SELL Backdrop Blur Overlays -->
+          <div class="absolute top-4 left-[28%] backdrop-blur-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-mono px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 animate-bounce">
+            <span class="iconify text-emerald-400" data-icon="solar:trending-up-bold-duotone"></span>
+            <span>BUY SIGNAL @ $66,800 (+4.2%)</span>
+          </div>
+
+          <div class="absolute top-12 right-[20%] backdrop-blur-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs font-mono px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg shadow-rose-500/20">
+            <span class="iconify text-rose-400" data-icon="solar:trending-down-bold-duotone"></span>
+            <span>SELL SIGNAL @ $67,950 (+2.1%)</span>
+          </div>
+
+          <!-- Candlesticks (Flex Vertical Bars) -->
+          <!-- Green Candle 1 -->
+          <div class="flex-1 flex flex-col items-center group">
+            <div class="w-[2px] h-8 bg-emerald-400"></div>
+            <div class="w-full max-w-[20px] h-16 bg-emerald-400 rounded-sm"></div>
+            <div class="w-[2px] h-6 bg-emerald-400"></div>
+          </div>
+          <!-- Red Candle 2 -->
+          <div class="flex-1 flex flex-col items-center group">
+            <div class="w-[2px] h-4 bg-rose-400"></div>
+            <div class="w-full max-w-[20px] h-12 bg-rose-400 rounded-sm"></div>
+            <div class="w-[2px] h-8 bg-rose-400"></div>
+          </div>
+          <!-- Green Candle 3 -->
+          <div class="flex-1 flex flex-col items-center group">
+            <div class="w-[2px] h-10 bg-emerald-400"></div>
+            <div class="w-full max-w-[20px] h-24 bg-emerald-400 rounded-sm"></div>
+            <div class="w-[2px] h-4 bg-emerald-400"></div>
+          </div>
+          <!-- Green Candle 4 (Big Surge) -->
+          <div class="flex-1 flex flex-col items-center group">
+            <div class="w-[2px] h-6 bg-emerald-400"></div>
+            <div class="w-full max-w-[20px] h-36 bg-emerald-400 rounded-sm shadow-lg shadow-emerald-500/30"></div>
+            <div class="w-[2px] h-6 bg-emerald-400"></div>
+          </div>
+          <!-- Red Candle 5 -->
+          <div class="flex-1 flex flex-col items-center group">
+            <div class="w-[2px] h-8 bg-rose-400"></div>
+            <div class="w-full max-w-[20px] h-14 bg-rose-400 rounded-sm"></div>
+            <div class="w-[2px] h-4 bg-rose-400"></div>
+          </div>
+          <!-- Green Candle 6 -->
+          <div class="flex-1 flex flex-col items-center group">
+            <div class="w-[2px] h-4 bg-emerald-400"></div>
+            <div class="w-full max-w-[20px] h-20 bg-emerald-400 rounded-sm"></div>
+            <div class="w-[2px] h-8 bg-emerald-400"></div>
+          </div>
+          <!-- Red Candle 7 -->
+          <div class="flex-1 flex flex-col items-center group">
+            <div class="w-[2px] h-6 bg-rose-400"></div>
+            <div class="w-full max-w-[20px] h-10 bg-rose-400 rounded-sm"></div>
+            <div class="w-[2px] h-4 bg-rose-400"></div>
+          </div>
+          <!-- Green Candle 8 -->
+          <div class="flex-1 flex flex-col items-center group">
+            <div class="w-[2px] h-12 bg-emerald-400"></div>
+            <div class="w-full max-w-[20px] h-28 bg-emerald-400 rounded-sm"></div>
+            <div class="w-[2px] h-6 bg-emerald-400"></div>
+          </div>
+        </div>
+
+        <!-- Comparison 3-Column Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-white/10">
+          <div class="rounded-2xl bg-rose-500/10 border border-rose-500/20 p-5 space-y-2">
+            <div class="text-xs font-mono uppercase tracking-wider text-rose-400">1. Problem (Manual Loss)</div>
+            <div class="text-2xl font-extrabold text-rose-400 font-mono">-$420.00</div>
+            <p class="text-xs text-neutral-300">High slippage, manual emotion-driven execution delays.</p>
+          </div>
+
+          <div class="rounded-2xl bg-white/5 border border-white/10 p-5 space-y-2">
+            <div class="text-xs font-mono uppercase tracking-wider text-neutral-400">2. Challenge (Latency)</div>
+            <div class="text-2xl font-extrabold text-neutral-200 font-mono">480ms Lag</div>
+            <p class="text-xs text-neutral-300">Traditional APIs suffer from network bottlenecks and signal drops.</p>
+          </div>
+
+          <div class="rounded-2xl bg-emerald-500/10 border border-emerald-500/20 p-5 space-y-2">
+            <div class="text-xs font-mono uppercase tracking-wider text-emerald-400">3. Solution (Auden AI)</div>
+            <div class="text-2xl font-extrabold text-emerald-400 font-mono">+$1,240.50</div>
+            <p class="text-xs text-neutral-300">Sub-12ms execution loop with zero-lag edge routing.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 5: MENTORSHIP & FOOTER ================= -->
+    <section id="mentorship" class="py-24 px-6 max-w-7xl mx-auto space-y-16 fade-slide-target">
+      
+      <!-- Mentorship Feature Banner -->
+      <div class="glass-card border-gradient p-10 sm:p-16 rounded-[28px] grid md:grid-cols-12 gap-8 items-center relative overflow-hidden">
+        <div class="md:col-span-7 space-y-6">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-mono text-blue-300">
+            <span class="iconify" data-icon="solar:user-speak-bold-duotone"></span>
+            <span>FLUXORA MENTORSHIP PROGRAM</span>
+          </div>
+
+          <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+            Accelerate your AI architecture with expert guidance.
+          </h2>
+
+          <p class="text-sm text-neutral-300 leading-relaxed">
+            Get direct access to senior AI systems engineers, custom edge deployment audits, and dedicated hardware provisioning.
+          </p>
+
+          <!-- Feature List with Checkmarks -->
+          <div class="grid sm:grid-cols-2 gap-3 text-xs text-neutral-200 pt-2 font-mono">
+            <div class="flex items-center space-x-2">
+              <span class="iconify text-emerald-400 text-base" data-icon="solar:check-circle-bold"></span>
+              <span>1-on-1 Architecture Reviews</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="iconify text-emerald-400 text-base" data-icon="solar:check-circle-bold"></span>
+              <span>Dedicated Hardware Allowance</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="iconify text-emerald-400 text-base" data-icon="solar:check-circle-bold"></span>
+              <span>Dana $200 Infra Credits</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="iconify text-emerald-400 text-base" data-icon="solar:check-circle-bold"></span>
+              <span>24/7 SLA Incident Support</span>
+            </div>
+          </div>
+
+          <!-- CTAs -->
+          <div class="flex flex-wrap items-center gap-4 pt-4">
+            <button class="inline-flex items-center gap-2.5 bg-gradient-to-r from-blue-600 to-indigo-500 hover:from-blue-500 hover:to-indigo-400 text-white font-semibold text-sm rounded-full px-8 py-3.5 backdrop-blur-xl hover:-translate-y-0.5 shadow-xl shadow-blue-500/25 transition-all active:scale-95">
+              <span>Daftar Sekarang</span>
+              <span class="iconify text-base" data-icon="solar:arrow-right-bold"></span>
+            </button>
+
+            <button class="inline-flex items-center gap-2 bg-white/5 hover:bg-white/10 text-white font-medium text-sm rounded-full px-7 py-3.5 border border-white/10 backdrop-blur-xl hover:-translate-y-0.5 transition-all">
+              <span class="iconify text-blue-400 text-base" data-icon="solar:play-bold"></span>
+              <span>Lihat Detail</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="md:col-span-5 relative flex justify-center">
+          <!-- Hero Team Image Asset -->
+          <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/357cb3d1-9f65-4810-884b-f0072a65193d_1600w.webp" alt="Fluxora Team Mentorship" class="rounded-2xl border border-white/10 shadow-2xl object-cover max-h-[360px] w-full" />
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="border-t border-white/10 bg-neutral-950 py-16 px-6 relative z-10 text-neutral-400 text-xs">
+      <div class="max-w-7xl mx-auto grid gap-10 md:grid-cols-4 pb-12 border-b border-white/10">
+        <!-- Col 1: Brand -->
+        <div class="space-y-4 md:col-span-1">
+          <div class="flex items-center space-x-3">
+            <div class="w-7 h-7 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-400 flex items-center justify-center text-white text-sm font-black shadow-md shadow-blue-500/20">
+              <span class="iconify" data-icon="solar:star-fall-minimalistic-2-bold-duotone"></span>
+            </div>
+            <span class="text-sm font-bold text-white tracking-tight">Fluxora Inc.</span>
+          </div>
+          <p class="text-neutral-400 leading-relaxed text-xs">
+            Sophisticated dark-mode AI infrastructure for high-throughput autonomous systems.
+          </p>
+        </div>
+
+        <!-- Col 2: Infrastructure -->
+        <div class="space-y-3">
+          <h4 class="font-semibold text-white uppercase tracking-wider text-[11px]">Infrastructure</h4>
+          <ul class="space-y-2 text-neutral-400">
+            <li><a href="#hero" class="hover:text-white transition-colors">Edge Engine</a></li>
+            <li><a href="#bento" class="hover:text-white transition-colors">Global Mesh</a></li>
+            <li><a href="#trading" class="hover:text-white transition-colors">Auden Trading</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Telemetry Logs</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Resources -->
+        <div class="space-y-3">
+          <h4 class="font-semibold text-white uppercase tracking-wider text-[11px]">Resources</h4>
+          <ul class="space-y-2 text-neutral-400">
+            <li><a href="#" class="hover:text-white transition-colors">Documentation</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">API Reference</a></li>
+            <li><a href="#mentorship" class="hover:text-white transition-colors">Mentorship</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">GitHub Repository</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Socials -->
+        <div class="space-y-3">
+          <h4 class="font-semibold text-white uppercase tracking-wider text-[11px]">Connect</h4>
+          <div class="flex items-center space-x-4 pt-1">
+            <a href="#" class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-neutral-300 hover:text-white hover:bg-white/10 transition-all">
+              <span class="iconify text-base" data-icon="solar:letter-bold"></span>
+            </a>
+            <a href="#" class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-neutral-300 hover:text-white hover:bg-white/10 transition-all">
+              <span class="iconify text-base" data-icon="solar:code-bold"></span>
+            </a>
+            <a href="#" class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-neutral-300 hover:text-white hover:bg-white/10 transition-all">
+              <span class="iconify text-base" data-icon="solar:share-bold"></span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="max-w-7xl mx-auto pt-8 flex flex-col sm:flex-row items-center justify-between text-neutral-500 text-[11px]">
+        <p>© 2026 Fluxora Inc. All rights reserved. Recreated with high fidelity.</p>
+        <div class="flex items-center space-x-6 mt-4 sm:mt-0">
+          <a href="#" class="hover:text-neutral-300">Privacy Policy</a>
+          <a href="#" class="hover:text-neutral-300">Terms of Service</a>
+          <a href="#" class="hover:text-neutral-300">SLA Specification</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ================= SCRIPTS & CHART INITIALIZATION ================= -->
+  <script>
+    // 1. Initialize Chart.js Bar Chart for SLA Metric
+    document.addEventListener('DOMContentLoaded', () => {
+      const ctx = document.getElementById('slaChart');
+      if (ctx) {
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+              label: 'SLA Delivery %',
+              data: [92, 96, 98, 97, 99, 98, 97],
+              backgroundColor: '#60a5fa',
+              borderRadius: 6,
+              borderSkipped: false,
+              barThickness: 16,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: '#171717',
+                titleColor: '#ffffff',
+                bodyColor: '#60a5fa',
+                borderColor: 'rgba(255,255,255,0.1)',
+                borderWidth: 1,
+                padding: 10,
+                displayColors: false,
+              }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { color: '#737373', font: { size: 10, family: 'Inter' } }
+              },
+              y: {
+                min: 80,
+                max: 100,
+                grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                ticks: { color: '#737373', font: { size: 10, family: 'Inter' } }
+              }
+            }
+          }
+        });
+      }
+
+      // 2. IntersectionObserver for Scroll Animations (.fade-slide-target -> .animate)
+      const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate');
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll('.fade-slide-target').forEach(el => {
+        observer.observe(el);
+      });
+
+      // 3. Initialize UnicornStudio.js if present
+      if (window.UnicornStudio && typeof window.UnicornStudio.init === 'function') {
+        window.UnicornStudio.init();
+      }
+    });
+  </script>
+
+</body>
+</html>
