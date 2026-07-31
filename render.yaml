@@ -1,26 +1,42 @@
 services:
-  # FastAPI Backend API
+  # --------------------------------------------------
+  # 1. FounderHQ FastAPI Backend API Service
+  # --------------------------------------------------
   - type: web
     name: founderhq-api
-    runtime: docker
-    dockerfilePath: Dockerfile.api
-    dockerContext: .
+    env: docker
+    dockerfilePath: ./Dockerfile.api
     plan: free
+    region: oregon
+    healthCheckPath: /api/v1/healthz
     envVars:
       - key: ENV
         value: production
-      - key: PORT
-        value: 8000
+      - key: PROJECT_NAME
+        value: FounderHQ-API
+      - key: VERSION
+        value: 1.0.0
       - key: DEBUG
         value: 'false'
+      - key: PORT
+        value: '8000'
+      - key: HOST
+        value: 0.0.0.0
+      - key: CORS_ORIGINS
+        value: '["*"]'
+      - key: JWT_SECRET_KEY
+        generateValue: true
 
-  # Next.js Web Frontend
+  # --------------------------------------------------
+  # 2. FounderHQ Next.js Web Frontend Service
+  # --------------------------------------------------
   - type: web
     name: founderhq-web
-    runtime: docker
-    dockerfilePath: Dockerfile.web
+    env: docker
+    dockerfilePath: ./Dockerfile.web
     dockerContext: .
     plan: free
+    region: oregon
     envVars:
       - key: NEXT_PUBLIC_APP_ENV
         value: production
