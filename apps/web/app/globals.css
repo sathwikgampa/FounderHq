@@ -103,4 +103,11 @@
   .btn-rounded {
     @apply rounded-xl;
   }
+
+  /* Dark-mode glass panel used by marketing & auth pages */
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
 }

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { FloatingChatbot } from '@/components/chatbot/FloatingChatbot';
 
@@ -166,11 +167,15 @@ export default function LandingPage() {
       <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#030304]/80 backdrop-blur-md transition-all duration-300 reveal active">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-6 h-6 rounded bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white text-[10px] font-semibold tracking-tighter">
-              N
-            </div>
+            <Image
+              src="/logo.png"
+              alt="FounderHQ"
+              width={32}
+              height={32}
+              className="object-contain group-hover:opacity-80 transition-opacity"
+            />
             <span className="text-white font-medium tracking-tight text-sm group-hover:opacity-80 transition-opacity">
-              NEURALINK
+              FOUNDERHQ
             </span>
           </Link>
 
@@ -188,17 +193,17 @@ export default function LandingPage() {
 
           <div className="flex items-center gap-4">
             <button
-              onClick={() => router.push('/dashboard')}
+              onClick={() => router.push('/login')}
               className="hidden sm:block text-xs font-medium hover:text-white transition-colors"
             >
               Sign in
             </button>
-            <a
-              href="#join"
+            <button
+              onClick={() => router.push('/login?mode=demo')}
               className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-medium rounded-full border border-white/10 transition-all duration-300 backdrop-blur-sm"
             >
-              Get Early Access
-            </a>
+              Try Demo
+            </button>
           </div>
         </div>
       </nav>
@@ -215,37 +220,40 @@ export default function LandingPage() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500" />
               </span>
-              v2.0 Beta is live
+              AI Operating System v1.0
             </div>
 
             <h1 className="reveal active delay-100 text-5xl md:text-7xl font-medium tracking-tight text-white mb-6 leading-[1.1] title-gradient">
-              Supercharge Your Team’s <br className="hidden md:block" /> Productivity with AI.
+              Your Startup&apos;s AI-Powered <br className="hidden md:block" /> Executive Team.
             </h1>
 
             <p className="reveal active delay-200 text-lg md:text-xl text-slate-400 max-w-2xl mb-10 leading-relaxed font-light">
-              NeuraLink seamlessly integrates with your workflow to make collaboration smarter,
-              faster, and completely intuitive.
+              FounderHQ replaces fragmented startup tools with one unified operating system where AI
+              executives collaborate under a CEO Planner — keeping you in complete control.
             </p>
 
             <div className="reveal active delay-300 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
               <button
-                onClick={() => router.push('/dashboard')}
+                onClick={() => router.push('/login')}
                 className="w-full sm:w-auto group relative px-8 py-3.5 bg-white text-black text-sm font-semibold rounded-full hover:bg-slate-100 transition-all duration-300 shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] flex items-center justify-center gap-2"
               >
-                <span>Get Early Access</span>
+                <span>Sign In</span>
                 <span
                   className="iconify inline ml-1 group-hover:translate-x-0.5 transition-transform"
                   data-icon="lucide:arrow-right"
                   data-width="16"
                 />
               </button>
-              <a
-                href="#demo"
+              <button
+                onClick={() => {
+                  // Demo mode: bypass auth
+                  router.push('/login?mode=demo');
+                }}
                 className="w-full sm:w-auto px-8 py-3.5 bg-transparent border border-white/10 hover:border-white/20 text-white text-sm font-medium rounded-full transition-all duration-300 flex items-center justify-center gap-2"
               >
-                <span className="iconify" data-icon="lucide:play-circle" data-width="16" />
-                <span>See How It Works</span>
-              </a>
+                <span className="iconify" data-icon="lucide:sparkles" data-width="16" />
+                <span>Try Demo</span>
+              </button>
             </div>
           </div>
 
@@ -280,7 +288,9 @@ export default function LandingPage() {
                   <div className="mt-auto pt-4 border-t border-white/5">
                     <div className="flex items-center gap-3">
                       <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-blue-500" />
-                      <div className="hidden md:block text-xs text-slate-400">Neura AI Active</div>
+                      <div className="hidden md:block text-xs text-slate-400">
+                        Jarvis (CEO Planner) Active
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -293,7 +303,7 @@ export default function LandingPage() {
                       <div className="h-4 w-32 bg-white/10 rounded mb-2" />
                       <div className="h-8 w-64 bg-white/5 rounded border border-white/5 flex items-center px-3">
                         <span className="text-xs text-slate-500">
-                          Ask Neura AI to optimize schedule...
+                          Ask Jarvis to plan your sprint...
                         </span>
                       </div>
                     </div>
@@ -324,13 +334,13 @@ export default function LandingPage() {
                             data-width="14"
                           />
                           <span className="text-xs font-medium text-white">
-                            Workflow Suggestion
+                            CEO Planner Insight
                           </span>
                         </div>
                         <span className="text-[10px] text-slate-500">Just now</span>
                       </div>
                       <p className="text-sm text-slate-300 mb-4 leading-relaxed">
-                        Based on team velocity, moving &quot;Q4 Roadmap&quot; to{' '}
+                        Based on team velocity, moving &ldquo;MVP Launch&rdquo; to{' '}
                         <span className="text-white border-b border-indigo-500/50">Sprint B</span>{' '}
                         will increase completion probability by {isTaskApplied ? '38%' : '24%'}.
                       </p>
@@ -352,7 +362,7 @@ export default function LandingPage() {
 
                     {/* Stats Card */}
                     <div className="glass-panel rounded-lg p-5 flex flex-col justify-between">
-                      <span className="text-xs text-slate-500">Productivity Score</span>
+                      <span className="text-xs text-slate-500">Startup Health Score</span>
                       <div className="text-3xl font-medium text-white tracking-tight mt-2">
                         {isTaskApplied ? '97.8' : '94.2'}
                       </div>
@@ -415,7 +425,7 @@ export default function LandingPage() {
       <section className="py-10 border-y border-white/5 bg-white/[0.01] overflow-hidden reveal active">
         <div className="max-w-7xl mx-auto px-6 text-center mb-8">
           <p className="text-xs font-medium text-slate-500 tracking-wider uppercase">
-            Trusted by forward-thinking teams
+            Trusted by forward-thinking startups
           </p>
         </div>
 
@@ -468,8 +478,8 @@ export default function LandingPage() {
               Intelligence built into every step.
             </h2>
             <p className="text-slate-400 text-lg">
-              Stop managing tools and start managing work. NeuraLink&apos;s AI handles the busy work
-              so you can focus on shipping.
+              Stop managing tools and start managing your startup. FounderHQ&apos;s AI executive team
+              handles the busy work so you can focus on building.
             </p>
           </div>
 
@@ -486,10 +496,10 @@ export default function LandingPage() {
                   data-width="24"
                 />
               </div>
-              <h3 className="text-lg font-medium text-white mb-2">AI Task Prioritization</h3>
+              <h3 className="text-lg font-medium text-white mb-2">CEO Planner Orchestration</h3>
               <p className="text-sm text-slate-400 leading-relaxed">
-                Automatically sorts your daily tasks based on deadlines, complexity, and team
-                availability.
+                Speak to one AI executive that coordinates finance, talent, growth, and operations
+                behind the scenes.
               </p>
             </div>
 
@@ -505,18 +515,18 @@ export default function LandingPage() {
                     />
                   </div>
                   <h3 className="text-lg font-medium text-white mb-2">
-                    Smart Workflow Suggestions
+                    Multi-Agent Collaboration
                   </h3>
                   <p className="text-sm text-slate-400 leading-relaxed max-w-md">
-                    The AI analyzes bottlenecks in real-time and suggests instant optimizations to
-                    clear blockers before they become problems.
+                    Finance checks affordability, Talent creates hiring plans, Growth evaluates
+                    launch impact — all coordinated by the CEO Planner.
                   </p>
                 </div>
                 {/* Micro visual */}
                 <div className="flex-1 w-full bg-[#0A0A0C] border border-white/5 rounded-lg p-4 shadow-lg transform group-hover:translate-y-[-4px] transition-transform duration-500">
                   <div className="flex gap-2 items-center mb-3 border-b border-white/5 pb-2">
                     <div className="w-2 h-2 rounded-full bg-purple-500" />
-                    <span className="text-[10px] text-purple-300">Suggestion Found</span>
+                    <span className="text-[10px] text-purple-300">Agents Executing</span>
                   </div>
                   <div className="flex gap-3">
                     <div className="h-8 w-8 rounded bg-white/5" />
@@ -538,10 +548,10 @@ export default function LandingPage() {
                   data-width="24"
                 />
               </div>
-              <h3 className="text-lg font-medium text-white mb-2">Data-Driven Insights</h3>
+              <h3 className="text-lg font-medium text-white mb-2">Startup Health Dashboard</h3>
               <p className="text-sm text-slate-400 leading-relaxed">
-                Visual analytics that show you exactly where your team excels and where time is
-                being wasted.
+                Track finance, hiring, growth, and operations health scores updated after every
+                major decision.
               </p>
             </div>
 
@@ -554,10 +564,10 @@ export default function LandingPage() {
                   data-width="24"
                 />
               </div>
-              <h3 className="text-lg font-medium text-white mb-2">Integrated Chat</h3>
+              <h3 className="text-lg font-medium text-white mb-2">Knowledge Engine (RAG)</h3>
               <p className="text-sm text-slate-400 leading-relaxed">
-                Context-aware chat that links discussions directly to tasks, so no context is ever
-                lost.
+                Upload pitch decks, financials, and roadmaps. AI grounds every decision in your
+                startup&apos;s actual context.
               </p>
             </div>
 
@@ -570,9 +580,10 @@ export default function LandingPage() {
                   data-width="24"
                 />
               </div>
-              <h3 className="text-lg font-medium text-white mb-2">Seamless Integrations</h3>
+              <h3 className="text-lg font-medium text-white mb-2">Approval &amp; Memory</h3>
               <p className="text-sm text-slate-400 leading-relaxed">
-                Works with GitHub, Slack, Figma, and Notion out of the box. Connect in seconds.
+                High-risk actions require your approval. Every decision is logged in Startup Memory
+                for full transparency.
               </p>
             </div>
           </div>
@@ -592,11 +603,11 @@ export default function LandingPage() {
               Live Demo
             </div>
             <h2 className="text-3xl md:text-4xl font-medium text-white tracking-tight">
-              Watch AI Optimize Your Day
+              Watch AI Orchestrate Your Startup
             </h2>
             <p className="text-slate-400 text-lg">
-              Hover over the task list to see how NeuraLink analyzes complexity and suggests the
-              optimal path forward.
+              Hover over the task list to see how the CEO Planner analyzes complexity and suggests
+              the optimal path forward.
             </p>
             <ul className="space-y-4 pt-4">
               <li className="flex items-center gap-3 text-sm text-slate-300">
@@ -621,7 +632,7 @@ export default function LandingPage() {
                   data-icon="lucide:check-circle-2"
                   data-width="18"
                 />
-                Drag-and-drop reordering
+                Multi-agent coordination
               </li>
             </ul>
           </div>
@@ -656,9 +667,9 @@ export default function LandingPage() {
                       </div>
                       <div>
                         <p className="text-sm text-slate-200 font-medium">
-                          Refactor Authentication Logic
+                          Hire Backend Engineers
                         </p>
-                        <p className="text-xs text-slate-500 mt-1">Backend • Due Today</p>
+                        <p className="text-xs text-slate-500 mt-1">Talent • Due Today</p>
                       </div>
                     </div>
                     <span className="px-2 py-0.5 rounded text-[10px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
@@ -675,10 +686,10 @@ export default function LandingPage() {
                     <div className="pt-3 border-t border-white/10 flex items-center gap-3 text-xs">
                       <span className="text-indigo-300 flex items-center gap-1 font-medium">
                         <span className="iconify" data-icon="lucide:bot" data-width="12" />
-                        AI Tip:
+                        CEO Planner:
                       </span>
                       <span className="text-slate-400">
-                        Similar task completed by Sarah in 2h. Assigning to her improves throughput.
+                        Finance checked runway. Budget for 2 engineers approved. Talent drafting JD.
                       </span>
                     </div>
                   </div>
@@ -705,7 +716,7 @@ export default function LandingPage() {
       {/* Testimonials */}
       <section className="py-24 max-w-7xl mx-auto px-6">
         <h2 className="text-2xl font-medium text-center text-white mb-16 tracking-tight reveal active">
-          Loved by remote teams worldwide
+          Loved by founders worldwide
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="glass-panel p-6 rounded-xl border border-white/5 hover:border-white/10 transition-colors reveal active delay-100">
@@ -715,14 +726,14 @@ export default function LandingPage() {
               ))}
             </div>
             <p className="text-sm text-slate-300 leading-relaxed mb-6">
-              &quot;NeuraLink totally changed how we handle sprints. The AI suggestions are
-              surprisingly accurate and have saved us hours of planning time every week.&quot;
+              &ldquo;FounderHQ totally changed how we run our startup. The CEO Planner orchestrates
+              everything — finance, hiring, growth — feels like having a full executive team.&rdquo;
             </p>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-slate-700" />
               <div>
                 <p className="text-xs font-medium text-white">Alex Chen</p>
-                <p className="text-[10px] text-slate-500">CTO, DevScale</p>
+                <p className="text-[10px] text-slate-500">Founder, DevScale</p>
               </div>
             </div>
           </div>
@@ -734,8 +745,8 @@ export default function LandingPage() {
               ))}
             </div>
             <p className="text-sm text-slate-300 leading-relaxed mb-6">
-              &quot;The interface is stunning, but the backend AI is where the magic happens. It
-              feels like having a project manager who never sleeps.&quot;
+              &ldquo;The interface is stunning, but the multi-agent AI is where the magic happens. It
+              feels like having a project manager who never sleeps.&rdquo;
             </p>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-slate-700" />
@@ -753,8 +764,8 @@ export default function LandingPage() {
               ))}
             </div>
             <p className="text-sm text-slate-300 leading-relaxed mb-6">
-              &quot;We&apos;ve tried every tool out there. Nothing integrates this smoothly with our
-              existing stack while adding actual intelligence.&quot;
+              &ldquo;We&apos;ve tried every tool out there. Nothing integrates this smoothly with our
+              existing stack while adding actual intelligence.&rdquo;
             </p>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-slate-700" />
@@ -781,7 +792,7 @@ export default function LandingPage() {
             {/* Starter */}
             <div className="p-8 rounded-2xl border border-white/5 bg-[#0A0A0C] reveal active delay-100">
               <h3 className="text-lg font-medium text-white">Starter</h3>
-              <p className="text-sm text-slate-500 mb-6">For individuals</p>
+              <p className="text-sm text-slate-500 mb-6">For solo founders</p>
               <div className="text-3xl font-medium text-white mb-6">$0</div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center gap-2 text-sm text-slate-400">
@@ -790,7 +801,7 @@ export default function LandingPage() {
                     data-icon="lucide:check"
                     data-width="14"
                   />{' '}
-                  3 Projects
+                  1 Workspace
                 </li>
                 <li className="flex items-center gap-2 text-sm text-slate-400">
                   <span
@@ -823,7 +834,7 @@ export default function LandingPage() {
                 Most Popular
               </div>
               <h3 className="text-lg font-medium text-white">Pro</h3>
-              <p className="text-sm text-slate-500 mb-6">For small teams</p>
+              <p className="text-sm text-slate-500 mb-6">For growing startups</p>
               <div className="text-3xl font-medium text-white mb-6">
                 $12<span className="text-sm text-slate-500 font-normal">/mo</span>
               </div>
@@ -834,7 +845,7 @@ export default function LandingPage() {
                     data-icon="lucide:check"
                     data-width="14"
                   />{' '}
-                  Unlimited Projects
+                  Unlimited Workspaces
                 </li>
                 <li className="flex items-center gap-2 text-sm text-slate-300">
                   <span
@@ -842,7 +853,7 @@ export default function LandingPage() {
                     data-icon="lucide:check"
                     data-width="14"
                   />{' '}
-                  Advanced AI Insights
+                  Full AI Executive Team
                 </li>
                 <li className="flex items-center gap-2 text-sm text-slate-300">
                   <span
@@ -850,7 +861,7 @@ export default function LandingPage() {
                     data-icon="lucide:check"
                     data-width="14"
                   />{' '}
-                  Integrations
+                  RAG &amp; Integrations
                 </li>
               </ul>
               <button
@@ -891,7 +902,7 @@ export default function LandingPage() {
                     data-icon="lucide:check"
                     data-width="14"
                   />{' '}
-                  Custom AI Models
+                  Custom AI Agents
                 </li>
               </ul>
               <button
@@ -909,10 +920,10 @@ export default function LandingPage() {
       <section id="join" className="py-24 relative overflow-hidden">
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10 reveal active">
           <h2 className="text-4xl md:text-5xl font-medium text-white tracking-tight mb-6">
-            Ready to work smarter?
+            Ready to run your startup with AI?
           </h2>
           <p className="text-slate-400 text-lg mb-10">
-            Join the waiting list today and get our free guide on &quot;AI-First Productivity&quot;.
+            Join the waitlist today and get early access to the AI Operating System for startups.
           </p>
 
           <form
@@ -956,12 +967,12 @@ export default function LandingPage() {
             <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-5 h-5 rounded bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white text-[9px] font-bold">
-                  N
+                  FHQ
                 </div>
-                <span className="text-white font-medium tracking-tight">NEURALINK</span>
+                <span className="text-white font-medium tracking-tight">FOUNDERHQ</span>
               </div>
               <p className="text-slate-500 text-xs leading-relaxed">
-                AI That Connects Your Team Smarter. Built for the future of remote work.
+                AI Operating System for Startups. Built for the future of founding.
               </p>
             </div>
             <div>
@@ -1028,7 +1039,7 @@ export default function LandingPage() {
 
           <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5">
             <p className="text-slate-600 text-xs">
-              © 2026 NeuraLink Solutions. All rights reserved.
+              © 2026 FounderHQ. All rights reserved.
             </p>
             <div className="flex gap-6 mt-4 md:mt-0">
               <a href="#" className="text-slate-500 hover:text-white transition-colors">
