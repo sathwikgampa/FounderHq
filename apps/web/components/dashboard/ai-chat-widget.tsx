@@ -257,16 +257,6 @@ export function AiChatWidget() {
             )}
           </div>
         )}
-
-        {/* Generic Output JSON Preview */}
-        {!out.mvp_features &&
-          !out.icp_targets &&
-          !out.runway_months &&
-          !out.recommended_equity_split && (
-            <pre className="text-[10px] font-mono bg-muted/50 p-2 rounded text-muted-foreground overflow-x-auto">
-              {JSON.stringify(out, null, 2)}
-            </pre>
-          )}
       </div>
     );
   };
@@ -394,7 +384,16 @@ export function AiChatWidget() {
                 </div>
                 <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
                   {logs.map((log) => {
-                    const isExpanded = expandedLogId === log.id || !!log.output;
+                    const hasFormattedInfo =
+                      log.output &&
+                      (log.output.mvp_features ||
+                        log.output.icp_targets ||
+                        log.output.runway_months ||
+                        log.output.recommended_equity_split);
+                    const isExpanded =
+                      expandedLogId === log.id ||
+                      (hasFormattedInfo && log.event === 'tool_executed');
+
                     return (
                       <div
                         key={log.id}
@@ -407,7 +406,7 @@ export function AiChatWidget() {
                             </span>
                             <span>{log.text}</span>
                           </div>
-                          {log.output && (
+                          {hasFormattedInfo && (
                             <button
                               type="button"
                               onClick={() =>
@@ -420,7 +419,7 @@ export function AiChatWidget() {
                           )}
                         </div>
 
-                        {/* Expandable Structured Output */}
+                        {/* Expandable Human-Readable Information Output */}
                         {isExpanded && renderToolOutputDetails(log)}
                       </div>
                     );
