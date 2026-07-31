@@ -72,8 +72,14 @@ function FeatureCard({
 export default function AuthPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { signInWithEmail, signUpWithEmail, signInWithGoogle, loginAsDemo, isAuthenticated } =
-    useAuth();
+  const {
+    signInWithEmail,
+    signUpWithEmail,
+    signInWithGoogle,
+    loginAsDemo,
+    isAuthenticated,
+    isDemo,
+  } = useAuth();
 
   const [tab, setTab] = useState<'signin' | 'signup'>('signin');
   const [email, setEmail] = useState('');
@@ -85,7 +91,7 @@ export default function AuthPage() {
 
   const strength = getPasswordStrength(password);
 
-  // Handle ?mode=demo query param
+  // Check query params for demo trigger
   useEffect(() => {
     if (searchParams?.get('mode') === 'demo') {
       loginAsDemo();
@@ -94,12 +100,12 @@ export default function AuthPage() {
     }
   }, [searchParams, loginAsDemo, router]);
 
-  // Redirect if already authenticated
+  // Redirect if already authenticated with a REAL account (not demo)
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !isDemo) {
       router.push('/dashboard');
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, isDemo, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -164,7 +170,7 @@ export default function AuthPage() {
           className="flex items-center gap-3 relative z-10"
         >
           <Image
-            src="/logo.png"
+            src="/logo.svg"
             alt="FounderHQ"
             width={40}
             height={40}
@@ -272,7 +278,7 @@ export default function AuthPage() {
         {/* Mobile logo */}
         <div className="lg:hidden mb-8 flex items-center gap-2">
           <Image
-            src="/logo.png"
+            src="/logo.svg"
             alt="FounderHQ"
             width={32}
             height={32}

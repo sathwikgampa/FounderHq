@@ -44,43 +44,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isDemo: false,
   });
 
-  // Track demo user in localStorage for persistence across reloads
+  // Initialize auth state
   useEffect(() => {
-    const savedDemo = localStorage.getItem('founderhq_demo_user');
-    if (savedDemo) {
-      try {
-        const demoUser: UserProfile = JSON.parse(savedDemo);
-        setState({
-          user: demoUser,
-          token: 'mock_demo_bearer_token',
-          isAuthenticated: true,
-          isLoading: false,
-          isDemo: true,
-        });
-        return;
-      } catch {
-        localStorage.removeItem('founderhq_demo_user');
-      }
-    }
-
     if (!auth) {
-      // Firebase is not configured with a valid API key, default to initial state
-      setState((prev) =>
-        prev.isDemo
-          ? prev
-          : {
-              user: null,
-              token: null,
-              isAuthenticated: false,
-              isLoading: false,
-              isDemo: false,
-            },
-      );
+      const savedDemo = localStorage.getItem('founderhq_demo_user');
+      if (savedDemo) {
+        try {
+          const demoUser: UserProfile = JSON.parse(savedDemo);
+          setState({
+            user: demoUser,
+            token: 'mock_demo_bearer_token',
+            isAuthenticated: true,
+            isLoading: false,
+            isDemo: true,
+          });
+          return;
+        } catch {
+          localStorage.removeItem('founderhq_demo_user');
+        }
+      }
+      setState({
+        user: null,
+        token: null,
+        isAuthenticated: false,
+        isLoading: false,
+        isDemo: false,
+      });
       return;
     }
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
       if (firebaseUser) {
+        localStorage.removeItem('founderhq_demo_user');
         const token = await firebaseUser.getIdToken();
         const userProfile: UserProfile = {
           id: firebaseUser.uid,
@@ -100,17 +95,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           isDemo: false,
         });
       } else {
-        setState((prev) =>
-          prev.isDemo
-            ? prev
-            : {
-                user: null,
-                token: null,
-                isAuthenticated: false,
-                isLoading: false,
-                isDemo: false,
-              },
-        );
+        const savedDemo = localStorage.getItem('founderhq_demo_user');
+        if (savedDemo) {
+          try {
+            const demoUser: UserProfile = JSON.parse(savedDemo);
+            setState({
+              user: demoUser,
+              token: 'mock_demo_bearer_token',
+              isAuthenticated: true,
+              isLoading: false,
+              isDemo: true,
+            });
+            return;
+          } catch {
+            localStorage.removeItem('founderhq_demo_user');
+          }
+        }
+
+        setState({
+          user: null,
+          token: null,
+          isAuthenticated: false,
+          isLoading: false,
+          isDemo: false,
+        });
       }
     });
 
@@ -158,6 +166,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signInWithEmail = async (email: string, pass: string) => {
+    localStorage.removeItem('founderhq_demo_user');
     if (!auth) {
       throw new Error('Firebase Auth is not initialized. Check API keys.');
     }
@@ -165,6 +174,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signUpWithEmail = async (email: string, pass: string, name: string) => {
+    localStorage.removeItem('founderhq_demo_user');
     if (!auth) {
       throw new Error('Firebase Auth is not initialized. Check API keys.');
     }
@@ -175,6 +185,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signInWithGoogle = async () => {
+    localStorage.removeItem('founderhq_demo_user');
     if (!auth) {
       throw new Error('Firebase Auth is not initialized. Check API keys.');
     }

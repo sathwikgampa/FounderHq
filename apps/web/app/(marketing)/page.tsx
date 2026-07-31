@@ -168,7 +168,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
             <Image
-              src="/logo.png"
+              src="/logo.svg"
               alt="FounderHQ"
               width={32}
               height={32}
@@ -478,8 +478,8 @@ export default function LandingPage() {
               Intelligence built into every step.
             </h2>
             <p className="text-slate-400 text-lg">
-              Stop managing tools and start managing your startup. FounderHQ&apos;s AI executive team
-              handles the busy work so you can focus on building.
+              Stop managing tools and start managing your startup. FounderHQ&apos;s AI executive
+              team handles the busy work so you can focus on building.
             </p>
           </div>
 
@@ -514,9 +514,7 @@ export default function LandingPage() {
                       data-width="24"
                     />
                   </div>
-                  <h3 className="text-lg font-medium text-white mb-2">
-                    Multi-Agent Collaboration
-                  </h3>
+                  <h3 className="text-lg font-medium text-white mb-2">Multi-Agent Collaboration</h3>
                   <p className="text-sm text-slate-400 leading-relaxed max-w-md">
                     Finance checks affordability, Talent creates hiring plans, Growth evaluates
                     launch impact — all coordinated by the CEO Planner.
@@ -666,9 +664,7 @@ export default function LandingPage() {
                         />
                       </div>
                       <div>
-                        <p className="text-sm text-slate-200 font-medium">
-                          Hire Backend Engineers
-                        </p>
+                        <p className="text-sm text-slate-200 font-medium">Hire Backend Engineers</p>
                         <p className="text-xs text-slate-500 mt-1">Talent • Due Today</p>
                       </div>
                     </div>
@@ -745,8 +741,8 @@ export default function LandingPage() {
               ))}
             </div>
             <p className="text-sm text-slate-300 leading-relaxed mb-6">
-              &ldquo;The interface is stunning, but the multi-agent AI is where the magic happens. It
-              feels like having a project manager who never sleeps.&rdquo;
+              &ldquo;The interface is stunning, but the multi-agent AI is where the magic happens.
+              It feels like having a project manager who never sleeps.&rdquo;
             </p>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-slate-700" />
@@ -764,8 +760,8 @@ export default function LandingPage() {
               ))}
             </div>
             <p className="text-sm text-slate-300 leading-relaxed mb-6">
-              &ldquo;We&apos;ve tried every tool out there. Nothing integrates this smoothly with our
-              existing stack while adding actual intelligence.&rdquo;
+              &ldquo;We&apos;ve tried every tool out there. Nothing integrates this smoothly with
+              our existing stack while adding actual intelligence.&rdquo;
             </p>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-slate-700" />
@@ -1038,9 +1034,7 @@ export default function LandingPage() {
           </div>
 
           <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5">
-            <p className="text-slate-600 text-xs">
-              © 2026 FounderHQ. All rights reserved.
-            </p>
+            <p className="text-slate-600 text-xs">© 2026 FounderHQ. All rights reserved.</p>
             <div className="flex gap-6 mt-4 md:mt-0">
               <a href="#" className="text-slate-500 hover:text-white transition-colors">
                 <span className="iconify" data-icon="lucide:twitter" data-width="16" />

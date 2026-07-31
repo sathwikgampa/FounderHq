@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   Bot,
@@ -15,7 +16,10 @@ import {
   Briefcase,
   User,
   ChevronRight,
+  LogOut,
+  Loader2,
 } from 'lucide-react';
+import { useAuth } from '@/providers/auth-provider';
 
 const mainNavItems = [{ name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard }];
 
@@ -34,7 +38,10 @@ const secondaryNavItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, logout } = useAuth();
   const [agentsExpanded, setAgentsExpanded] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const NavItem = ({ item, isSub = false }: { item: any; isSub?: boolean }) => {
@@ -43,11 +50,13 @@ export function Sidebar() {
     return (
       <Link
         href={item.href}
-        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${isSub ? 'ml-6 text-sm' : ''
-          } ${isActive
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${
+          isSub ? 'ml-6 text-sm' : ''
+        } ${
+          isActive
             ? 'bg-primary/10 text-primary font-medium'
             : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-          }`}
+        }`}
       >
         <Icon
           size={isSub ? 16 : 18}
@@ -64,9 +73,13 @@ export function Sidebar() {
     <aside className="w-64 h-screen hidden md:flex flex-col border-r bg-card shrink-0 fixed left-0 top-0">
       <div className="flex items-center h-16 px-6 border-b">
         <Link href="/dashboard" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold">
-            F
-          </div>
+          <Image
+            src="/logo.svg"
+            alt="FounderHQ"
+            width={32}
+            height={32}
+            className="object-contain"
+          />
           <span className="font-bold text-lg tracking-tight text-foreground">FounderHQ</span>
         </Link>
       </div>
@@ -77,11 +90,10 @@ export function Sidebar() {
         ))}
 
         <div className="mb-1">
-          <div className={`w-full flex items-center justify-between rounded-xl transition-all duration-200 group ${pathname.startsWith('/agents') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}>
-            <Link
-              href="/agents"
-              className="flex-1 flex items-center gap-3 px-3 py-2.5"
-            >
+          <div
+            className={`w-full flex items-center justify-between rounded-xl transition-all duration-200 group ${pathname.startsWith('/agents') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+          >
+            <Link href="/agents" className="flex-1 flex items-center gap-3 px-3 py-2.5">
               <Bot
                 size={18}
                 className={`transition-colors ${pathname.startsWith('/agents') ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`}
@@ -121,7 +133,13 @@ export function Sidebar() {
             <div className="h-full bg-primary w-2/3" />
           </div>
           <p className="text-[10px] text-muted-foreground mb-3">AI credits used</p>
-          <button onClick={() => { console.log('Upgrade clicked'); alert('Plan upgrade flow coming soon!'); }} className="w-full py-1.5 px-3 text-xs font-semibold text-primary border border-primary rounded-lg hover:bg-primary/5 transition-colors">
+          <button
+            onClick={() => {
+              console.log('Upgrade clicked');
+              alert('Plan upgrade flow coming soon!');
+            }}
+            className="w-full py-1.5 px-3 text-xs font-semibold text-primary border border-primary rounded-lg hover:bg-primary/5 transition-colors"
+          >
             Upgrade Plan
           </button>
         </div>
@@ -134,9 +152,33 @@ export function Sidebar() {
             />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-foreground truncate">Sarah Founder</p>
-            <p className="text-xs text-muted-foreground truncate">CEO, Acme Inc</p>
+            <p className="text-sm font-medium text-foreground truncate">
+              {user?.displayName || 'Founder'}
+            </p>
+            <p className="text-xs text-muted-foreground truncate">
+              {user?.email || 'CEO, Acme Inc'}
+            </p>
           </div>
+          <button
+            onClick={async () => {
+              if (loggingOut) return;
+              setLoggingOut(true);
+              try {
+                await logout();
+              } finally {
+                router.push('/login');
+              }
+            }}
+            disabled={loggingOut}
+            className="p-2 text-muted-foreground hover:text-destructive transition-colors ml-auto group/logout rounded-md hover:bg-destructive/10 disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Log out"
+          >
+            {loggingOut ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <LogOut size={16} className="group-hover/logout:text-destructive" />
+            )}
+          </button>
         </div>
       </div>
     </aside>
