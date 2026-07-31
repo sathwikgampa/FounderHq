@@ -18,30 +18,72 @@ const COLUMNS: { id: string; title: string; tasks: Task[] }[] = [
     id: 'today',
     title: 'Today',
     tasks: [
-      { id: 't1', title: 'Review Series A SAFE Cap Table', owner: 'Siddharth', priority: 'URGENT', dueDate: 'Today 5 PM', aiSuggestion: 'CFO Agent flagged +2% dilution' },
-      { id: 't2', title: 'Interview Senior AI Engineer', owner: 'Elena (HR)', priority: 'HIGH', dueDate: 'Today 3 PM', aiSuggestion: 'Resume match: 96%' },
+      {
+        id: 't1',
+        title: 'Review Series A SAFE Cap Table',
+        owner: 'Siddharth',
+        priority: 'URGENT',
+        dueDate: 'Today 5 PM',
+        aiSuggestion: 'CFO Agent flagged +2% dilution',
+      },
+      {
+        id: 't2',
+        title: 'Interview Senior AI Engineer',
+        owner: 'Elena (HR)',
+        priority: 'HIGH',
+        dueDate: 'Today 3 PM',
+        aiSuggestion: 'Resume match: 96%',
+      },
     ],
   },
   {
     id: 'this-week',
     title: 'This Week',
     tasks: [
-      { id: 't3', title: 'Submit Delaware Franchise Tax', owner: 'Legal Agent', priority: 'MEDIUM', dueDate: 'Friday', aiSuggestion: '83b status confirmed' },
-      { id: 't4', title: 'Deploy WebGL Shader Background', owner: 'Design Agent', priority: 'HIGH', dueDate: 'Tomorrow', aiSuggestion: 'Passed 60FPS test' },
+      {
+        id: 't3',
+        title: 'Submit Delaware Franchise Tax',
+        owner: 'Legal Agent',
+        priority: 'MEDIUM',
+        dueDate: 'Friday',
+        aiSuggestion: '83b status confirmed',
+      },
+      {
+        id: 't4',
+        title: 'Deploy WebGL Shader Background',
+        owner: 'Design Agent',
+        priority: 'HIGH',
+        dueDate: 'Tomorrow',
+        aiSuggestion: 'Passed 60FPS test',
+      },
     ],
   },
   {
     id: 'blocked',
     title: 'Blocked',
     tasks: [
-      { id: 't5', title: 'Stripe Corporate Account Audit', owner: 'Finance Agent', priority: 'URGENT', dueDate: 'Pending Approval', aiSuggestion: 'Requires Founder KYC verification' },
+      {
+        id: 't5',
+        title: 'Stripe Corporate Account Audit',
+        owner: 'Finance Agent',
+        priority: 'URGENT',
+        dueDate: 'Pending Approval',
+        aiSuggestion: 'Requires Founder KYC verification',
+      },
     ],
   },
   {
     id: 'completed',
     title: 'Completed',
     tasks: [
-      { id: 't6', title: 'Seed Round Pitch Deck Generated', owner: 'CEO Planner', priority: 'MEDIUM', dueDate: 'Completed', aiSuggestion: 'Data room shared' },
+      {
+        id: 't6',
+        title: 'Seed Round Pitch Deck Generated',
+        owner: 'CEO Planner',
+        priority: 'MEDIUM',
+        dueDate: 'Completed',
+        aiSuggestion: 'Data room shared',
+      },
     ],
   },
 ];
@@ -75,7 +117,10 @@ export function KanbanTasks() {
 
             <div className="space-y-2.5">
               {col.tasks.map((task) => (
-                <GlowCard key={task.id} className="p-3.5 space-y-2.5 hover:border-white/20 transition-all">
+                <GlowCard
+                  key={task.id}
+                  className="p-3.5 space-y-2.5 hover:border-white/20 transition-all"
+                >
                   <div className="flex items-start justify-between gap-2">
                     <h4 className="text-xs font-bold text-white leading-snug">{task.title}</h4>
                     <span

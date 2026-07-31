@@ -62,7 +62,13 @@ export function FloatingSidebar() {
       <div className="flex items-center justify-between pb-4 border-b border-white/[0.06]">
         <Link href="/dashboard" className="flex items-center gap-3 group px-2">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#7C5CFF] to-indigo-500 flex items-center justify-center text-white font-bold shrink-0 shadow-lg shadow-[#7C5CFF]/20 group-hover:scale-105 transition-transform">
-            <Image src="/logo.svg" alt="FounderHQ" width={20} height={20} className="object-contain" />
+            <Image
+              src="/logo.svg"
+              alt="FounderHQ"
+              width={20}
+              height={20}
+              className="object-contain"
+            />
           </div>
           {!collapsed && (
             <div className="flex flex-col min-w-0">
@@ -109,7 +115,9 @@ export function FloatingSidebar() {
       {/* Navigation List */}
       <nav className="flex-1 my-2 space-y-1 overflow-y-auto custom-scrollbar pr-1">
         {NAV_ITEMS.map((item) => {
-          const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
+          const isActive =
+            pathname === item.href ||
+            (item.href !== '/dashboard' && pathname.startsWith(item.href));
           const Icon = item.icon;
 
           return (
@@ -147,7 +155,9 @@ export function FloatingSidebar() {
 
       {/* Profile & Logout Section */}
       <div className="pt-3 border-t border-white/[0.06] mt-auto">
-        <div className={`flex items-center gap-3 p-2 rounded-2xl bg-white/[0.03] border border-white/5 ${collapsed ? 'justify-center' : ''}`}>
+        <div
+          className={`flex items-center gap-3 p-2 rounded-2xl bg-white/[0.03] border border-white/5 ${collapsed ? 'justify-center' : ''}`}
+        >
           <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
             {user?.displayName ? user.displayName.charAt(0) : <User size={14} />}
           </div>

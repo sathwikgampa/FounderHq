@@ -41,7 +41,10 @@ export function TopNavbar() {
               className="w-full flex items-center justify-between gap-3 px-4 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] rounded-2xl text-xs text-slate-400 hover:text-slate-200 transition-all group"
             >
               <div className="flex items-center gap-2.5">
-                <Search size={14} className="text-slate-400 group-hover:text-[#7C5CFF] transition-colors" />
+                <Search
+                  size={14}
+                  className="text-slate-400 group-hover:text-[#7C5CFF] transition-colors"
+                />
                 <span>Search tasks, agents, documents, memory...</span>
               </div>
               <kbd className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/10 text-[10px] text-slate-300 font-mono border border-white/10">
@@ -116,7 +119,9 @@ export function TopNavbar() {
             </div>
 
             <div className="space-y-2 text-xs">
-              <div className="text-[10px] uppercase font-semibold text-slate-500 px-3">Quick Navigation</div>
+              <div className="text-[10px] uppercase font-semibold text-slate-500 px-3">
+                Quick Navigation
+              </div>
               {[
                 { name: 'Go to Financial Forecasts', action: () => router.push('/finance') },
                 { name: 'View Active Candidates', action: () => router.push('/hiring') },

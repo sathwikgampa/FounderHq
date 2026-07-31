@@ -97,7 +97,8 @@ export function HeroMissionControl() {
                   {greeting}, {userName}
                 </h1>
                 <p className="text-slate-400 text-sm mt-1 leading-relaxed">
-                  Your AI executive team is running 10 parallel workflows. 2 items require your approval today.
+                  Your AI executive team is running 10 parallel workflows. 2 items require your
+                  approval today.
                 </p>
               </div>
 

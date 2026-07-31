@@ -12,7 +12,8 @@ const INSIGHTS = [
     category: 'Finance Optimization',
     priority: 'HIGH',
     confidence: '98%',
-    description: 'Switching GPU compute nodes to 1-year reserved instances will cut burn rate by $1,800/mo.',
+    description:
+      'Switching GPU compute nodes to 1-year reserved instances will cut burn rate by $1,800/mo.',
     action: 'Apply Reserved Contract',
   },
   {
@@ -21,7 +22,8 @@ const INSIGHTS = [
     category: 'Sales & Growth',
     priority: 'CRITICAL',
     confidence: '92%',
-    description: 'Enterprise Client "Acme Bio" has not logged in for 14 days. Recommend CEO check-in call.',
+    description:
+      'Enterprise Client "Acme Bio" has not logged in for 14 days. Recommend CEO check-in call.',
     action: 'Schedule Founder Check-in',
   },
 ];
@@ -47,7 +49,9 @@ export function AiInsightsPanel() {
           >
             <div className="flex items-start justify-between gap-2">
               <div>
-                <span className="text-[10px] text-slate-400 font-medium block">{item.category}</span>
+                <span className="text-[10px] text-slate-400 font-medium block">
+                  {item.category}
+                </span>
                 <h4 className="text-sm font-bold text-white mt-0.5">{item.title}</h4>
               </div>
               <span
@@ -64,7 +68,9 @@ export function AiInsightsPanel() {
             <p className="text-xs text-slate-300 leading-relaxed">{item.description}</p>
 
             <div className="flex items-center justify-between pt-2 border-t border-white/5">
-              <span className="text-[10px] text-slate-400">Confidence: <strong className="text-emerald-400">{item.confidence}</strong></span>
+              <span className="text-[10px] text-slate-400">
+                Confidence: <strong className="text-emerald-400">{item.confidence}</strong>
+              </span>
               <button
                 onClick={() => toast.success(`Executed: ${item.action}`)}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#7C5CFF] hover:bg-[#6b49f3] text-white text-xs font-semibold transition-all shadow-md shadow-[#7C5CFF]/20"

@@ -5,10 +5,42 @@ import { GitCommit, FileCheck, Users, CircleDollarSign } from 'lucide-react';
 import { GlowCard } from '@/components/ui/glow-card';
 
 const ACTIVITIES = [
-  { id: '1', title: 'Fundraising SAFE Term Sheet Updated', time: '10 min ago', agent: 'Investment Agent', type: 'finance', icon: CircleDollarSign, color: 'text-amber-400' },
-  { id: '2', title: 'Senior AI Engineer Candidate Screened (96% Match)', time: '45 min ago', agent: 'Talent Agent', type: 'hiring', icon: Users, color: 'text-purple-400' },
-  { id: '3', title: 'Delaware C-Corp Franchise Tax Verified', time: '2 hours ago', agent: 'Legal Agent', type: 'legal', icon: FileCheck, color: 'text-blue-400' },
-  { id: '4', title: 'WebGL Shader Canvas Deployed to Production', time: '4 hours ago', agent: 'CTO Tech Agent', type: 'code', icon: GitCommit, color: 'text-emerald-400' },
+  {
+    id: '1',
+    title: 'Fundraising SAFE Term Sheet Updated',
+    time: '10 min ago',
+    agent: 'Investment Agent',
+    type: 'finance',
+    icon: CircleDollarSign,
+    color: 'text-amber-400',
+  },
+  {
+    id: '2',
+    title: 'Senior AI Engineer Candidate Screened (96% Match)',
+    time: '45 min ago',
+    agent: 'Talent Agent',
+    type: 'hiring',
+    icon: Users,
+    color: 'text-purple-400',
+  },
+  {
+    id: '3',
+    title: 'Delaware C-Corp Franchise Tax Verified',
+    time: '2 hours ago',
+    agent: 'Legal Agent',
+    type: 'legal',
+    icon: FileCheck,
+    color: 'text-blue-400',
+  },
+  {
+    id: '4',
+    title: 'WebGL Shader Canvas Deployed to Production',
+    time: '4 hours ago',
+    agent: 'CTO Tech Agent',
+    type: 'code',
+    icon: GitCommit,
+    color: 'text-emerald-400',
+  },
 ];
 
 export function ActivityTimeline() {
