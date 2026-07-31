@@ -33,6 +33,7 @@ from apps.api.agents.startup_team.agent import (  # noqa: E402
     TalentAgent,
     TechArchitectAgent,
     analyze_and_route_workflow,
+    calculate_cap_table_dilution,
     check_runway,
     create_campaign_plan,
     draft_job_posting,
@@ -126,6 +127,13 @@ def verify_all_deterministic_tools():
     )
     assert t7["cost_breakdown_usd"]["total_monthly_estimate"] > 0
 
+    # 8. InvestmentAgent tool
+    t8 = calculate_cap_table_dilution(2000000.0, 500000.0)
+    print(
+        f"  [8] InvestmentAgent(calculate_cap_table)-> Investor Equity: {t8['investor_ownership_pct']} | Post-Money: ${t8['post_money_valuation_usd']:,.0f}"
+    )
+    assert t8["requires_human_signoff"] is True
+
     print("\n  ✅ STEP 2 PASSED: All sub-agent tools functional.")
 
 
@@ -151,12 +159,25 @@ def verify_routing_engine():
             ["GrowthAgent", "SalesAgent"],
             "PARALLEL",
         ),
+        (
+            "Prepare pitch deck and calculate cap table dilution for $500k seed round",
+            ["InvestmentAgent"],
+            "PARALLEL",
+        ),
+        (
+            "0-to-1 launch plan for B2B AI app with personal savings",
+            ["ProductAgent", "GrowthAgent", "FinanceAgent", "LegalAgent"],
+            "SEQUENTIAL",
+        ),
     ]
 
     for q, expected_agents, expected_wf in test_queries:
         res = analyze_and_route_workflow(q)
         print(f"  Query: '{q[:55]}...'")
         print(f"    -> Selected: {res['selected_agents']} | Workflow: {res['workflow_type']}")
+        assert "routing_rationale" in res, "Missing routing_rationale"
+        assert "intent_category" in res, "Missing intent_category"
+        assert "confidence_score" in res, "Missing confidence_score"
         for ea in expected_agents:
             assert ea in res["selected_agents"], f"Expected {ea} in selected agents for query '{q}'"
         assert (
