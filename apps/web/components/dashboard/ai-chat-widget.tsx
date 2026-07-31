@@ -135,6 +135,7 @@ export function AiChatWidget() {
             payload.synthesis ||
             payload.executive_summary ||
             payload.raw_brief ||
+            payload.summary ||
             'Launch plan synthesized successfully.';
           setFinalBrief(brief);
         }
