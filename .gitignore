@@ -62,6 +62,4 @@ firestore-debug.log
 # Turbo
 .turbo/
 
-# ADK Startup Team Agents (Local Only)
-apps/api/agents/startup_team/
 
