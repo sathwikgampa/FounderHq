@@ -10,8 +10,8 @@
     --card-foreground: 224 71.4% 4.1%;
     --popover: 0 0% 100%;
     --popover-foreground: 224 71.4% 4.1%;
-    --primary: 220.9 39.3% 11%;
-    --primary-foreground: 210 20% 98%;
+    --primary: 239 84% 67%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 220 14.3% 95.9%;
     --secondary-foreground: 220.9 39.3% 11%;
     --muted: 220 14.3% 95.9%;
@@ -54,7 +54,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-[#0a0a0a] text-white antialiased selection:bg-blue-500/30 selection:text-blue-200;
+    @apply bg-[#FAFAFB] text-slate-900 antialiased selection:bg-indigo-500/20 selection:text-indigo-900;
     font-feature-settings:
       'rlig' 1,
       'calt' 1;
