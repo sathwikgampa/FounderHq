@@ -25,6 +25,7 @@ import {
 import { toast } from 'sonner';
 import { clientRAGEngine, Citation } from '@/lib/rag-engine';
 import { useVoice } from '@/hooks/use-voice';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 interface ChatMessage {
   id: string;
@@ -139,14 +140,20 @@ export function KnowledgeChatbot() {
 
   return (
     <>
-      {/* Floating Chatbot Launcher Button */}
+      {/* Floating Chatbot Launcher Button with DotLottie Animation */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-40 p-4 rounded-2xl bg-gradient-to-r from-[#7C5CFF] to-indigo-600 text-white shadow-2xl shadow-[#7C5CFF]/40 hover:scale-105 transition-all flex items-center gap-2 group"
+        className="fixed bottom-6 right-6 z-40 p-2.5 rounded-3xl bg-[#0E1014]/90 border border-[#7C5CFF]/50 text-white shadow-2xl shadow-[#7C5CFF]/40 hover:scale-105 transition-all flex items-center gap-2 group backdrop-blur-xl"
       >
-        <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />
-        <span className="font-bold text-xs">Knowledge AI</span>
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+        <div className="w-10 h-10 overflow-hidden flex items-center justify-center shrink-0">
+          <DotLottieReact
+            src="https://lottie.host/53761f30-4dd3-42a6-a300-fcc52365776f/42HptGJW1u.lottie"
+            loop
+            autoplay
+          />
+        </div>
+        <span className="font-bold text-xs pr-1">Knowledge AI</span>
+        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping mr-1" />
       </button>
 
       {/* Floating Chatbot Drawer Modal */}
@@ -161,8 +168,12 @@ export function KnowledgeChatbot() {
             {/* Chatbot Header */}
             <div className="p-4 border-b border-white/10 bg-white/[0.02] flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-[#7C5CFF]/20 border border-[#7C5CFF]/40 flex items-center justify-center text-[#7C5CFF]">
-                  <Sparkles size={18} />
+                <div className="w-10 h-10 rounded-xl bg-[#7C5CFF]/20 border border-[#7C5CFF]/40 flex items-center justify-center text-[#7C5CFF] overflow-hidden shrink-0">
+                  <DotLottieReact
+                    src="https://lottie.host/53761f30-4dd3-42a6-a300-fcc52365776f/42HptGJW1u.lottie"
+                    loop
+                    autoplay
+                  />
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
