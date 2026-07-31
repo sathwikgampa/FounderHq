@@ -135,7 +135,7 @@ export function Sidebar() {
           <p className="text-[10px] text-muted-foreground mb-3">AI credits used</p>
           <button
             onClick={() => {
-              console.log('Upgrade clicked');
+              console.info('Upgrade clicked');
               alert('Plan upgrade flow coming soon!');
             }}
             className="w-full py-1.5 px-3 text-xs font-semibold text-primary border border-primary rounded-lg hover:bg-primary/5 transition-colors"

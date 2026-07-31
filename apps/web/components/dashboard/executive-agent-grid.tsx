@@ -131,6 +131,7 @@ export function ExecutiveAgentGrid() {
             return (
               <GlowCard
                 key={agent.id}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 onClick={() => router.push(agent.href as any)}
                 className="cursor-pointer hover:-translate-y-1 transition-transform"
               >

@@ -36,7 +36,7 @@ export function MiddleWidgets() {
 
   const togglePriority = (id: string) => {
     setPriorities((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, checked: !item.checked } : item))
+      prev.map((item) => (item.id === id ? { ...item, checked: !item.checked } : item)),
     );
   };
 
@@ -56,9 +56,27 @@ export function MiddleWidgets() {
   ];
 
   const ACTIVITIES = [
-    { id: '1', title: 'Term sheet updated', agent: 'Investment Agent', time: '10m ago', dotColor: 'bg-[#6C63FF]' },
-    { id: '2', title: 'Senior AI Engineer offer sent', agent: 'Talent Agent', time: '45m ago', dotColor: 'bg-blue-500' },
-    { id: '3', title: 'Runway analysis completed', agent: 'Finance Agent', time: '2h ago', dotColor: 'bg-[#16A34A]' },
+    {
+      id: '1',
+      title: 'Term sheet updated',
+      agent: 'Investment Agent',
+      time: '10m ago',
+      dotColor: 'bg-[#6C63FF]',
+    },
+    {
+      id: '2',
+      title: 'Senior AI Engineer offer sent',
+      agent: 'Talent Agent',
+      time: '45m ago',
+      dotColor: 'bg-blue-500',
+    },
+    {
+      id: '3',
+      title: 'Runway analysis completed',
+      agent: 'Finance Agent',
+      time: '2h ago',
+      dotColor: 'bg-[#16A34A]',
+    },
   ];
 
   const AGENTS = [
@@ -118,7 +136,9 @@ export function MiddleWidgets() {
                   ) : (
                     <Circle size={16} className="text-[#6B7280] shrink-0" />
                   )}
-                  <span className={`text-xs font-medium ${item.checked ? 'text-[#111827] font-semibold' : 'text-[#6B7280]'}`}>
+                  <span
+                    className={`text-xs font-medium ${item.checked ? 'text-[#111827] font-semibold' : 'text-[#6B7280]'}`}
+                  >
                     {item.title}
                   </span>
                 </div>
@@ -153,10 +173,15 @@ export function MiddleWidgets() {
         {openSection === 'insights' && (
           <div className="px-4 pb-4 border-t border-[#ECECEC] pt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
             {INSIGHTS.map((ins) => (
-              <div key={ins.id} className="p-3.5 rounded-xl bg-[#FAFAFB] border border-[#ECECEC] flex items-center justify-between">
+              <div
+                key={ins.id}
+                className="p-3.5 rounded-xl bg-[#FAFAFB] border border-[#ECECEC] flex items-center justify-between"
+              >
                 <div>
                   <h4 className="text-xs font-bold text-[#111827]">{ins.title}</h4>
-                  <span className="text-[10px] font-semibold text-[#16A34A] block mt-0.5">{ins.confidence}</span>
+                  <span className="text-[10px] font-semibold text-[#16A34A] block mt-0.5">
+                    {ins.confidence}
+                  </span>
                 </div>
                 <button
                   onClick={() => toast.success(`Executed: ${ins.action}`)}
@@ -192,7 +217,10 @@ export function MiddleWidgets() {
         {openSection === 'activity' && (
           <div className="px-4 pb-4 border-t border-[#ECECEC] pt-3 space-y-2.5">
             {ACTIVITIES.map((act) => (
-              <div key={act.id} className="flex items-center justify-between text-xs py-1 border-b border-[#ECECEC]/50 last:border-none">
+              <div
+                key={act.id}
+                className="flex items-center justify-between text-xs py-1 border-b border-[#ECECEC]/50 last:border-none"
+              >
                 <div className="flex items-center gap-3">
                   <span className={`w-2 h-2 rounded-full ${act.dotColor} shrink-0`} />
                   <div>
@@ -205,6 +233,7 @@ export function MiddleWidgets() {
             ))}
             <div className="pt-2 text-right">
               <button
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 onClick={() => router.push('/activity' as any)}
                 className="text-xs font-semibold text-[#6C63FF] hover:underline inline-flex items-center gap-1"
               >
@@ -239,7 +268,7 @@ export function MiddleWidgets() {
             {AGENTS.map((agent) => (
               <div
                 key={agent.id}
-                onClick={() => router.push('/agents' as any)}
+                onClick={() => router.push('/agents')}
                 className="p-3 rounded-xl bg-[#FAFAFB] border border-[#ECECEC] cursor-pointer hover:border-[#6C63FF]/30 transition-all space-y-1"
               >
                 <div className="flex items-center justify-between">
@@ -279,7 +308,7 @@ export function MiddleWidgets() {
             {TASKS.map((t) => (
               <div
                 key={t.id}
-                onClick={() => router.push('/tasks' as any)}
+                onClick={() => router.push('/tasks')}
                 className="p-3 rounded-xl bg-[#FAFAFB] border border-[#ECECEC] flex items-center justify-between cursor-pointer hover:border-[#6C63FF]/30 transition-all text-xs"
               >
                 <div className="flex items-center gap-3">
@@ -317,10 +346,12 @@ export function MiddleWidgets() {
             <div className="p-3.5 rounded-xl bg-[#FAFAFB] border border-[#ECECEC] flex items-center justify-between">
               <div>
                 <h4 className="text-xs font-bold text-[#111827]">Q3 SAFE Funding Memo Prepared</h4>
-                <p className="text-[11px] text-[#6B7280] mt-0.5">Sequoia & Index Ventures data room ready.</p>
+                <p className="text-[11px] text-[#6B7280] mt-0.5">
+                  Sequoia & Index Ventures data room ready.
+                </p>
               </div>
               <button
-                onClick={() => router.push('/investors' as any)}
+                onClick={() => router.push('/investors')}
                 className="px-3 py-1.5 rounded-xl bg-[#6C63FF] text-white text-[11px] font-semibold hover:bg-[#5b52e0] transition-colors"
               >
                 Open Data Room
@@ -334,14 +365,14 @@ export function MiddleWidgets() {
       <div className="pt-4 border-t border-[#ECECEC]">
         <div className="flex items-center justify-center gap-3 flex-wrap">
           <button
-            onClick={() => router.push('/tasks' as any)}
+            onClick={() => router.push('/tasks')}
             className="px-4 py-2.5 rounded-xl bg-white border border-[#ECECEC] hover:border-[#6C63FF]/40 text-[#111827] text-xs font-semibold shadow-sm transition-all flex items-center gap-2"
           >
             <Plus size={14} className="text-[#6C63FF]" /> Create Task
           </button>
 
           <button
-            onClick={() => router.push('/documents' as any)}
+            onClick={() => router.push('/documents')}
             className="px-4 py-2.5 rounded-xl bg-white border border-[#ECECEC] hover:border-[#6C63FF]/40 text-[#111827] text-xs font-semibold shadow-sm transition-all flex items-center gap-2"
           >
             <FilePlus size={14} className="text-[#6C63FF]" /> New Document

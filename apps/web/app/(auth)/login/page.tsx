@@ -54,14 +54,15 @@ export default function LoginPage() {
         await signInWithEmail(email, password);
       }
       router.push('/dashboard');
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as Error;
       console.error('Auth error:', err);
       // Fallback for demo environments if Firebase isn't configured
-      if (err.message && err.message.includes('Firebase')) {
+      if (errorObj.message && errorObj.message.includes('Firebase')) {
         loginAsDemo();
         router.push('/dashboard');
       } else {
-        setError(err.message || 'Authentication failed. Please try again.');
+        setError(errorObj.message || 'Authentication failed. Please try again.');
       }
     } finally {
       setIsLoading(false);
@@ -74,13 +75,14 @@ export default function LoginPage() {
     try {
       await signInWithGoogle();
       router.push('/dashboard');
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as Error;
       console.error('Google Auth error:', err);
-      if (err.message && err.message.includes('Firebase')) {
+      if (errorObj.message && errorObj.message.includes('Firebase')) {
         loginAsDemo();
         router.push('/dashboard');
       } else {
-        setError(err.message || 'Google Authentication failed.');
+        setError(errorObj.message || 'Google Authentication failed.');
       }
     } finally {
       setIsLoading(false);

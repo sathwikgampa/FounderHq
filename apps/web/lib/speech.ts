@@ -28,22 +28,25 @@ export async function speakText(text: string): Promise<void> {
 
   try {
     // Attempt ElevenLabs TTS API call
-    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'audio/mpeg',
-        'Content-Type': 'application/json',
-        'xi-api-key': ELEVENLABS_API_KEY,
-      },
-      body: JSON.stringify({
-        text: text.slice(0, 500), // Cap length for fast latency
-        model_id: 'eleven_monolingual_v1',
-        voice_settings: {
-          stability: 0.5,
-          similarity_boost: 0.75,
+    const response = await fetch(
+      `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}`,
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'audio/mpeg',
+          'Content-Type': 'application/json',
+          'xi-api-key': ELEVENLABS_API_KEY,
         },
-      }),
-    });
+        body: JSON.stringify({
+          text: text.slice(0, 500), // Cap length for fast latency
+          model_id: 'eleven_monolingual_v1',
+          voice_settings: {
+            stability: 0.5,
+            similarity_boost: 0.75,
+          },
+        }),
+      },
+    );
 
     if (response.ok) {
       const audioBlob = await response.blob();
@@ -91,7 +94,7 @@ export async function transcribeAudioWithGroq(audioBlob: Blob): Promise<string> 
     const response = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${GROQ_API_KEY}`,
+        Authorization: `Bearer ${GROQ_API_KEY}`,
       },
       body: formData,
     });
@@ -112,11 +115,14 @@ export async function transcribeAudioWithGroq(audioBlob: Blob): Promise<string> 
 export function createSpeechRecognizer(
   onResult: (text: string) => void,
   onEnd?: () => void,
-  onError?: (err: any) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onError?: (err: any) => void,
 ) {
   if (typeof window === 'undefined') return null;
 
-  const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const SpeechRecognition =
+    (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
   if (!SpeechRecognition) return null;
 
   const recognition = new SpeechRecognition();
@@ -124,6 +130,7 @@ export function createSpeechRecognizer(
   recognition.interimResults = true;
   recognition.lang = 'en-US';
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   recognition.onresult = (event: any) => {
     let transcript = '';
     for (let i = event.resultIndex; i < event.results.length; i++) {

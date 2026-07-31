@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import { AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import React, { useEffect } from 'react';
+import { AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function Error({
   error,
@@ -12,8 +12,7 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.error("Next.js Error caught:", error);
+    console.warn('Next.js Error caught:', error);
   }, [error]);
 
   return (

@@ -178,7 +178,7 @@ export function AnalyticsCharts() {
                   fill="#cbd5e1"
                   fontSize={11}
                   fontWeight={600}
-                  formatter={(v: any) => Number(v).toLocaleString()}
+                  formatter={(v: number | string) => Number(v).toLocaleString()}
                 />
               </Bar>
             </BarChart>

@@ -57,11 +57,9 @@ export default function LandingPage() {
           'https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js';
         unicornScript.async = true;
         unicornScript.onload = () => {
-          if (
-            (window as any).UnicornStudio &&
-            typeof (window as any).UnicornStudio.init === 'function'
-          ) {
-            (window as any).UnicornStudio.init();
+          const win = window as unknown as { UnicornStudio?: { init?: () => void } };
+          if (win.UnicornStudio && typeof win.UnicornStudio.init === 'function') {
+            win.UnicornStudio.init();
           }
         };
         document.head.appendChild(unicornScript);

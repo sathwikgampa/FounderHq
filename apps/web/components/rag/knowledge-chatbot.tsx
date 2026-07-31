@@ -226,7 +226,9 @@ export function KnowledgeChatbot() {
                 return (
                   <button
                     key={layer.id}
-                    onClick={() => setSelectedLayer(layer.id as any)}
+                    onClick={() =>
+                      setSelectedLayer(layer.id as 'GLOBAL' | 'TEAM' | 'PRIVATE' | 'SYSTEM')
+                    }
                     className={`px-2.5 py-1 rounded-full border transition-all flex items-center gap-1 shrink-0 ${
                       isSel
                         ? 'bg-[#7C5CFF] text-white border-[#7C5CFF]'

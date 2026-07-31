@@ -134,12 +134,10 @@ export function AuraBackground({
     let script = document.getElementById(scriptId) as HTMLScriptElement | null;
 
     const initUnicorn = () => {
-      if (
-        (window as any).UnicornStudio &&
-        typeof (window as any).UnicornStudio.init === 'function'
-      ) {
+      const win = window as unknown as { UnicornStudio?: { init?: () => void } };
+      if (win.UnicornStudio && typeof win.UnicornStudio.init === 'function') {
         try {
-          (window as any).UnicornStudio.init();
+          win.UnicornStudio.init();
         } catch (e) {
           console.warn('UnicornStudio initialization caught error:', e);
         }

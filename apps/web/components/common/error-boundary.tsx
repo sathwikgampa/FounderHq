@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { Component, ErrorInfo, ReactNode } from "react";
-import { AlertTriangle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { AlertTriangle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface Props {
   children: ReactNode;
@@ -24,8 +24,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // eslint-disable-next-line no-console
-    console.error("Uncaught application error:", error, errorInfo);
+    console.warn('Uncaught application error:', error, errorInfo);
   }
 
   public render() {
@@ -43,10 +42,7 @@ export class ErrorBoundary extends Component<Props, State> {
           <p className="mt-2 text-sm text-muted-foreground max-w-md">
             An unexpected error occurred in this application module.
           </p>
-          <Button
-            className="mt-6"
-            onClick={() => this.setState({ hasError: false })}
-          >
+          <Button className="mt-6" onClick={() => this.setState({ hasError: false })}>
             Try Again
           </Button>
         </div>
