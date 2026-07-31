@@ -13,18 +13,21 @@ export default function LandingPage() {
 
   // Scroll Reveal Observer
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('active');
-          } else {
-            entry.target.classList.remove('active');
-          }
-        });
-      },
-      { threshold: 0.1 },
-    );
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1,
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        } else {
+          entry.target.classList.remove('active');
+        }
+      });
+    }, observerOptions);
 
     const revealElements = document.querySelectorAll('.reveal');
     revealElements.forEach((el) => observer.observe(el));
@@ -34,35 +37,53 @@ export default function LandingPage() {
     };
   }, []);
 
-  // Load UnicornStudio Script Dynamically
+  // Load Iconify & UnicornStudio Scripts Dynamically
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const script = document.createElement('script');
-      script.src =
-        'https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js';
-      script.async = true;
-      script.onload = () => {
-        if (
-          (window as any).UnicornStudio &&
-          typeof (window as any).UnicornStudio.init === 'function'
-        ) {
-          (window as any).UnicornStudio.init();
-        }
-      };
-      document.body.appendChild(script);
+      // Iconify 3.1.0 Script
+      if (!document.querySelector('script[src*="iconify"]')) {
+        const iconifyScript = document.createElement('script');
+        iconifyScript.src = 'https://code.iconify.design/3/3.1.0/iconify.min.js';
+        iconifyScript.async = true;
+        document.head.appendChild(iconifyScript);
+      }
 
-      return () => {
-        if (script.parentNode) {
-          script.parentNode.removeChild(script);
-        }
-      };
+      // UnicornStudio Script
+      if (!document.querySelector('script[src*="unicornStudio"]')) {
+        const unicornScript = document.createElement('script');
+        unicornScript.src =
+          'https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js';
+        unicornScript.async = true;
+        unicornScript.onload = () => {
+          if (
+            (window as any).UnicornStudio &&
+            typeof (window as any).UnicornStudio.init === 'function'
+          ) {
+            (window as any).UnicornStudio.init();
+          }
+        };
+        document.head.appendChild(unicornScript);
+      }
     }
   }, []);
 
   return (
     <div className="bg-[#030304] text-slate-400 antialiased selection:bg-indigo-500/30 selection:text-indigo-200 overflow-x-hidden min-h-screen relative font-sans">
-      {/* CSS Styles */}
+      {/* Custom Styles */}
       <style jsx global>{`
+        ::-webkit-scrollbar {
+          width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+          background: #050505;
+        }
+        ::-webkit-scrollbar-thumb {
+          background: #333;
+          border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: #444;
+        }
         .glass-panel {
           background: rgba(255, 255, 255, 0.03);
           backdrop-filter: blur(10px);
@@ -123,7 +144,7 @@ export default function LandingPage() {
         }
       `}</style>
 
-      {/* Aura Background Component */}
+      {/* Background (component) added by Aura */}
       <div
         className="aura-background-component fixed top-0 w-full h-screen -z-10"
         data-alpha-mask="80"
@@ -212,32 +233,17 @@ export default function LandingPage() {
                 className="w-full sm:w-auto group relative px-8 py-3.5 bg-white text-black text-sm font-semibold rounded-full hover:bg-slate-100 transition-all duration-300 shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] flex items-center justify-center gap-2"
               >
                 <span>Get Early Access</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 h-4 group-hover:translate-x-0.5 transition-transform"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-7-7l7 7-7 7" />
-                </svg>
+                <span
+                  className="iconify inline ml-1 group-hover:translate-x-0.5 transition-transform"
+                  data-icon="lucide:arrow-right"
+                  data-width="16"
+                />
               </button>
               <a
                 href="#demo"
                 className="w-full sm:w-auto px-8 py-3.5 bg-transparent border border-white/10 hover:border-white/20 text-white text-sm font-medium rounded-full transition-all duration-300 flex items-center justify-center gap-2"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 h-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <polygon points="10 8 16 12 10 16 10 8" />
-                </svg>
+                <span className="iconify" data-icon="lucide:play-circle" data-width="16" />
                 <span>See How It Works</span>
               </a>
             </div>
@@ -255,49 +261,19 @@ export default function LandingPage() {
                   </div>
                   <div className="space-y-4">
                     <div className="h-8 w-full bg-white/5 rounded flex items-center px-3 border border-white/5">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-4 h-4 text-indigo-400"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <rect x="3" y="3" width="7" height="9" />
-                        <rect x="14" y="3" width="7" height="5" />
-                        <rect x="14" y="12" width="7" height="9" />
-                        <rect x="3" y="16" width="7" height="5" />
-                      </svg>
+                      <span
+                        className="iconify text-indigo-400"
+                        data-icon="lucide:layout-dashboard"
+                        data-width="16"
+                      />
                       <span className="hidden md:block ml-3 text-xs text-white">Overview</span>
                     </div>
                     <div className="h-8 w-full rounded flex items-center px-3 hover:bg-white/5 transition-colors cursor-pointer opacity-60">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-4 h-4"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <polyline points="9 11 12 14 22 4" />
-                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-                      </svg>
+                      <span className="iconify" data-icon="lucide:check-square" data-width="16" />
                       <span className="hidden md:block ml-3 text-xs">Tasks</span>
                     </div>
                     <div className="h-8 w-full rounded flex items-center px-3 hover:bg-white/5 transition-colors cursor-pointer opacity-60">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-4 h-4"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                        <circle cx="9" cy="7" r="4" />
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                      </svg>
+                      <span className="iconify" data-icon="lucide:users" data-width="16" />
                       <span className="hidden md:block ml-3 text-xs">Team</span>
                     </div>
                   </div>
@@ -323,17 +299,11 @@ export default function LandingPage() {
                     </div>
                     <div className="flex gap-2">
                       <div className="h-8 w-8 rounded-full border border-white/10 flex items-center justify-center">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="w-3.5 h-3.5 text-slate-400"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                        </svg>
+                        <span
+                          className="iconify text-slate-400"
+                          data-icon="lucide:bell"
+                          data-width="14"
+                        />
                       </div>
                       <div className="h-8 w-24 bg-indigo-600/20 border border-indigo-500/30 rounded-full flex items-center justify-center text-[10px] text-indigo-300 font-medium">
                         + New Project
@@ -348,16 +318,11 @@ export default function LandingPage() {
                       <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-[50px] rounded-full pointer-events-none" />
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="w-3.5 h-3.5 text-indigo-400"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-                          </svg>
+                          <span
+                            className="iconify text-indigo-400"
+                            data-icon="lucide:sparkles"
+                            data-width="14"
+                          />
                           <span className="text-xs font-medium text-white">
                             Workflow Suggestion
                           </span>
@@ -392,17 +357,7 @@ export default function LandingPage() {
                         {isTaskApplied ? '97.8' : '94.2'}
                       </div>
                       <div className="flex items-center gap-1 mt-2 text-[10px] text-emerald-400">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="w-3 h-3"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                          <polyline points="17 6 23 6 23 12" />
-                        </svg>
+                        <span className="iconify" data-icon="lucide:trending-up" data-width="12" />
                         <span>+12% this week</span>
                       </div>
                       <div className="mt-4 h-1 w-full bg-white/5 rounded-full overflow-hidden">
@@ -417,18 +372,11 @@ export default function LandingPage() {
                     <div className="col-span-3 glass-panel rounded-lg p-5">
                       <div className="flex justify-between items-center mb-4">
                         <span className="text-xs font-medium text-white">Prioritized Tasks</span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="w-3.5 h-3.5 text-slate-500 cursor-pointer hover:text-white"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <circle cx="12" cy="12" r="1" />
-                          <circle cx="19" cy="12" r="1" />
-                          <circle cx="5" cy="12" r="1" />
-                        </svg>
+                        <span
+                          className="iconify text-slate-500 cursor-pointer hover:text-white"
+                          data-icon="lucide:more-horizontal"
+                          data-width="14"
+                        />
                       </div>
                       <div className="space-y-2">
                         <div className="flex items-center gap-3 p-2 hover:bg-white/5 rounded transition-colors group/task cursor-pointer">
@@ -480,88 +428,30 @@ export default function LandingPage() {
           }}
         >
           <div className="animate-marquee flex gap-12 items-center opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-            {/* Original & Duplicated Items for Seamless Loop */}
             {[1, 2, 3].flatMap((loopIdx) => (
               <React.Fragment key={loopIdx}>
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-6 h-6"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                  </svg>
+                  <span className="iconify" data-icon="lucide:hexagon" data-width="24" />
                   <span className="font-bold text-lg text-white tracking-tight">AcmeCorp</span>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-6 h-6"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                  </svg>
+                  <span className="iconify" data-icon="lucide:triangle" data-width="24" />
                   <span className="font-bold text-lg text-white tracking-tight">Vortex</span>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-6 h-6"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                  </svg>
+                  <span className="iconify" data-icon="lucide:circle" data-width="24" />
                   <span className="font-bold text-lg text-white tracking-tight">Sphere</span>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-6 h-6"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                  </svg>
+                  <span className="iconify" data-icon="lucide:square-stack" data-width="24" />
                   <span className="font-bold text-lg text-white tracking-tight">Layer</span>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-6 h-6"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <polygon points="6 3 18 3 22 9 12 22 2 9 6 3" />
-                  </svg>
+                  <span className="iconify" data-icon="lucide:gem" data-width="24" />
                   <span className="font-bold text-lg text-white tracking-tight">Crystal</span>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-6 h-6"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <rect x="3" y="3" width="7" height="7" />
-                    <rect x="14" y="3" width="7" height="7" />
-                    <rect x="14" y="14" width="7" height="7" />
-                    <rect x="3" y="14" width="7" height="7" />
-                  </svg>
+                  <span className="iconify" data-icon="lucide:boxes" data-width="24" />
                   <span className="font-bold text-lg text-white tracking-tight">Block</span>
                 </div>
               </React.Fragment>
@@ -587,31 +477,14 @@ export default function LandingPage() {
             {/* Feature 1 */}
             <div className="group p-8 glass-panel rounded-2xl hover:bg-white/[0.05] transition-all duration-300 relative overflow-hidden reveal active delay-100">
               <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-24 h-24 text-indigo-500"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-                </svg>
+                <span className="iconify text-indigo-500" data-icon="lucide:zap" data-width="100" />
               </div>
               <div className="w-12 h-12 bg-indigo-500/10 rounded-lg flex items-center justify-center mb-6 border border-indigo-500/20 group-hover:border-indigo-500/40 transition-colors">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-6 h-6 text-indigo-400"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M11 12H3" />
-                  <path d="M16 6H3" />
-                  <path d="M16 18H3" />
-                  <path d="M18 9l3 3-3 3" />
-                </svg>
+                <span
+                  className="iconify text-indigo-400"
+                  data-icon="lucide:list-todo"
+                  data-width="24"
+                />
               </div>
               <h3 className="text-lg font-medium text-white mb-2">AI Task Prioritization</h3>
               <p className="text-sm text-slate-400 leading-relaxed">
@@ -625,16 +498,11 @@ export default function LandingPage() {
               <div className="flex flex-col md:flex-row gap-8 items-start md:items-center h-full">
                 <div className="flex-1 z-10">
                   <div className="w-12 h-12 bg-purple-500/10 rounded-lg flex items-center justify-center mb-6 border border-purple-500/20">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="w-6 h-6 text-purple-400"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-                    </svg>
+                    <span
+                      className="iconify text-purple-400"
+                      data-icon="lucide:sparkles"
+                      data-width="24"
+                    />
                   </div>
                   <h3 className="text-lg font-medium text-white mb-2">
                     Smart Workflow Suggestions
@@ -664,18 +532,11 @@ export default function LandingPage() {
             {/* Feature 3 */}
             <div className="group p-8 glass-panel rounded-2xl hover:bg-white/[0.05] transition-all duration-300 reveal active delay-100">
               <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center mb-6 border border-blue-500/20">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-6 h-6 text-blue-400"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <line x1="18" y1="20" x2="18" y2="10" />
-                  <line x1="12" y1="20" x2="12" y2="4" />
-                  <line x1="6" y1="20" x2="6" y2="14" />
-                </svg>
+                <span
+                  className="iconify text-blue-400"
+                  data-icon="lucide:bar-chart-3"
+                  data-width="24"
+                />
               </div>
               <h3 className="text-lg font-medium text-white mb-2">Data-Driven Insights</h3>
               <p className="text-sm text-slate-400 leading-relaxed">
@@ -687,16 +548,11 @@ export default function LandingPage() {
             {/* Feature 4 */}
             <div className="group p-8 glass-panel rounded-2xl hover:bg-white/[0.05] transition-all duration-300 reveal active delay-200">
               <div className="w-12 h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-6 border border-emerald-500/20">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-6 h-6 text-emerald-400"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
+                <span
+                  className="iconify text-emerald-400"
+                  data-icon="lucide:messages-square"
+                  data-width="24"
+                />
               </div>
               <h3 className="text-lg font-medium text-white mb-2">Integrated Chat</h3>
               <p className="text-sm text-slate-400 leading-relaxed">
@@ -708,16 +564,11 @@ export default function LandingPage() {
             {/* Feature 5 */}
             <div className="group p-8 glass-panel rounded-2xl hover:bg-white/[0.05] transition-all duration-300 reveal active delay-300">
               <div className="w-12 h-12 bg-orange-500/10 rounded-lg flex items-center justify-center mb-6 border border-orange-500/20">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-6 h-6 text-orange-400"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M19.439 7.85c-.049-.322.059-.648.289-.878l1.568-1.568a2.41 2.41 0 0 0 0-3.408 2.41 2.41 0 0 0-3.408 0l-1.568 1.568c-.23.23-.556.338-.878.289a4.966 4.966 0 0 0-3.435 1.154 4.968 4.968 0 0 0-1.154 3.435c.049.322-.059.648-.289.878l-5.6 5.6a2.41 2.41 0 0 0 0 3.408 2.41 2.41 0 0 0 3.408 0l5.6-5.6c.23-.23.556-.338.878-.289a4.966 4.966 0 0 0 3.435-1.154 4.966 4.966 0 0 0 1.154-3.435z" />
-                </svg>
+                <span
+                  className="iconify text-orange-400"
+                  data-icon="lucide:puzzle"
+                  data-width="24"
+                />
               </div>
               <h3 className="text-lg font-medium text-white mb-2">Seamless Integrations</h3>
               <p className="text-sm text-slate-400 leading-relaxed">
@@ -749,45 +600,27 @@ export default function LandingPage() {
             </p>
             <ul className="space-y-4 pt-4">
               <li className="flex items-center gap-3 text-sm text-slate-300">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4.5 h-4.5 text-emerald-400"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                  <polyline points="22 4 12 14.01 9 11.01" />
-                </svg>
+                <span
+                  className="iconify text-emerald-400"
+                  data-icon="lucide:check-circle-2"
+                  data-width="18"
+                />
                 Real-time complexity analysis
               </li>
               <li className="flex items-center gap-3 text-sm text-slate-300">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4.5 h-4.5 text-emerald-400"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                  <polyline points="22 4 12 14.01 9 11.01" />
-                </svg>
+                <span
+                  className="iconify text-emerald-400"
+                  data-icon="lucide:check-circle-2"
+                  data-width="18"
+                />
                 Automated resource allocation
               </li>
               <li className="flex items-center gap-3 text-sm text-slate-300">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4.5 h-4.5 text-emerald-400"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                  <polyline points="22 4 12 14.01 9 11.01" />
-                </svg>
+                <span
+                  className="iconify text-emerald-400"
+                  data-icon="lucide:check-circle-2"
+                  data-width="18"
+                />
                 Drag-and-drop reordering
               </li>
             </ul>
@@ -815,16 +648,11 @@ export default function LandingPage() {
                   <div className="flex items-start justify-between relative z-10">
                     <div className="flex items-start gap-3">
                       <div className="mt-0.5 w-4 h-4 rounded border border-slate-600 flex items-center justify-center group-hover:border-indigo-400">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="w-2.5 h-2.5 text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="3"
-                        >
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
+                        <span
+                          className="iconify opacity-0 group-hover:opacity-100 text-indigo-400"
+                          data-icon="lucide:check"
+                          data-width="10"
+                        />
                       </div>
                       <div>
                         <p className="text-sm text-slate-200 font-medium">
@@ -846,21 +674,7 @@ export default function LandingPage() {
                   >
                     <div className="pt-3 border-t border-white/10 flex items-center gap-3 text-xs">
                       <span className="text-indigo-300 flex items-center gap-1 font-medium">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="w-3 h-3"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <path d="M12 8V4H8" />
-                          <rect width="16" height="12" x="4" y="8" rx="2" />
-                          <path d="M2 14h2" />
-                          <path d="M20 14h2" />
-                          <path d="M15 13v2" />
-                          <path d="M9 13v2" />
-                        </svg>
+                        <span className="iconify" data-icon="lucide:bot" data-width="12" />
                         AI Tip:
                       </span>
                       <span className="text-slate-400">
@@ -897,14 +711,7 @@ export default function LandingPage() {
           <div className="glass-panel p-6 rounded-xl border border-white/5 hover:border-white/10 transition-colors reveal active delay-100">
             <div className="flex gap-1 mb-4 text-indigo-400">
               {[1, 2, 3, 4, 5].map((s) => (
-                <svg
-                  key={s}
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-3.5 h-3.5 fill-current"
-                  viewBox="0 0 24 24"
-                >
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                </svg>
+                <span key={s} className="iconify" data-icon="lucide:star" data-width="14" />
               ))}
             </div>
             <p className="text-sm text-slate-300 leading-relaxed mb-6">
@@ -912,9 +719,7 @@ export default function LandingPage() {
               surprisingly accurate and have saved us hours of planning time every week.&quot;
             </p>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs">
-                AC
-              </div>
+              <div className="w-8 h-8 rounded-full bg-slate-700" />
               <div>
                 <p className="text-xs font-medium text-white">Alex Chen</p>
                 <p className="text-[10px] text-slate-500">CTO, DevScale</p>
@@ -925,14 +730,7 @@ export default function LandingPage() {
           <div className="glass-panel p-6 rounded-xl border border-white/5 hover:border-white/10 transition-colors reveal active delay-200">
             <div className="flex gap-1 mb-4 text-indigo-400">
               {[1, 2, 3, 4, 5].map((s) => (
-                <svg
-                  key={s}
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-3.5 h-3.5 fill-current"
-                  viewBox="0 0 24 24"
-                >
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                </svg>
+                <span key={s} className="iconify" data-icon="lucide:star" data-width="14" />
               ))}
             </div>
             <p className="text-sm text-slate-300 leading-relaxed mb-6">
@@ -940,9 +738,7 @@ export default function LandingPage() {
               feels like having a project manager who never sleeps.&quot;
             </p>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold text-xs">
-                SM
-              </div>
+              <div className="w-8 h-8 rounded-full bg-slate-700" />
               <div>
                 <p className="text-xs font-medium text-white">Sarah Miller</p>
                 <p className="text-[10px] text-slate-500">Product Lead, Streamline</p>
@@ -953,14 +749,7 @@ export default function LandingPage() {
           <div className="glass-panel p-6 rounded-xl border border-white/5 hover:border-white/10 transition-colors reveal active delay-300">
             <div className="flex gap-1 mb-4 text-indigo-400">
               {[1, 2, 3, 4, 5].map((s) => (
-                <svg
-                  key={s}
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-3.5 h-3.5 fill-current"
-                  viewBox="0 0 24 24"
-                >
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                </svg>
+                <span key={s} className="iconify" data-icon="lucide:star" data-width="14" />
               ))}
             </div>
             <p className="text-sm text-slate-300 leading-relaxed mb-6">
@@ -968,9 +757,7 @@ export default function LandingPage() {
               existing stack while adding actual intelligence.&quot;
             </p>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white font-bold text-xs">
-                JW
-              </div>
+              <div className="w-8 h-8 rounded-full bg-slate-700" />
               <div>
                 <p className="text-xs font-medium text-white">James Wilson</p>
                 <p className="text-[10px] text-slate-500">Founder, NextGen</p>
@@ -998,42 +785,27 @@ export default function LandingPage() {
               <div className="text-3xl font-medium text-white mb-6">$0</div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center gap-2 text-sm text-slate-400">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-3.5 h-3.5 text-slate-600"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>{' '}
+                  <span
+                    className="iconify text-slate-600"
+                    data-icon="lucide:check"
+                    data-width="14"
+                  />{' '}
                   3 Projects
                 </li>
                 <li className="flex items-center gap-2 text-sm text-slate-400">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-3.5 h-3.5 text-slate-600"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>{' '}
+                  <span
+                    className="iconify text-slate-600"
+                    data-icon="lucide:check"
+                    data-width="14"
+                  />{' '}
                   Basic AI suggestions
                 </li>
                 <li className="flex items-center gap-2 text-sm text-slate-400">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-3.5 h-3.5 text-slate-600"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>{' '}
+                  <span
+                    className="iconify text-slate-600"
+                    data-icon="lucide:check"
+                    data-width="14"
+                  />{' '}
                   Community Support
                 </li>
               </ul>
@@ -1057,42 +829,27 @@ export default function LandingPage() {
               </div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center gap-2 text-sm text-slate-300">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-3.5 h-3.5 text-indigo-400"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>{' '}
+                  <span
+                    className="iconify text-indigo-400"
+                    data-icon="lucide:check"
+                    data-width="14"
+                  />{' '}
                   Unlimited Projects
                 </li>
                 <li className="flex items-center gap-2 text-sm text-slate-300">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-3.5 h-3.5 text-indigo-400"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>{' '}
+                  <span
+                    className="iconify text-indigo-400"
+                    data-icon="lucide:check"
+                    data-width="14"
+                  />{' '}
                   Advanced AI Insights
                 </li>
                 <li className="flex items-center gap-2 text-sm text-slate-300">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-3.5 h-3.5 text-indigo-400"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>{' '}
+                  <span
+                    className="iconify text-indigo-400"
+                    data-icon="lucide:check"
+                    data-width="14"
+                  />{' '}
                   Integrations
                 </li>
               </ul>
@@ -1113,42 +870,27 @@ export default function LandingPage() {
               </div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center gap-2 text-sm text-slate-400">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-3.5 h-3.5 text-slate-600"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>{' '}
+                  <span
+                    className="iconify text-slate-600"
+                    data-icon="lucide:check"
+                    data-width="14"
+                  />{' '}
                   SSO &amp; Security
                 </li>
                 <li className="flex items-center gap-2 text-sm text-slate-400">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-3.5 h-3.5 text-slate-600"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>{' '}
+                  <span
+                    className="iconify text-slate-600"
+                    data-icon="lucide:check"
+                    data-width="14"
+                  />{' '}
                   Dedicated Success Manager
                 </li>
                 <li className="flex items-center gap-2 text-sm text-slate-400">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-3.5 h-3.5 text-slate-600"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>{' '}
+                  <span
+                    className="iconify text-slate-600"
+                    data-icon="lucide:check"
+                    data-width="14"
+                  />{' '}
                   Custom AI Models
                 </li>
               </ul>
@@ -1180,17 +922,11 @@ export default function LandingPage() {
             }}
             className="max-w-md mx-auto relative flex items-center"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-4 h-4 absolute left-4 text-slate-500"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <rect width="20" height="16" x="2" y="4" rx="2" />
-              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-            </svg>
+            <span
+              className="iconify absolute left-4 text-slate-500"
+              data-icon="lucide:mail"
+              data-width="16"
+            />
             <input
               type="email"
               value={email}
@@ -1296,46 +1032,16 @@ export default function LandingPage() {
             </p>
             <div className="flex gap-6 mt-4 md:mt-0">
               <a href="#" className="text-slate-500 hover:text-white transition-colors">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 h-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
-                </svg>
+                <span className="iconify" data-icon="lucide:twitter" data-width="16" />
               </a>
               <a
                 href="https://github.com/sathwikgampa/FounderHq"
                 className="text-slate-500 hover:text-white transition-colors"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 h-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-                  <path d="M9 18c-4.51 2-5-2-7-2" />
-                </svg>
+                <span className="iconify" data-icon="lucide:github" data-width="16" />
               </a>
               <a href="#" className="text-slate-500 hover:text-white transition-colors">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 h-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                  <rect width="4" height="12" x="2" y="9" />
-                  <circle cx="4" cy="4" r="2" />
-                </svg>
+                <span className="iconify" data-icon="lucide:linkedin" data-width="16" />
               </a>
             </div>
           </div>
