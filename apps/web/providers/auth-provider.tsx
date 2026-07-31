@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
   onAuthStateChanged,
   User as FirebaseUser,
@@ -10,9 +10,9 @@ import {
   GoogleAuthProvider,
   signOut as firebaseSignOut,
   updateProfile,
-} from "firebase/auth";
-import { auth } from "@/lib/firebase";
-import { UserProfile, AuthState } from "@founderhq/types";
+} from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { UserProfile, AuthState } from '@founderhq/types';
 
 interface AuthContextType extends AuthState {
   loginAsDemo: () => void;
@@ -46,21 +46,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Track demo user in localStorage for persistence across reloads
   useEffect(() => {
-    const savedDemo = localStorage.getItem("founderhq_demo_user");
+    const savedDemo = localStorage.getItem('founderhq_demo_user');
     if (savedDemo) {
       try {
         const demoUser: UserProfile = JSON.parse(savedDemo);
         setState({
           user: demoUser,
-          token: "mock_demo_bearer_token",
+          token: 'mock_demo_bearer_token',
           isAuthenticated: true,
           isLoading: false,
           isDemo: true,
         });
         return;
-      } catch (e) {
-        localStorage.removeItem("founderhq_demo_user");
+      } catch {
+        localStorage.removeItem('founderhq_demo_user');
       }
+    }
+
+    if (!auth) {
+      // Firebase is not configured with a valid API key, default to initial state
+      setState((prev) =>
+        prev.isDemo
+          ? prev
+          : {
+              user: null,
+              token: null,
+              isAuthenticated: false,
+              isLoading: false,
+              isDemo: false,
+            },
+      );
+      return;
     }
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
@@ -68,8 +84,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const token = await firebaseUser.getIdToken();
         const userProfile: UserProfile = {
           id: firebaseUser.uid,
-          email: firebaseUser.email || "",
-          displayName: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "Founder",
+          email: firebaseUser.email || '',
+          displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Founder',
           avatarUrl: firebaseUser.photoURL || undefined,
           isDemo: false,
           createdAt: new Date().toISOString(),
@@ -84,13 +100,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           isDemo: false,
         });
       } else {
-        setState((prev) => (prev.isDemo ? prev : {
-          user: null,
-          token: null,
-          isAuthenticated: false,
-          isLoading: false,
-          isDemo: false,
-        }));
+        setState((prev) =>
+          prev.isDemo
+            ? prev
+            : {
+                user: null,
+                token: null,
+                isAuthenticated: false,
+                isLoading: false,
+                isDemo: false,
+              },
+        );
       }
     });
 
@@ -99,20 +119,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loginAsDemo = () => {
     const demoUser: UserProfile = {
-      id: "usr_founder_demo_001",
-      email: "founder@startup.com",
-      displayName: "Founder Demo",
+      id: 'usr_founder_demo_001',
+      email: 'founder@startup.com',
+      displayName: 'Founder Demo',
       avatarUrl: undefined,
       isDemo: true,
-      defaultWorkspaceId: "ws_demo_001",
+      defaultWorkspaceId: 'ws_demo_001',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
 
-    localStorage.setItem("founderhq_demo_user", JSON.stringify(demoUser));
+    localStorage.setItem('founderhq_demo_user', JSON.stringify(demoUser));
     setState({
       user: demoUser,
-      token: "mock_demo_bearer_token",
+      token: 'mock_demo_bearer_token',
       isAuthenticated: true,
       isLoading: false,
       isDemo: true,
@@ -120,7 +140,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = async () => {
-    localStorage.removeItem("founderhq_demo_user");
+    localStorage.removeItem('founderhq_demo_user');
     setState({
       user: null,
       token: null,
@@ -128,39 +148,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isLoading: false,
       isDemo: false,
     });
-    try {
-      await firebaseSignOut(auth);
-    } catch (e) {
-      // Ignore if unauthenticated
+    if (auth) {
+      try {
+        await firebaseSignOut(auth);
+      } catch {
+        // Ignore if unauthenticated
+      }
     }
   };
 
   const signInWithEmail = async (email: string, pass: string) => {
+    if (!auth) {
+      loginAsDemo();
+      return;
+    }
     try {
       await signInWithEmailAndPassword(auth, email, pass);
-    } catch (e: any) {
-      // If Firebase config is mock or missing, fallback cleanly to Demo mode
+    } catch {
+      // If Firebase auth fails, fallback cleanly to Demo mode
       loginAsDemo();
     }
   };
 
   const signUpWithEmail = async (email: string, pass: string, name: string) => {
+    if (!auth) {
+      loginAsDemo();
+      return;
+    }
     try {
       const creds = await createUserWithEmailAndPassword(auth, email, pass);
       if (creds.user) {
         await updateProfile(creds.user, { displayName: name });
       }
-    } catch (e: any) {
+    } catch {
       // Fallback cleanly to Demo mode
       loginAsDemo();
     }
   };
 
   const signInWithGoogle = async () => {
+    if (!auth) {
+      loginAsDemo();
+      return;
+    }
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
-    } catch (e: any) {
+    } catch {
       loginAsDemo();
     }
   };
