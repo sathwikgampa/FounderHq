@@ -118,7 +118,7 @@ export function MiddleWidgets() {
           ))}
           <div className="pt-2 text-right">
             <Link
-              href="/activity"
+              href={'/activity' as any}
               className="text-xs font-semibold text-[#6C63FF] hover:underline inline-flex items-center gap-1"
             >
               View All <ArrowRight size={12} />
