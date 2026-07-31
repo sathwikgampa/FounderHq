@@ -69,10 +69,14 @@ def analyze_and_route_workflow(prompt: str) -> dict[str, Any]:  # noqa: C901
         ]
     ):
         selected_agents = ["ProductAgent", "GrowthAgent", "FinanceAgent", "LegalAgent"]
+        agent_str = " -> ".join(selected_agents)
         return {
             "selected_agents": selected_agents,
             "workflow_type": "SEQUENTIAL",
             "step_count": len(selected_agents),
+            "routing_rationale": f"Routed {len(selected_agents)} executive sub-agents [{agent_str}] in SEQUENTIAL topology for 0-to-1 Incubator Launch Plan.",
+            "intent_category": "FULL_INCUBATOR_LAUNCH",
+            "confidence_score": 0.99,
         }
 
     # Map prompt intents to sub-agents
@@ -174,10 +178,24 @@ def analyze_and_route_workflow(prompt: str) -> dict[str, Any]:  # noqa: C901
     else:
         workflow_type = "PARALLEL"
 
+    # Determine execution sequence rationale and intent classification
+    agent_str = (
+        " -> ".join(selected_agents)
+        if workflow_type == "SEQUENTIAL"
+        else ", ".join(selected_agents)
+    )
+    rationale = f"Routed {len(selected_agents)} executive sub-agent(s) [{agent_str}] in {workflow_type} topology based on prompt requirements."
+    intent_category = (
+        "FULL_INCUBATOR_LAUNCH" if len(selected_agents) >= 4 else "SPECIALIZED_OPERATIONS"
+    )
+
     return {
         "selected_agents": selected_agents,
         "workflow_type": workflow_type,
         "step_count": len(selected_agents),
+        "routing_rationale": rationale,
+        "intent_category": intent_category,
+        "confidence_score": 0.98,
     }
 
 
@@ -633,6 +651,67 @@ def estimate_cloud_cost(monthly_active_users: int, infrastructure_type: str) -> 
     }
 
 
+def generate_investor_update(
+    monthly_recurring_revenue: float, monthly_burn: float, runway_months: float, key_milestones: str
+) -> dict[str, Any]:
+    """Draft a structured monthly investor update summary with key metrics and runway status.
+
+    Args:
+        monthly_recurring_revenue: Current MRR in USD.
+        monthly_burn: Monthly net cash burn in USD.
+        runway_months: Estimated cash runway in months.
+        key_milestones: Highlight of recent product, sales, or hiring wins.
+    """
+    burn_multiple = (
+        round(monthly_burn / monthly_recurring_revenue, 2)
+        if monthly_recurring_revenue > 0
+        else math.inf
+    )
+    health = "HEALTHY" if runway_months >= 12 and burn_multiple <= 2.5 else "NEEDS_ATTENTION"
+
+    return {
+        "tool": "generate_investor_update",
+        "mrr_usd": monthly_recurring_revenue,
+        "monthly_burn_usd": monthly_burn,
+        "runway_months": runway_months,
+        "burn_multiple": "N/A (Zero Revenue)" if burn_multiple == math.inf else burn_multiple,
+        "key_milestones": key_milestones,
+        "ir_status": health,
+        "investor_summary": (
+            f"Monthly Update: MRR ${monthly_recurring_revenue:,.2f} | Burn ${monthly_burn:,.2f}/mo | "
+            f"Runway {runway_months}m. Key Highlights: {key_milestones}"
+        ),
+    }
+
+
+def calculate_cap_table_dilution(
+    pre_money_valuation: float, investment_amount: float, option_pool_pct: float = 0.10
+) -> dict[str, Any]:
+    """Compute post-money valuation, investor ownership percentage, and founder dilution.
+
+    Args:
+        pre_money_valuation: Agreed pre-money valuation in USD.
+        investment_amount: Target investment round size in USD.
+        option_pool_pct: Unallocated unissued option pool fraction (default 10%).
+    """
+    post_money = pre_money_valuation + investment_amount
+    investor_equity = round((investment_amount / post_money) * 100, 2)
+    founder_equity = round(100.0 - investor_equity - (option_pool_pct * 100), 2)
+
+    return {
+        "tool": "calculate_cap_table_dilution",
+        "pre_money_valuation_usd": pre_money_valuation,
+        "investment_amount_usd": investment_amount,
+        "post_money_valuation_usd": post_money,
+        "investor_ownership_pct": f"{investor_equity}%",
+        "option_pool_pct": f"{int(option_pool_pct * 100)}%",
+        "post_round_founder_equity_pct": f"{founder_equity}%",
+        "approval_status": "HOLD_FOR_HUMAN_APPROVAL",
+        "requires_human_signoff": True,
+        "ir_note": f"Raising ${investment_amount:,.2f} at ${pre_money_valuation:,.2f} pre-money yields a post-money valuation of ${post_money:,.2f}.",
+    }
+
+
 # ==============================================================================
 # SECTION 2 – 8 SPECIALIZED SUB-AGENTS (Model: gemini-2.5-flash)
 # ==============================================================================
@@ -736,12 +815,16 @@ TechArchitectAgent = Agent(
 InvestmentAgent = Agent(
     name="InvestmentAgent",
     model=_resolve_model(_SUB_AGENT_MODEL_ID),
-    description="Head of Investor Relations Sub-Agent. Drafts pitch deck frameworks and cap table summaries.",
+    description="Head of Investor Relations Sub-Agent. Drafts pitch deck frameworks, investor updates, and cap table summaries.",
     instruction=(
         "You are InvestmentAgent — Head of Investor Relations at FounderHQ.\n"
-        "Formulate investor update emails, cap table summaries, and fundraising pitch deck frameworks."
+        "Use `generate_investor_update` to draft monthly updates or `calculate_cap_table_dilution` to model round dilution.\n"
+        "SIMPLE FORMAT LAW: Output MUST use clean markdown headers, bullet points, and callout boxes with NO dense text paragraphs:\n"
+        "* 📊 Post-Money Valuation: $[X]\n"
+        "* 💼 Investor Ownership: [Y]%\n"
+        "* 🛡️ Post-Round Founder Equity: [Z]%"
     ),
-    tools=[],
+    tools=[generate_investor_update, calculate_cap_table_dilution],
 )
 
 

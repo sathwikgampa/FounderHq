@@ -6,6 +6,7 @@ import { StepVision } from '@/components/onboarding/step-vision';
 import { StepDomain } from '@/components/onboarding/step-domain';
 import { AgentInitialization } from '@/components/onboarding/agent-initialization';
 import { AuraBackground } from '@/components/ui/aura-background';
+import { ProtectedRoute } from '@/features/auth/components/protected-route';
 
 type OnboardingStep = 'VISION' | 'DOMAIN' | 'INIT';
 
@@ -30,7 +31,8 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030304] flex items-center justify-center p-6 relative overflow-hidden">
+    <ProtectedRoute>
+      <div className="min-h-screen bg-[#030304] flex items-center justify-center p-6 relative overflow-hidden">
       <AuraBackground />
 
       {/* Dark overlay to make form pop */}
@@ -61,5 +63,6 @@ export default function OnboardingPage() {
         </AnimatePresence>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

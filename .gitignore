@@ -12,6 +12,8 @@ ENV/
 # Next.js build output
 .next/
 out/
+*.tsbuildinfo
+
 
 # Production builds
 build/

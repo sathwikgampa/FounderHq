@@ -1,5 +1,8 @@
-class GrowthAgent:
-    """Growth Agent Placeholder."""
+from __future__ import annotations
 
-    def __init__(self) -> None:
-        self.name = "Growth Agent"
+from apps.api.agents.startup_team.agent import GrowthAgent as ADKGrowthAgent
+from apps.api.agents.startup_team.agent import build_gtm_launch_plan, create_campaign_plan
+
+GrowthAgent = ADKGrowthAgent
+
+__all__ = ["GrowthAgent", "build_gtm_launch_plan", "create_campaign_plan"]

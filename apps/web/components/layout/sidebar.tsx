@@ -44,7 +44,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuth();
-  const [agentsExpanded, setAgentsExpanded] = useState(false);
+  const [agentsExpanded, setAgentsExpanded] = useState(false); // Initially closed unless controlled via effect if needed, but Next router dictates re-renders. Actually, let's keep it structurally separate.
   const [loggingOut, setLoggingOut] = useState(false);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -54,11 +54,13 @@ export function Sidebar() {
     return (
       <Link
         href={item.href}
-        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${isSub ? 'ml-6 text-sm' : ''
-          } ${isActive
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${
+          isSub ? 'ml-6 text-sm' : ''
+        } ${
+          isActive
             ? 'bg-primary/10 text-primary font-medium'
             : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-          }`}
+        }`}
       >
         <Icon
           size={isSub ? 16 : 18}
@@ -109,7 +111,7 @@ export function Sidebar() {
             />
           </button>
 
-          {(agentsExpanded || pathname.startsWith('/agents')) && (
+          {agentsExpanded && (
             <div className="mt-1 space-y-1">
               {agentSubItems.map((item) => (
                 <NavItem key={item.name} item={item} isSub />

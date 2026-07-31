@@ -1,16 +1,8 @@
-from typing import Any
+from __future__ import annotations
 
+from apps.api.agents.startup_team.agent import CEOAgent as ADKCEOAgent
+from apps.api.agents.startup_team.agent import analyze_and_route_workflow
 
-class CEOPlannerAgent:
-    """CEO Planner Google ADK Agent Placeholder."""
+CEOPlannerAgent = ADKCEOAgent
 
-    def __init__(self) -> None:
-        self.name = "CEO Planner Agent"
-
-    async def execute_intent(self, user_command: str) -> dict[str, Any]:
-        """Placeholder intent analysis and execution pipeline."""
-        return {
-            "agent": self.name,
-            "status": "FOUNDATION_READY",
-            "command": user_command,
-        }
+__all__ = ["CEOPlannerAgent", "analyze_and_route_workflow"]
