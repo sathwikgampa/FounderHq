@@ -1,5 +1,6 @@
-from app.main import app
 from fastapi.testclient import TestClient
+
+from app.main import app
 
 client = TestClient(app)
 
@@ -8,7 +9,7 @@ def test_upload_and_delete_document():
     upload_payload = {
         "filename": "q3_financial_model.pdf",
         "category": "financial",
-        "startupId": "startup-001"
+        "startupId": "startup-001",
     }
     res = client.post("/api/v1/documents/upload", json=upload_payload)
     assert res.status_code == 201

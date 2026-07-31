@@ -229,8 +229,6 @@ async def _planner_event_stream(
     session_id: str,
 ) -> AsyncGenerator[dict, None]:
     """Async generator streaming Server-Sent Events (SSE) following the required contract."""
-    from app.ai.approval_store import approval_store
-
     from apps.api.agents.startup_team.agent import (
         analyze_and_route_workflow,
         build_gtm_launch_plan,
@@ -242,6 +240,8 @@ async def _planner_event_stream(
         generate_incorporation_checklist,
         generate_mvp_spec,
     )
+
+    from app.ai.approval_store import approval_store
 
     # 1. event: routing_decision
     route_info = analyze_and_route_workflow(prompt)

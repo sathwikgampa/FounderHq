@@ -9,8 +9,11 @@ from app.schemas.documents import DocumentResponse, DocumentUploadRequest, Docum
 
 _DOCUMENTS_STORE: dict[str, DocumentResponse] = {}
 
+
 class DocumentService:
-    def upload_document(self, payload: DocumentUploadRequest, file_size: int = 1048576) -> DocumentUploadResponse:
+    def upload_document(
+        self, payload: DocumentUploadRequest, file_size: int = 1048576
+    ) -> DocumentUploadResponse:
         doc_id = f"doc-{uuid.uuid4().hex[:8]}"
         storage_path = f"storage/ws-default/{payload.startupId}/documents/{payload.filename}"
         now = datetime.now(UTC).isoformat()

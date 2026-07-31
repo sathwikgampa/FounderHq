@@ -1,8 +1,9 @@
 from typing import Any
 
-from app.core.exceptions import UnauthorizedException
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
+from app.core.exceptions import UnauthorizedException
 
 security_bearer = HTTPBearer(auto_error=False)
 

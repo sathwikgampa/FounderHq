@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException, status
 
+from app.ai.memory.manager import rag_engine
 from app.schemas.documents import (
     DocumentResponse,
     DocumentUploadRequest,
@@ -13,13 +14,16 @@ from app.schemas.documents import (
 )
 from app.schemas.response import APIResponse
 from app.services.document_service import DocumentService
-from app.ai.memory.manager import rag_engine
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
 doc_service = DocumentService()
 
 
-@router.post("/upload", response_model=APIResponse[DocumentUploadResponse], status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/upload",
+    response_model=APIResponse[DocumentUploadResponse],
+    status_code=status.HTTP_201_CREATED,
+)
 async def upload_document_metadata(payload: DocumentUploadRequest):
     """Register uploaded document metadata and trigger vector indexing."""
     result = doc_service.upload_document(payload)

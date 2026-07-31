@@ -1,8 +1,9 @@
 from typing import Any
 
+from fastapi import Depends
+
 from app.core.exceptions import ForbiddenException
 from app.middleware.jwt_auth import jwt_auth
-from fastapi import Depends
 
 
 class RBACMiddleware:

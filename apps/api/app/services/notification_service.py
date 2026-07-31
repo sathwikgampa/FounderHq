@@ -8,6 +8,7 @@ from app.schemas.notifications import NotificationResponse
 
 _NOTIFICATIONS_STORE: dict[str, NotificationResponse] = {}
 
+
 def _seed_notifications():
     if not _NOTIFICATIONS_STORE:
         n1 = NotificationResponse(
@@ -32,12 +33,15 @@ def _seed_notifications():
         _NOTIFICATIONS_STORE[n1.id] = n1
         _NOTIFICATIONS_STORE[n2.id] = n2
 
+
 _seed_notifications()
 
 
 class NotificationService:
     def list_notifications(self, startup_id: str) -> list[NotificationResponse]:
-        return [n for n in _NOTIFICATIONS_STORE.values() if n.startupId in (startup_id, "startup-001")]
+        return [
+            n for n in _NOTIFICATIONS_STORE.values() if n.startupId in (startup_id, "startup-001")
+        ]
 
     def mark_as_read(self, notification_id: str) -> NotificationResponse | None:
         notif = _NOTIFICATIONS_STORE.get(notification_id)

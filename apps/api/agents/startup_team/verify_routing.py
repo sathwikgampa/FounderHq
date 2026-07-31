@@ -20,10 +20,10 @@ if str(ROOT) not in sys.path:
 if str(API_ROOT) not in sys.path:
     sys.path.insert(0, str(API_ROOT))
 
-from fastapi.testclient import TestClient  # noqa: E402
-from main import app  # noqa: E402
-
 from apps.api.agents.startup_team.agent import analyze_and_route_workflow  # noqa: E402
+from fastapi.testclient import TestClient  # noqa: E402
+
+from main import app  # noqa: E402
 
 
 def verify_routing_logic():

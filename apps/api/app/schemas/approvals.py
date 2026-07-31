@@ -12,7 +12,9 @@ class ApprovalResponse(BaseModel):
     id: str
     startupId: str
     executionId: str
-    actionType: str = Field(..., description="Action category (e.g. HIRE_TALENT, SPEND_CAPITAL, CONTRACT_SIGNING)")
+    actionType: str = Field(
+        ..., description="Action category (e.g. HIRE_TALENT, SPEND_CAPITAL, CONTRACT_SIGNING)"
+    )
     title: str
     description: str
     requestedByAgent: str = Field(default="CEO Planner")
@@ -24,4 +26,6 @@ class ApprovalResponse(BaseModel):
 
 
 class ApprovalActionRequest(BaseModel):
-    reason: str | None = Field(default=None, description="Optional founder rationale for approval or rejection")
+    reason: str | None = Field(
+        default=None, description="Optional founder rationale for approval or rejection"
+    )

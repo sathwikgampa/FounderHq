@@ -1,5 +1,6 @@
-from app.main import app
 from fastapi.testclient import TestClient
+
+from app.main import app
 
 client = TestClient(app)
 
@@ -7,7 +8,7 @@ client = TestClient(app)
 def test_execute_planner_command():
     payload = {
         "startupId": "startup-001",
-        "command": "Analyze runway and review hiring proposal for Senior AI Engineer"
+        "command": "Analyze runway and review hiring proposal for Senior AI Engineer",
     }
     response = client.post("/api/v1/planner/execute", json=payload)
     assert response.status_code == 200
@@ -18,10 +19,7 @@ def test_execute_planner_command():
 
 
 def test_get_execution_status():
-    payload = {
-        "startupId": "startup-001",
-        "command": "Calculate financial projections for Q3"
-    }
+    payload = {"startupId": "startup-001", "command": "Calculate financial projections for Q3"}
     exec_res = client.post("/api/v1/planner/execute", json=payload)
     exec_id = exec_res.json()["data"]["executionId"]
 

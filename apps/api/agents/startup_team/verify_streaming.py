@@ -137,8 +137,9 @@ def run_verification():
     print("=" * 65 + "\n")
 
     start_time = time.time()
-    from app.main import app
     from fastapi.testclient import TestClient
+
+    from app.main import app
 
     client = TestClient(app, raise_server_exceptions=False)
     approval_ids = _verify_step1_streaming(client)

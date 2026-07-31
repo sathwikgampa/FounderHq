@@ -9,8 +9,16 @@ from pydantic import BaseModel, Field
 
 
 class PlannerExecuteRequest(BaseModel):
-    startupId: str = Field(..., description="Startup context ID", json_schema_extra={"example": "startup-001"})
-    command: str = Field(..., description="High-level founder command", json_schema_extra={"example": "Analyze runway and prepare hiring plan for 2 senior AI engineers"})
+    startupId: str = Field(
+        ..., description="Startup context ID", json_schema_extra={"example": "startup-001"}
+    )
+    command: str = Field(
+        ...,
+        description="High-level founder command",
+        json_schema_extra={
+            "example": "Analyze runway and prepare hiring plan for 2 senior AI engineers"
+        },
+    )
     workspaceId: str | None = Field(default="ws-default", description="Workspace tenant ID")
 
 
@@ -43,7 +51,10 @@ class PlannerExecutionResponse(BaseModel):
     executionId: str
     startupId: str
     command: str
-    status: str = Field(default="COMPLETED", description="Execution status: IN_PROGRESS, COMPLETED, REQUIRES_APPROVAL, FAILED")
+    status: str = Field(
+        default="COMPLETED",
+        description="Execution status: IN_PROGRESS, COMPLETED, REQUIRES_APPROVAL, FAILED",
+    )
     planSummary: str
     consultedAgents: list[str] = Field(default_factory=list)
     agentSteps: list[AgentStepResult] = Field(default_factory=list)

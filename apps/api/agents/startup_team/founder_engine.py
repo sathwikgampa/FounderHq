@@ -458,7 +458,7 @@ async def main():
         print(f"• 💡 Sales & Growth Projection: {gtm['projected_sales_impact']}")
         print(f"• 👥 Target Audience: {gtm['icp_targets'][0]}")
         print("• ✉️ Cold Outreach Script:")
-        print(f"  \"{gtm['cold_email_template']['body'].splitlines()[0]}\"\n")
+        print(f'  "{gtm["cold_email_template"]["body"].splitlines()[0]}"\n')
         print("💰 MONEY & RUNWAY SUMMARY")
         print(f"• 💰 Cash Runway: {fin['runway_months']} remaining ({fin['health_status']})")
         print(

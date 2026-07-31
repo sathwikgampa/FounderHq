@@ -8,6 +8,7 @@ from app.schemas.approvals import ApprovalResponse
 
 _APPROVALS_STORE: dict[str, ApprovalResponse] = {}
 
+
 def _seed_approvals():
     if not _APPROVALS_STORE:
         appr1 = ApprovalResponse(
@@ -25,12 +26,17 @@ def _seed_approvals():
         )
         _APPROVALS_STORE[appr1.id] = appr1
 
+
 _seed_approvals()
 
 
 class ApprovalService:
-    def list_approvals(self, startup_id: str, status_filter: str | None = None) -> list[ApprovalResponse]:
-        results = [a for a in _APPROVALS_STORE.values() if a.startupId in (startup_id, "startup-001")]
+    def list_approvals(
+        self, startup_id: str, status_filter: str | None = None
+    ) -> list[ApprovalResponse]:
+        results = [
+            a for a in _APPROVALS_STORE.values() if a.startupId in (startup_id, "startup-001")
+        ]
         if status_filter:
             results = [a for a in results if a.status.upper() == status_filter.upper()]
         return results
@@ -38,7 +44,9 @@ class ApprovalService:
     def get_approval(self, approval_id: str) -> ApprovalResponse | None:
         return _APPROVALS_STORE.get(approval_id)
 
-    def approve_action(self, approval_id: str, reason: str | None = None) -> ApprovalResponse | None:
+    def approve_action(
+        self, approval_id: str, reason: str | None = None
+    ) -> ApprovalResponse | None:
         approval = self.get_approval(approval_id)
         if not approval:
             return None

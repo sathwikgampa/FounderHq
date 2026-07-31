@@ -1,5 +1,6 @@
-from app.main import app
 from fastapi.testclient import TestClient
+
+from app.main import app
 
 client = TestClient(app)
 
@@ -21,7 +22,7 @@ def test_create_startup():
         "mrr": 50000.0,
         "burnRate": 20000.0,
         "cashBalance": 400000.0,
-        "teamSize": 8
+        "teamSize": 8,
     }
     response = client.post("/api/v1/startups", json=payload)
     assert response.status_code == 201

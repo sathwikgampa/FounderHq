@@ -100,8 +100,9 @@ def test_deterministic_tools_human_approval_triggers():
 
 def test_agents_info_api_endpoint():
     """Verify GET /api/v1/agents/info returns HTTP 200 OK with complete agent metadata."""
-    from app.main import app
     from fastapi.testclient import TestClient
+
+    from app.main import app
 
     client = TestClient(app)
     response = client.get("/api/v1/agents/info")

@@ -10,6 +10,7 @@ from app.schemas.startups import StartupCreate, StartupResponse, StartupUpdate
 # In-memory store for demonstration & fallback when Firestore is offline
 _STARTUP_STORE: dict[str, StartupResponse] = {}
 
+
 # Seed default initial startup if empty
 def _seed_default_startup() -> StartupResponse:
     default_id = "startup-001"
@@ -32,11 +33,17 @@ def _seed_default_startup() -> StartupResponse:
         _STARTUP_STORE[default_id] = startup
     return _STARTUP_STORE[default_id]
 
+
 _seed_default_startup()
 
 
 class StartupService:
-    def create_startup(self, payload: StartupCreate, workspace_id: str = "ws-default", user_id: str = "user-founder-001") -> StartupResponse:
+    def create_startup(
+        self,
+        payload: StartupCreate,
+        workspace_id: str = "ws-default",
+        user_id: str = "user-founder-001",
+    ) -> StartupResponse:
         startup_id = f"startup-{uuid.uuid4().hex[:8]}"
         now = datetime.now(UTC).isoformat()
 
@@ -90,4 +97,6 @@ class StartupService:
         return updated_startup
 
     def list_startups(self, workspace_id: str = "ws-default") -> list[StartupResponse]:
-        return [s for s in _STARTUP_STORE.values() if s.workspaceId == workspace_id] or [_seed_default_startup()]
+        return [s for s in _STARTUP_STORE.values() if s.workspaceId == workspace_id] or [
+            _seed_default_startup()
+        ]

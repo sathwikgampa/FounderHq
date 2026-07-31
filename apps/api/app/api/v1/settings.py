@@ -11,6 +11,7 @@ router = APIRouter(prefix="/settings", tags=["Settings"])
 
 _SETTINGS_STORE: dict[str, SettingsResponse] = {}
 
+
 def _get_settings() -> SettingsResponse:
     if "default" not in _SETTINGS_STORE:
         _SETTINGS_STORE["default"] = SettingsResponse()
