@@ -19,19 +19,19 @@ import {
   Loader2,
   TrendingUp,
   Handshake,
-  Grip,
 } from 'lucide-react';
 import { useAuth } from '@/providers/auth-provider';
 
 const mainNavItems = [{ name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard }];
 
 const agentSubItems = [
-  { name: 'Finance', href: '/agents/finance', icon: CircleDollarSign },
-  { name: 'HR', href: '/agents/hr', icon: Users },
+  { name: 'CEO', href: '/agents/ceo', icon: Bot },
+  { name: 'Product', href: '/agents/product', icon: LayoutDashboard },
   { name: 'Growth', href: '/agents/growth', icon: TrendingUp },
+  { name: 'Finance', href: '/agents/finance', icon: CircleDollarSign },
   { name: 'Legal', href: '/agents/legal', icon: Scale },
   { name: 'Sales', href: '/agents/sales', icon: Handshake },
-  { name: 'Other', href: '/agents/other', icon: Grip },
+  { name: 'HR', href: '/agents/hr', icon: Users },
 ];
 
 const secondaryNavItems = [
@@ -44,7 +44,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuth();
-  const [agentsExpanded, setAgentsExpanded] = useState(false); // Initially closed unless controlled via effect if needed, but Next router dictates re-renders. Actually, let's keep it structurally separate.
+  const [agentsExpanded, setAgentsExpanded] = useState(pathname.startsWith('/agents'));
   const [loggingOut, setLoggingOut] = useState(false);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

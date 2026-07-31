@@ -96,3 +96,27 @@ def test_deterministic_tools_human_approval_triggers():
 
     deal_enterprise = evaluate_lead_and_pricing(15000.0, 60)
     assert deal_enterprise["requires_human_signoff"] is True
+
+
+def test_agents_info_api_endpoint():
+    """Verify GET /api/v1/agents/info returns HTTP 200 OK with complete agent metadata."""
+    from app.main import app
+    from fastapi.testclient import TestClient
+
+    client = TestClient(app)
+    response = client.get("/api/v1/agents/info")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "success"
+    assert "ceo_agent" in data["agents"]
+    assert "product_agent" in data["agents"]
+    assert "growth_agent" in data["agents"]
+    assert "finance_agent" in data["agents"]
+    assert "legal_agent" in data["agents"]
+
+    # Test single agent slug lookup
+    single_res = client.get("/api/v1/agents/finance")
+    assert single_res.status_code == 200
+    single_data = single_res.json()
+    assert single_data["title"] == "Finance Agent (CFO)"
+    assert single_data["model"] == "gemini-2.5-flash"
