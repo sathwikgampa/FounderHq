@@ -82,7 +82,7 @@ export function AnalyticsCharts() {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: '#718096', fontSize: 13, fontWeight: 500 }}
-                tickFormatter={(value: number) => `$${value / 1000}k`}
+                tickFormatter={(value) => `$${value / 1000}k`}
               />
               <Tooltip
                 contentStyle={{

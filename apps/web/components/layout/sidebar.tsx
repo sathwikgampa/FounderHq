@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   Bot,
@@ -15,7 +15,6 @@ import {
   Briefcase,
   User,
   ChevronRight,
-  ChevronDown,
 } from 'lucide-react';
 
 const mainNavItems = [{ name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard }];
@@ -35,6 +34,7 @@ const secondaryNavItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [agentsExpanded, setAgentsExpanded] = useState(false);
 
   const NavItem = ({ item, isSub = false }: { item: any; isSub?: boolean }) => {
@@ -78,23 +78,33 @@ export function Sidebar() {
           <NavItem key={item.name} item={item} />
         ))}
 
-        <div>
-          <button
-            onClick={() => setAgentsExpanded(!agentsExpanded)}
-            className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 text-muted-foreground hover:bg-muted hover:text-foreground"
+        <div className="mb-1">
+          <div
+            onClick={() => router.push('/agents')}
+            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 cursor-pointer group ${pathname.startsWith('/agents') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
           >
             <div className="flex items-center gap-3">
-              <Bot size={18} className="text-muted-foreground" />
+              <Bot
+                size={18}
+                className={`transition-colors ${pathname.startsWith('/agents') ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`}
+              />
               <span>Agents</span>
             </div>
-            {agentsExpanded ? (
-              <ChevronDown size={16} className="text-muted-foreground" />
-            ) : (
-              <ChevronRight size={16} className="text-muted-foreground" />
-            )}
-          </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setAgentsExpanded(!agentsExpanded);
+              }}
+              className="p-1 -mr-1 rounded hover:bg-background/50 transition-colors"
+            >
+              <ChevronRight
+                size={16}
+                className={`transition-transform duration-200 ${agentsExpanded || pathname.startsWith('/agents') ? 'rotate-90' : ''} ${pathname.startsWith('/agents') ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`}
+              />
+            </button>
+          </div>
 
-          {agentsExpanded && (
+          {(agentsExpanded || pathname.startsWith('/agents')) && (
             <div className="mt-1 space-y-1">
               {agentSubItems.map((item) => (
                 <NavItem key={item.name} item={item} isSub />

@@ -20,8 +20,7 @@ type Department = {
   color: string;
   bg: string;
   span: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  href?: any;
+  href?: '/marketing';
 };
 
 export function DepartmentGrid() {
