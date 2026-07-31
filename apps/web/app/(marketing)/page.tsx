@@ -104,26 +104,10 @@ export default function LandingPage() {
     });
   }, []);
 
-  // IntersectionObserver for scroll animations
+  // Ensure all animations are fully shown immediately
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('animate');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: '0px 0px -5% 0px' },
-    );
-
     const elements = document.querySelectorAll('.animate-on-scroll');
-    elements.forEach((el) => observer.observe(el));
-
-    return () => {
-      elements.forEach((el) => observer.unobserve(el));
-    };
+    elements.forEach((el) => el.classList.add('animate'));
   }, []);
 
   // Load UnicornStudio script dynamically
@@ -198,7 +182,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* STICKY GLASS NAVIGATION */}
+      {/* SINGLE STICKY NAVIGATION HEADER */}
       <header className="sticky top-0 z-50 w-full bg-neutral-950/80 backdrop-blur-xl border-b border-white/10 transition-all duration-300">
         <nav className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           {/* Logo */}
@@ -215,9 +199,6 @@ export default function LandingPage() {
             </div>
             <span className="text-xl font-bold tracking-tight text-white flex items-center gap-1.5">
               Founder<span className="text-blue-400">HQ</span>
-              <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">
-                v2.0
-              </span>
             </span>
           </Link>
 
@@ -229,9 +210,6 @@ export default function LandingPage() {
             <a href="#c-suite" className="hover:text-white transition-colors">
               AI C-Suite
             </a>
-            <a href="#governance" className="hover:text-white transition-colors">
-              Governance & Memory
-            </a>
             <a href="#testimonials" className="hover:text-white transition-colors">
               Founders
             </a>
@@ -240,7 +218,7 @@ export default function LandingPage() {
             </a>
           </div>
 
-          {/* Right Status & Actions */}
+          {/* Right Actions */}
           <div className="flex items-center space-x-4">
             <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-mono text-emerald-400">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
@@ -273,20 +251,7 @@ export default function LandingPage() {
 
       {/* HERO SECTION */}
       <main className="relative z-10">
-        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10 pb-20 md:pb-28 lg:pt-20">
-          {/* Pill Badge */}
-          <div className="mx-auto w-fit mb-6 [animation:fadeSlideIn_0.8s_ease-out_0.1s_both] animate-on-scroll animate">
-            <div
-              className="inline-flex items-center gap-2 rounded-full border-gradient bg-white/5 px-4 py-2 text-xs text-neutral-300 backdrop-blur-xl"
-              style={{ borderRadius: '9999px' }}
-            >
-              <span className="inline-flex items-center justify-center rounded-full bg-blue-400/20 text-blue-300 px-2.5 py-0.5 font-medium font-mono">
-                FounderHQ v2.0
-              </span>
-              <span className="font-medium">Autonomous Executive Suite for Startups</span>
-            </div>
-          </div>
-
+        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 pb-20 md:pb-28 lg:pt-20">
           {/* Headline & Subheadline */}
           <div className="[animation:fadeSlideIn_0.8s_ease-out_0.2s_both] animate-on-scroll text-center animate">
             <h1 className="mx-auto max-w-5xl text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tighter text-white leading-[1.08]">
@@ -340,7 +305,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* BENTO GRID (12 COLUMNS, FIXED H-[800PX]) */}
+          {/* BENTO GRID (12 COLUMNS, PROPERLY ALIGNED PICTURES) */}
           <div
             id="platform"
             className="grid grid-cols-1 auto-rows-[200px] md:mt-16 md:grid-cols-6 md:gap-6 lg:grid-cols-12 lg:mt-24 overflow-hidden h-[800px] mt-16 gap-4"
@@ -350,47 +315,51 @@ export default function LandingPage() {
                 'linear-gradient(180deg, transparent, black 0%, black 65%, transparent)',
             }}
           >
-            {/* CARD 1: FounderHQ Executive Team Image Card */}
+            {/* CARD 1: Executive C-Suite Team Image Card */}
             <div
-              className="relative overflow-hidden rounded-3xl border-gradient md:col-span-3 lg:col-span-6 md:row-span-2 [animation:fadeSlideIn_0.8s_ease-out_0.3s_both] animate-on-scroll animate"
+              className="relative overflow-hidden rounded-3xl border-gradient md:col-span-3 lg:col-span-6 md:row-span-2 [animation:fadeSlideIn_0.8s_ease-out_0.3s_both] animate-on-scroll animate flex flex-col justify-between"
               style={{
                 background:
                   'linear-gradient(225deg,rgba(255,255,255,0.0) 0%,rgba(255,255,255,0.05) 50%,rgba(255,255,255,0.0) 100%)',
                 borderRadius: '24px',
               }}
             >
-              <img
-                className="h-full w-full object-cover opacity-90"
-                src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/357cb3d1-9f65-4810-884b-f0072a65193d_1600w.webp"
-                alt="FounderHQ Executive C-Suite AI"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-neutral-950/20 to-transparent" />
-              <div className="absolute left-4 top-4">
+              <div className="absolute inset-0 z-0">
+                <img
+                  className="h-full w-full object-cover object-center opacity-85"
+                  src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/357cb3d1-9f65-4810-884b-f0072a65193d_1600w.webp"
+                  alt="FounderHQ Executive C-Suite AI"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/30 to-transparent" />
+              </div>
+
+              <div className="relative z-10 p-6 flex justify-between items-start">
                 <span
-                  className="inline-flex items-center gap-1.5 text-[11px] border-gradient text-slate-200 bg-white/10 rounded-full px-3 py-1 backdrop-blur-xl font-mono font-medium"
+                  className="inline-flex items-center gap-1.5 text-[11px] border-gradient text-slate-200 bg-black/60 rounded-full px-3 py-1 backdrop-blur-xl font-mono font-medium"
                   style={{ borderRadius: '9999px' }}
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  CEO Planner & C-Suite Sync Active
+                  CEO Planner & C-Suite Sync
                 </span>
               </div>
-              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+
+              <div className="relative z-10 p-6 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full ring-2 ring-blue-400 overflow-hidden">
+                  <div className="h-9 w-9 rounded-full ring-2 ring-blue-400 overflow-hidden shadow-md">
                     <img
                       className="h-full w-full object-cover"
                       src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/61cab6ed-972d-4d76-8094-1a3b9bbab509_100w.webp"
                       alt="CFO Agent"
                     />
                   </div>
-                  <div className="h-8 w-8 rounded-full ring-2 ring-purple-400 overflow-hidden -ml-2">
+                  <div className="h-9 w-9 rounded-full ring-2 ring-purple-400 overflow-hidden -ml-3 shadow-md">
                     <img
                       className="h-full w-full object-cover"
                       src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/2f999a94-4340-424d-b6bd-1e2df830c25a_100w.webp"
                       alt="VP Growth Agent"
                     />
                   </div>
-                  <div className="h-8 w-8 rounded-full ring-2 ring-emerald-400 overflow-hidden -ml-2">
+                  <div className="h-9 w-9 rounded-full ring-2 ring-emerald-400 overflow-hidden -ml-3 shadow-md">
                     <img
                       className="w-full h-full object-cover"
                       src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/08b00610-8646-44ce-a131-48226b9e2898_100w.webp"
@@ -398,8 +367,8 @@ export default function LandingPage() {
                     />
                   </div>
                 </div>
-                <span className="text-xs text-neutral-200 font-medium font-mono">
-                  Autonomous Goal Resolution: 99.4%
+                <span className="text-xs text-neutral-200 font-medium font-mono bg-black/60 px-3 py-1 rounded-full backdrop-blur-xl border border-white/10">
+                  Goal Resolution: 99.4%
                 </span>
               </div>
             </div>
@@ -519,7 +488,7 @@ await planner.orchestrateGoal({
               </div>
             </div>
 
-            {/* CARD 5: Global Deployment Mesh Card */}
+            {/* CARD 5: Global Deployment Mesh Card (PROPERLY ALIGNED PICTURE) */}
             <div
               className="relative overflow-hidden rounded-3xl border-gradient md:col-span-3 lg:col-span-3 md:row-span-2 [animation:fadeSlideIn_0.8s_ease-out_0.7s_both] animate-on-scroll animate flex flex-col justify-between"
               style={{
@@ -528,34 +497,34 @@ await planner.orchestrateGoal({
                 borderRadius: '24px',
               }}
             >
-              <div className="p-6">
+              <div className="p-6 space-y-2 relative z-10">
                 <p className="text-3xl font-extrabold tracking-tighter font-mono">35+</p>
-                <p className="mt-1 text-xs text-neutral-300">Global Startup Hubs</p>
-                <div className="mt-3 flex flex-wrap gap-1.5">
+                <p className="text-xs text-neutral-300">Global Startup Hubs</p>
+                <div className="flex flex-wrap gap-1.5 pt-1">
                   <span
-                    className="inline-flex items-center rounded-full bg-blue-400/15 text-blue-300 px-2.5 py-0.5 text-[11px] font-medium border-gradient"
+                    className="inline-flex items-center rounded-full bg-blue-400/15 text-blue-300 px-2.5 py-0.5 text-[11px] font-medium border-gradient backdrop-blur-xl"
                     style={{ borderRadius: '9999px' }}
                   >
                     San Francisco
                   </span>
                   <span
-                    className="inline-flex items-center rounded-full bg-blue-400/15 text-blue-300 px-2.5 py-0.5 text-[11px] font-medium border-gradient"
+                    className="inline-flex items-center rounded-full bg-blue-400/15 text-blue-300 px-2.5 py-0.5 text-[11px] font-medium border-gradient backdrop-blur-xl"
                     style={{ borderRadius: '9999px' }}
                   >
                     London
                   </span>
                   <span
-                    className="inline-flex items-center rounded-full bg-blue-400/15 text-blue-300 px-2.5 py-0.5 text-[11px] font-medium border-gradient"
+                    className="inline-flex items-center rounded-full bg-blue-400/15 text-blue-300 px-2.5 py-0.5 text-[11px] font-medium border-gradient backdrop-blur-xl"
                     style={{ borderRadius: '9999px' }}
                   >
                     Singapore
                   </span>
                 </div>
               </div>
-              <div className="px-6 pb-6">
-                <div className="overflow-hidden rounded-2xl border-gradient">
+              <div className="px-6 pb-6 relative z-10">
+                <div className="overflow-hidden rounded-2xl border border-white/10 shadow-lg">
                   <img
-                    className="h-36 w-full object-cover"
+                    className="h-36 w-full object-cover object-center"
                     src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/d25a1767-0ea8-4aac-b981-6afd67dc79a6_800w.webp"
                     alt="Globe Mesh"
                   />
@@ -1044,7 +1013,7 @@ class FinanceAgent:
           </div>
         </section>
 
-        {/* FOOTER */}
+        {/* SINGLE FOOTER */}
         <footer className="border-t border-white/10 bg-neutral-950 py-16 px-6 relative z-10 text-neutral-400 text-xs">
           <div className="max-w-7xl mx-auto grid gap-10 md:grid-cols-4 pb-12 border-b border-white/10">
             {/* Brand */}
@@ -1084,8 +1053,8 @@ class FinanceAgent:
                   </a>
                 </li>
                 <li>
-                  <a href="#governance" className="hover:text-white transition-colors">
-                    Human Risk Scoring
+                  <a href="#testimonials" className="hover:text-white transition-colors">
+                    Founder Stories
                   </a>
                 </li>
                 <li>
@@ -1109,7 +1078,7 @@ class FinanceAgent:
                 </li>
                 <li>
                   <a href="#c-suite" className="hover:text-white transition-colors">
-                    Talent & Hiring
+                    Talent & Sourcing
                   </a>
                 </li>
                 <li>
