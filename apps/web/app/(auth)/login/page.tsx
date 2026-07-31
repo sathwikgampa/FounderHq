@@ -91,8 +91,11 @@ export default function AuthPage() {
 
   const strength = getPasswordStrength(password);
 
-  // Check query params for demo trigger
+  // Check query params for tab or demo trigger
   useEffect(() => {
+    if (searchParams?.get('tab') === 'signup') {
+      setTab('signup');
+    }
     if (searchParams?.get('mode') === 'demo') {
       loginAsDemo();
       toast.success('Welcome to Demo Mode! Explore FounderHQ.', { icon: '✨' });
