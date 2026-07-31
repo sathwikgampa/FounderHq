@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, ArrowUpRight, TrendingDown, Clock, CircleDollarSign, Flame, TrendingUp } from 'lucide-react';
+import { ChevronDown, ArrowUpRight, TrendingDown } from 'lucide-react';
 import { useAuth } from '@/providers/auth-provider';
 
 export function HeroMissionControl() {
@@ -37,7 +37,14 @@ export function HeroMissionControl() {
           >
             <div className="relative w-9 h-9 flex items-center justify-center shrink-0">
               <svg className="w-9 h-9 transform -rotate-90">
-                <circle cx="18" cy="18" r="14" stroke="#ECECEC" strokeWidth="3" fill="transparent" />
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="14"
+                  stroke="#ECECEC"
+                  strokeWidth="3"
+                  fill="transparent"
+                />
                 <circle
                   cx="18"
                   cy="18"
@@ -55,7 +62,11 @@ export function HeroMissionControl() {
 
             <div>
               <span className="text-xs font-bold text-[#111827] flex items-center gap-1">
-                Healthy <ChevronDown size={12} className={`text-[#6B7280] transition-transform ${healthExpanded ? 'rotate-180' : ''}`} />
+                Healthy{' '}
+                <ChevronDown
+                  size={12}
+                  className={`text-[#6B7280] transition-transform ${healthExpanded ? 'rotate-180' : ''}`}
+                />
               </span>
               <span className="text-[10px] text-[#16A34A] font-medium flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] animate-pulse" />
@@ -99,13 +110,20 @@ export function HeroMissionControl() {
         {/* Card 1: Revenue */}
         <div className="p-4 rounded-[20px] bg-white border border-[#ECECEC] shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-1">
           <div className="text-xs font-semibold text-[#6B7280]">Revenue</div>
-          <div className="text-[40px] font-extrabold text-[#111827] tracking-tight leading-none">$28,450</div>
+          <div className="text-[40px] font-extrabold text-[#111827] tracking-tight leading-none">
+            $28,450
+          </div>
           <div className="flex items-center justify-between text-xs pt-1">
             <span className="text-[#16A34A] font-semibold flex items-center gap-0.5">
               <ArrowUpRight size={12} /> +18%
             </span>
             <svg className="w-14 h-4 text-[#6C63FF]" viewBox="0 0 100 30" fill="none">
-              <path d="M0 25 C 20 20, 40 10, 60 15 C 80 5, 90 2, 100 0" stroke="currentColor" strokeWidth="2" fill="none" />
+              <path
+                d="M0 25 C 20 20, 40 10, 60 15 C 80 5, 90 2, 100 0"
+                stroke="currentColor"
+                strokeWidth="2"
+                fill="none"
+              />
             </svg>
           </div>
         </div>
@@ -113,13 +131,20 @@ export function HeroMissionControl() {
         {/* Card 2: Runway */}
         <div className="p-4 rounded-[20px] bg-white border border-[#ECECEC] shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-1">
           <div className="text-xs font-semibold text-[#6B7280]">Runway</div>
-          <div className="text-[40px] font-extrabold text-[#111827] tracking-tight leading-none">16 Mo</div>
+          <div className="text-[40px] font-extrabold text-[#111827] tracking-tight leading-none">
+            16 Mo
+          </div>
           <div className="flex items-center justify-between text-xs pt-1">
             <span className="text-[#16A34A] font-semibold flex items-center gap-0.5">
               <ArrowUpRight size={12} /> +2 mo
             </span>
             <svg className="w-14 h-4 text-[#16A34A]" viewBox="0 0 100 30" fill="none">
-              <path d="M0 28 C 30 25, 50 15, 70 18 C 90 8, 95 5, 100 0" stroke="currentColor" strokeWidth="2" fill="none" />
+              <path
+                d="M0 28 C 30 25, 50 15, 70 18 C 90 8, 95 5, 100 0"
+                stroke="currentColor"
+                strokeWidth="2"
+                fill="none"
+              />
             </svg>
           </div>
         </div>
@@ -127,13 +152,20 @@ export function HeroMissionControl() {
         {/* Card 3: Burn */}
         <div className="p-4 rounded-[20px] bg-white border border-[#ECECEC] shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-1">
           <div className="text-xs font-semibold text-[#6B7280]">Burn</div>
-          <div className="text-[40px] font-extrabold text-[#111827] tracking-tight leading-none">-$8.1k</div>
+          <div className="text-[40px] font-extrabold text-[#111827] tracking-tight leading-none">
+            -$8.1k
+          </div>
           <div className="flex items-center justify-between text-xs pt-1">
             <span className="text-amber-600 font-semibold flex items-center gap-0.5">
               <TrendingDown size={12} /> -12%
             </span>
             <svg className="w-14 h-4 text-amber-500" viewBox="0 0 100 30" fill="none">
-              <path d="M0 10 C 20 15, 40 25, 60 20 C 80 28, 90 25, 100 30" stroke="currentColor" strokeWidth="2" fill="none" />
+              <path
+                d="M0 10 C 20 15, 40 25, 60 20 C 80 28, 90 25, 100 30"
+                stroke="currentColor"
+                strokeWidth="2"
+                fill="none"
+              />
             </svg>
           </div>
         </div>
@@ -141,13 +173,20 @@ export function HeroMissionControl() {
         {/* Card 4: Growth */}
         <div className="p-4 rounded-[20px] bg-white border border-[#ECECEC] shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-1">
           <div className="text-xs font-semibold text-[#6B7280]">Growth</div>
-          <div className="text-[40px] font-extrabold text-[#111827] tracking-tight leading-none">+24%</div>
+          <div className="text-[40px] font-extrabold text-[#111827] tracking-tight leading-none">
+            +24%
+          </div>
           <div className="flex items-center justify-between text-xs pt-1">
             <span className="text-blue-600 font-semibold flex items-center gap-0.5">
               <ArrowUpRight size={12} /> +4%
             </span>
             <svg className="w-14 h-4 text-blue-500" viewBox="0 0 100 30" fill="none">
-              <path d="M0 20 C 25 18, 45 10, 65 12 C 85 4, 95 2, 100 0" stroke="currentColor" strokeWidth="2" fill="none" />
+              <path
+                d="M0 20 C 25 18, 45 10, 65 12 C 85 4, 95 2, 100 0"
+                stroke="currentColor"
+                strokeWidth="2"
+                fill="none"
+              />
             </svg>
           </div>
         </div>

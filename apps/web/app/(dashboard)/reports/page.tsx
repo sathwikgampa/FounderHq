@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { FileBarChart, TrendingUp, ArrowUpRight, Download, Sparkles } from 'lucide-react';
+import { FileBarChart, ArrowUpRight, Download } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function ReportsPage() {

@@ -1,7 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import { CircleDollarSign, TrendingDown, Clock, ArrowUpRight, Sparkles, PieChart as PieIcon, Send, AlertCircle } from 'lucide-react';
+import {
+  CircleDollarSign,
+  TrendingDown,
+  Clock,
+  ArrowUpRight,
+  Sparkles,
+  PieChart as PieIcon,
+  Send,
+} from 'lucide-react';
 import { GlowCard } from '@/components/ui/glow-card';
 import { toast } from 'sonner';
 
@@ -29,7 +37,9 @@ export default function FinancePage() {
             Virtual CFO Agent Active
           </div>
           <h1 className="text-3xl font-bold text-white tracking-tight">Finance & Runway</h1>
-          <p className="text-slate-400 text-sm mt-1">Real-time burn rate, cash flow projection, and AI-driven runway optimization.</p>
+          <p className="text-slate-400 text-sm mt-1">
+            Real-time burn rate, cash flow projection, and AI-driven runway optimization.
+          </p>
         </div>
 
         <button
@@ -45,37 +55,54 @@ export default function FinancePage() {
         <GlowCard glowColor="rgba(16, 185, 129, 0.15)">
           <div className="flex items-center justify-between text-slate-400 text-xs font-medium mb-3">
             <span>Total Cash Balance</span>
-            <span className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400"><CircleDollarSign size={16} /></span>
+            <span className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400">
+              <CircleDollarSign size={16} />
+            </span>
           </div>
           <div className="text-3xl font-extrabold text-white tracking-tight">$420,000</div>
-          <div className="mt-3 flex items-center gap-2 text-xs text-emerald-400"><ArrowUpRight size={14} /><span>+$35k from Q2 seed grant</span></div>
+          <div className="mt-3 flex items-center gap-2 text-xs text-emerald-400">
+            <ArrowUpRight size={14} />
+            <span>+$35k from Q2 seed grant</span>
+          </div>
         </GlowCard>
 
         <GlowCard glowColor="rgba(239, 68, 68, 0.15)">
           <div className="flex items-center justify-between text-slate-400 text-xs font-medium mb-3">
             <span>Monthly Net Burn</span>
-            <span className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400"><TrendingDown size={16} /></span>
+            <span className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400">
+              <TrendingDown size={16} />
+            </span>
           </div>
           <div className="text-3xl font-extrabold text-white tracking-tight">$28,500</div>
-          <div className="mt-3 flex items-center gap-2 text-xs text-slate-400"><span>Payroll: $18k · Server: $6.5k</span></div>
+          <div className="mt-3 flex items-center gap-2 text-xs text-slate-400">
+            <span>Payroll: $18k · Server: $6.5k</span>
+          </div>
         </GlowCard>
 
         <GlowCard glowColor="rgba(99, 102, 241, 0.15)">
           <div className="flex items-center justify-between text-slate-400 text-xs font-medium mb-3">
             <span>Estimated Runway</span>
-            <span className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400"><Clock size={16} /></span>
+            <span className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400">
+              <Clock size={16} />
+            </span>
           </div>
           <div className="text-3xl font-extrabold text-white tracking-tight">14.7 Mo</div>
-          <div className="mt-3 flex items-center gap-2 text-xs text-indigo-300"><span>Safe zone (&gt; 12 months)</span></div>
+          <div className="mt-3 flex items-center gap-2 text-xs text-indigo-300">
+            <span>Safe zone (&gt; 12 months)</span>
+          </div>
         </GlowCard>
 
         <GlowCard glowColor="rgba(168, 85, 247, 0.15)">
           <div className="flex items-center justify-between text-slate-400 text-xs font-medium mb-3">
             <span>MRR Growth</span>
-            <span className="p-1.5 rounded-lg bg-purple-500/10 text-purple-400"><PieIcon size={16} /></span>
+            <span className="p-1.5 rounded-lg bg-purple-500/10 text-purple-400">
+              <PieIcon size={16} />
+            </span>
           </div>
           <div className="text-3xl font-extrabold text-white tracking-tight">$14,200</div>
-          <div className="mt-3 flex items-center gap-2 text-xs text-purple-300"><span>+18.4% vs last month</span></div>
+          <div className="mt-3 flex items-center gap-2 text-xs text-purple-300">
+            <span>+18.4% vs last month</span>
+          </div>
         </GlowCard>
       </div>
 
@@ -85,15 +112,22 @@ export default function FinancePage() {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-base font-bold text-white">Cash Flow & Burn Forecast</h3>
-                <p className="text-xs text-slate-400 mt-0.5">12-month projections calculated by Finance Agent</p>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  12-month projections calculated by Finance Agent
+                </p>
               </div>
-              <span className="text-xs px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300">Confidence: 94%</span>
+              <span className="text-xs px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300">
+                Confidence: 94%
+              </span>
             </div>
 
             <div className="h-48 flex items-end gap-3 pt-6 border-b border-white/5 pb-4">
               {[65, 70, 60, 80, 85, 75, 90, 95, 88, 100, 110, 120].map((val, idx) => (
                 <div key={idx} className="flex-1 flex flex-col items-center gap-2 group relative">
-                  <div className="w-full bg-gradient-to-t from-indigo-600/40 to-indigo-400 rounded-t-md transition-all duration-300 group-hover:from-indigo-500 group-hover:to-purple-400" style={{ height: `${val}%` }} />
+                  <div
+                    className="w-full bg-gradient-to-t from-indigo-600/40 to-indigo-400 rounded-t-md transition-all duration-300 group-hover:from-indigo-500 group-hover:to-purple-400"
+                    style={{ height: `${val}%` }}
+                  />
                   <span className="text-[10px] text-slate-500">M{idx + 1}</span>
                 </div>
               ))}
@@ -119,7 +153,14 @@ export default function FinancePage() {
                 disabled={isAnalyzing || !prompt.trim()}
                 className="w-full flex items-center justify-center gap-2 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs rounded-xl transition-all disabled:opacity-50"
               >
-                {isAnalyzing ? <span>Analyzing Financial Model...</span> : <><span>Query CFO Agent</span><Send size={14} /></>}
+                {isAnalyzing ? (
+                  <span>Analyzing Financial Model...</span>
+                ) : (
+                  <>
+                    <span>Query CFO Agent</span>
+                    <Send size={14} />
+                  </>
+                )}
               </button>
             </form>
           </GlowCard>

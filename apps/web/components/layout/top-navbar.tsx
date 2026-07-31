@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, Bell, Command, Sparkles } from 'lucide-react';
+import { Search, Bell, Sparkles } from 'lucide-react';
 import { useAuth } from '@/providers/auth-provider';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -24,7 +24,12 @@ export function TopNavbar() {
   }, []);
 
   const userInitials = user?.displayName
-    ? user.displayName.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase()
+    ? user.displayName
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .substring(0, 2)
+        .toUpperCase()
     : 'GS';
 
   return (
@@ -60,7 +65,10 @@ export function TopNavbar() {
       {/* Command Palette Modal */}
       {commandPaletteOpen && (
         <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 p-4">
-          <div onClick={() => setCommandPaletteOpen(false)} className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
+          <div
+            onClick={() => setCommandPaletteOpen(false)}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+          />
           <div className="relative w-full max-w-xl bg-white border border-[#ECECEC] rounded-2xl shadow-2xl p-4 z-10 space-y-4">
             <div className="flex items-center gap-3 px-3 py-2 border-b border-[#ECECEC]">
               <Search size={18} className="text-[#6C63FF]" />
@@ -75,7 +83,9 @@ export function TopNavbar() {
               <kbd className="text-[10px] text-[#6B7280] uppercase">ESC to close</kbd>
             </div>
             <div className="space-y-2 text-xs">
-              <div className="text-[10px] uppercase font-semibold text-[#6B7280] px-3">Quick Navigation</div>
+              <div className="text-[10px] uppercase font-semibold text-[#6B7280] px-3">
+                Quick Navigation
+              </div>
               {[
                 { name: 'Go to Financial Forecasts', action: () => router.push('/finance') },
                 { name: 'View Active Candidates', action: () => router.push('/hiring') },

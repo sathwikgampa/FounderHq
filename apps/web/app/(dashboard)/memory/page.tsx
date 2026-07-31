@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Database, Sparkles, RefreshCw } from 'lucide-react';
+import { Database, RefreshCw } from 'lucide-react';
 import { GlowCard } from '@/components/ui/glow-card';
 import { toast } from 'sonner';
 
@@ -14,8 +14,13 @@ export default function MemoryPage() {
             <Database size={14} />
             Startup Memory Active
           </div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Startup Vector Knowledge Base</h1>
-          <p className="text-slate-400 text-sm mt-1">Context stored by CEO Planner across all past decisions, pitch decks, and financial models.</p>
+          <h1 className="text-3xl font-bold text-white tracking-tight">
+            Startup Vector Knowledge Base
+          </h1>
+          <p className="text-slate-400 text-sm mt-1">
+            Context stored by CEO Planner across all past decisions, pitch decks, and financial
+            models.
+          </p>
         </div>
 
         <button
@@ -30,12 +35,16 @@ export default function MemoryPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <GlowCard>
           <h3 className="text-base font-bold text-white mb-2">Indexed Context Chunks</h3>
-          <p className="text-xs text-slate-400">1,280 indexed RAG vector nodes from pitch decks, NDAs, and financial reports.</p>
+          <p className="text-xs text-slate-400">
+            1,280 indexed RAG vector nodes from pitch decks, NDAs, and financial reports.
+          </p>
         </GlowCard>
 
         <GlowCard>
           <h3 className="text-base font-bold text-white mb-2">Executive Memory Sync</h3>
-          <p className="text-xs text-slate-400">10 AI Executive Agents synced with latest founder preferences.</p>
+          <p className="text-xs text-slate-400">
+            10 AI Executive Agents synced with latest founder preferences.
+          </p>
         </GlowCard>
       </div>
     </div>

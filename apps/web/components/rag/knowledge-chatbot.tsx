@@ -3,15 +3,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  MessageSquare,
   Sparkles,
   Send,
   Mic,
   MicOff,
   Upload,
   FileText,
-  FileCheck,
-  CheckCircle2,
   Loader2,
   X,
   Lock,
@@ -19,7 +16,6 @@ import {
   Users,
   BookOpen,
   Volume2,
-  Square,
   ExternalLink,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -48,16 +44,20 @@ export function KnowledgeChatbot() {
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedLayer, setSelectedLayer] = useState<'ALL' | 'GLOBAL' | 'TEAM' | 'PRIVATE' | 'SYSTEM'>('ALL');
+  const [selectedLayer, setSelectedLayer] = useState<
+    'ALL' | 'GLOBAL' | 'TEAM' | 'PRIVATE' | 'SYSTEM'
+  >('ALL');
   const [uploadingFile, setUploadingFile] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [uploadStep, setUploadStep] = useState<string>('');
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const { isListening, isSpeaking, transcript, toggleListening, speak, stopSpeaking } = useVoice((finalText) => {
-    if (finalText) setQuery(finalText);
-  });
+  const { isListening, isSpeaking, transcript, toggleListening, speak, stopSpeaking } = useVoice(
+    (finalText) => {
+      if (finalText) setQuery(finalText);
+    },
+  );
 
   useEffect(() => {
     if (transcript) setQuery(transcript);
@@ -86,13 +86,17 @@ export function KnowledgeChatbot() {
 
     setTimeout(async () => {
       // Execute 4-Layer RAG Engine Query with Permission Resolution
-      const ragRes = clientRAGEngine.query(userText, 'siddharth', 'acme-inc', ['ENGINEERING', 'FINANCE']);
+      const ragRes = clientRAGEngine.query(userText, 'siddharth', 'acme-inc', [
+        'ENGINEERING',
+        'FINANCE',
+      ]);
 
       let assistantText = '';
       if (ragRes.citations && ragRes.citations.length > 0) {
         assistantText = `Based on your accessible workspace documents [Intent: ${ragRes.intent}]:\n\n${ragRes.compressedContext}`;
       } else {
-        assistantText = "I couldn't find this information in your accessible workspace documents. Please verify your team permissions or upload the reference file.";
+        assistantText =
+          "I couldn't find this information in your accessible workspace documents. Please verify your team permissions or upload the reference file.";
       }
 
       const assistantMsg: ChatMessage = {
@@ -194,7 +198,9 @@ export function KnowledgeChatbot() {
                       RAG v1.0
                     </span>
                   </h3>
-                  <p className="text-[11px] text-slate-400">Security Scoped · Hybrid Search · Clickable Citations</p>
+                  <p className="text-[11px] text-slate-400">
+                    Security Scoped · Hybrid Search · Clickable Citations
+                  </p>
                 </div>
               </div>
 
@@ -244,7 +250,10 @@ export function KnowledgeChatbot() {
                   <span>{uploadProgress}%</span>
                 </div>
                 <div className="w-full bg-white/10 rounded-full h-1 overflow-hidden">
-                  <div className="bg-indigo-400 h-full transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                  <div
+                    className="bg-indigo-400 h-full transition-all duration-300"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
                 </div>
                 <p className="text-[10px] text-slate-400 flex items-center gap-1">
                   <Loader2 size={10} className="animate-spin text-indigo-400" />
@@ -279,7 +288,9 @@ export function KnowledgeChatbot() {
                           {msg.citations.map((cite, idx) => (
                             <div
                               key={idx}
-                              onClick={() => toast.info(`Viewing ${cite.fileName} (Page ${cite.pageNumber})`)}
+                              onClick={() =>
+                                toast.info(`Viewing ${cite.fileName} (Page ${cite.pageNumber})`)
+                              }
                               className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/8 text-[11px] text-slate-300 flex items-center justify-between cursor-pointer transition-colors"
                             >
                               <span className="flex items-center gap-1 truncate font-medium">
@@ -313,19 +324,33 @@ export function KnowledgeChatbot() {
             {isSpeaking && (
               <div className="px-4 py-1.5 bg-[#7C5CFF]/15 border-t border-[#7C5CFF]/30 flex items-center justify-between text-xs text-[#7C5CFF]">
                 <span className="flex items-center gap-1.5">
-                  <Volume2 size={12} className="animate-bounce" /> Playing ElevenLabs Executive Voice...
+                  <Volume2 size={12} className="animate-bounce" /> Playing ElevenLabs Executive
+                  Voice...
                 </span>
-                <button onClick={stopSpeaking} className="text-[10px] underline">Stop</button>
+                <button onClick={stopSpeaking} className="text-[10px] underline">
+                  Stop
+                </button>
               </div>
             )}
 
             {/* Input Form Footer */}
-            <form onSubmit={handleSend} className="p-3 border-t border-white/10 bg-white/[0.02] space-y-2">
+            <form
+              onSubmit={handleSend}
+              className="p-3 border-t border-white/10 bg-white/[0.02] space-y-2"
+            >
               <div className="flex items-center gap-2">
                 {/* File Upload Trigger */}
-                <label className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 cursor-pointer transition-colors" title="Upload Document into RAG Engine">
+                <label
+                  className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 cursor-pointer transition-colors"
+                  title="Upload Document into RAG Engine"
+                >
                   <Upload size={16} />
-                  <input type="file" onChange={handleFileUpload} className="hidden" accept=".pdf,.docx,.pptx,.txt" />
+                  <input
+                    type="file"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    accept=".pdf,.docx,.pptx,.txt"
+                  />
                 </label>
 
                 {/* Mic STT Trigger */}
@@ -346,7 +371,9 @@ export function KnowledgeChatbot() {
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder={isListening ? 'Listening...' : 'Ask your workspace knowledge base...'}
+                  placeholder={
+                    isListening ? 'Listening...' : 'Ask your workspace knowledge base...'
+                  }
                   className="flex-1 bg-transparent text-xs text-white placeholder:text-slate-500 focus:outline-none"
                 />
 
