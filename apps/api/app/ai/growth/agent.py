@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Any
 
 
 class GrowthAgentPlaceholder:
@@ -7,5 +7,5 @@ class GrowthAgentPlaceholder:
     def __init__(self) -> None:
         self.name = "Growth Agent"
 
-    async def generate_gtm_strategy() -> Dict[str, Any]:
+    async def generate_gtm_strategy(self) -> dict[str, Any]:
         return {"agent": self.name, "status": "PLACEHOLDER"}

@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Any
 
 
 class LegalAgentPlaceholder:
@@ -7,5 +7,5 @@ class LegalAgentPlaceholder:
     def __init__(self) -> None:
         self.name = "Legal Agent"
 
-    async def review_contract() -> Dict[str, Any]:
+    async def review_contract(self) -> dict[str, Any]:
         return {"agent": self.name, "status": "PLACEHOLDER"}

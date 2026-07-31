@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Any
 
 
 class CEOPlannerAgentPlaceholder:
@@ -7,7 +7,7 @@ class CEOPlannerAgentPlaceholder:
     def __init__(self) -> None:
         self.name = "CEO Planner Agent"
 
-    async def execute_plan(self, prompt: str) -> Dict[str, Any]:
+    async def execute_plan(self, prompt: str) -> dict[str, Any]:
         """Placeholder for plan execution using Google ADK."""
         return {
             "agent": self.name,

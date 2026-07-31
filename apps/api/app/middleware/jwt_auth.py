@@ -1,7 +1,8 @@
-from typing import Optional, Dict, Any
-from fastapi import Request, Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from typing import Any
+
 from app.core.exceptions import UnauthorizedException
+from fastapi import Depends
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 security_bearer = HTTPBearer(auto_error=False)
 
@@ -11,8 +12,8 @@ class JWTAuthMiddleware:
 
     async def verify_token(
         self,
-        credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_bearer),
-    ) -> Dict[str, Any]:
+        credentials: HTTPAuthorizationCredentials | None = Depends(security_bearer),
+    ) -> dict[str, Any]:
         if not credentials:
             # Fallback mock identity for development mode
             return {

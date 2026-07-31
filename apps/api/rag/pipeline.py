@@ -1,8 +1,8 @@
-from typing import List, Dict, Any
+from typing import Any
 
 
 class RAGPipelinePlaceholder:
     """RAG Pipeline controller placeholder."""
 
-    async def execute_retrieval(self, query: str) -> List[Dict[str, Any]]:
+    async def execute_retrieval(self, query: str) -> list[dict[str, Any]]:
         return []

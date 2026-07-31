@@ -1,4 +1,5 @@
-from typing import Any, Optional
+from typing import Any
+
 from fastapi import HTTPException, status
 
 
@@ -8,7 +9,7 @@ class BaseAPIException(HTTPException):
         status_code: int,
         code: str,
         message: str,
-        details: Optional[Any] = None,
+        details: Any | None = None,
     ) -> None:
         super().__init__(
             status_code=status_code,
@@ -24,7 +25,9 @@ class BaseAPIException(HTTPException):
 
 
 class UnauthorizedException(BaseAPIException):
-    def __init__(self, message: str = "Authentication credential failure.", details: Optional[Any] = None) -> None:
+    def __init__(
+        self, message: str = "Authentication credential failure.", details: Any | None = None
+    ) -> None:
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
             code="UNAUTHORIZED",
@@ -34,7 +37,9 @@ class UnauthorizedException(BaseAPIException):
 
 
 class ForbiddenException(BaseAPIException):
-    def __init__(self, message: str = "Access forbidden for this operation.", details: Optional[Any] = None) -> None:
+    def __init__(
+        self, message: str = "Access forbidden for this operation.", details: Any | None = None
+    ) -> None:
         super().__init__(
             status_code=status.HTTP_403_FORBIDDEN,
             code="FORBIDDEN",
@@ -44,7 +49,9 @@ class ForbiddenException(BaseAPIException):
 
 
 class NotFoundException(BaseAPIException):
-    def __init__(self, message: str = "Requested resource was not found.", details: Optional[Any] = None) -> None:
+    def __init__(
+        self, message: str = "Requested resource was not found.", details: Any | None = None
+    ) -> None:
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
             code="NOT_FOUND",
@@ -54,7 +61,9 @@ class NotFoundException(BaseAPIException):
 
 
 class ValidationException(BaseAPIException):
-    def __init__(self, message: str = "Payload validation error.", details: Optional[Any] = None) -> None:
+    def __init__(
+        self, message: str = "Payload validation error.", details: Any | None = None
+    ) -> None:
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             code="VALIDATION_ERROR",

@@ -1,11 +1,11 @@
-from typing import Dict, Any, List
+from typing import Any
 
 
 class StartupMemoryManagerPlaceholder:
     """Startup Memory Manager Placeholder."""
 
     def __init__(self) -> None:
-        self.active_context: List[Dict[str, Any]] = []
+        self.active_context: list[dict[str, Any]] = []
 
-    async def store_decision(self, decision: Dict[str, Any]) -> bool:
+    async def store_decision(self, decision: dict[str, Any]) -> bool:
         return True

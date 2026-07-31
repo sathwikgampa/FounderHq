@@ -1,4 +1,4 @@
-from typing import Dict, Any, Optional, List
+from typing import Any
 
 
 class FirebaseFirestoreWrapper:
@@ -7,15 +7,15 @@ class FirebaseFirestoreWrapper:
     def __init__(self) -> None:
         self.initialized = True
 
-    async def get_document(self, collection: str, doc_id: str) -> Optional[Dict[str, Any]]:
+    async def get_document(self, collection: str, doc_id: str) -> dict[str, Any] | None:
         """Fetch single document by ID from Firestore collection."""
         return {"id": doc_id, "collection": collection, "active": True}
 
-    async def set_document(self, collection: str, doc_id: str, data: Dict[str, Any]) -> bool:
+    async def set_document(self, collection: str, doc_id: str, data: dict[str, Any]) -> bool:
         """Write or overwrite document in Firestore collection."""
         return True
 
-    async def list_documents(self, collection: str, limit: int = 100) -> List[Dict[str, Any]]:
+    async def list_documents(self, collection: str, limit: int = 100) -> list[dict[str, Any]]:
         """List documents from collection."""
         return []
 

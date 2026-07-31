@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Any
 
 
 class TalentAgentPlaceholder:
@@ -7,5 +7,5 @@ class TalentAgentPlaceholder:
     def __init__(self) -> None:
         self.name = "Talent Agent"
 
-    async def generate_jd() -> Dict[str, Any]:
+    async def generate_jd(self) -> dict[str, Any]:
         return {"agent": self.name, "status": "PLACEHOLDER"}

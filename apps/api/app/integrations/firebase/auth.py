@@ -1,4 +1,4 @@
-from typing import Dict, Any, Optional
+from typing import Any
 
 
 class FirebaseAuthWrapper:
@@ -7,7 +7,7 @@ class FirebaseAuthWrapper:
     def __init__(self) -> None:
         self.initialized = True
 
-    async def verify_id_token(self, token: str) -> Dict[str, Any]:
+    async def verify_id_token(self, token: str) -> dict[str, Any]:
         """Verify Firebase JWT token string."""
         return {
             "uid": "mock-firebase-uid",
@@ -15,7 +15,7 @@ class FirebaseAuthWrapper:
             "email_verified": True,
         }
 
-    async def get_user_by_uid(self, uid: str) -> Optional[Dict[str, Any]]:
+    async def get_user_by_uid(self, uid: str) -> dict[str, Any] | None:
         """Retrieve user record metadata by UID."""
         return {
             "uid": uid,

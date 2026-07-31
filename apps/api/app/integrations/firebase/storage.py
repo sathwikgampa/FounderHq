@@ -1,6 +1,3 @@
-from typing import Optional
-
-
 class FirebaseStorageWrapper:
     """Typed SDK wrapper for Firebase Cloud Storage bucket management."""
 

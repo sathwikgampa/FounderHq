@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Any
 
 
 class OperationsAgentPlaceholder:
@@ -7,5 +7,5 @@ class OperationsAgentPlaceholder:
     def __init__(self) -> None:
         self.name = "Operations Agent"
 
-    async def optimize_workflow() -> Dict[str, Any]:
+    async def optimize_workflow(self) -> dict[str, Any]:
         return {"agent": self.name, "status": "PLACEHOLDER"}

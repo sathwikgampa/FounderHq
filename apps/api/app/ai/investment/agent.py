@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Any
 
 
 class InvestmentAgentPlaceholder:
@@ -7,5 +7,5 @@ class InvestmentAgentPlaceholder:
     def __init__(self) -> None:
         self.name = "Investment Agent"
 
-    async def model_cap_table() -> Dict[str, Any]:
+    async def model_cap_table(self) -> dict[str, Any]:
         return {"agent": self.name, "status": "PLACEHOLDER"}

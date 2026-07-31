@@ -1,18 +1,18 @@
-from typing import Generic, TypeVar, Optional, List, Dict, Any
 from abc import ABC, abstractmethod
+from typing import Any, TypeVar
 
 T = TypeVar("T")
 
 
-class BaseRepository(Generic[T], ABC):
+class BaseRepository[T](ABC):
     """Abstract Repository Pattern interface for Firebase Firestore data access."""
 
     @abstractmethod
-    async def get_by_id(self, id: str) -> Optional[T]:
+    async def get_by_id(self, id: str) -> T | None:
         pass
 
     @abstractmethod
-    async def list_all(self, limit: int = 100) -> List[T]:
+    async def list_all(self, limit: int = 100) -> list[T]:
         pass
 
     @abstractmethod
@@ -20,7 +20,7 @@ class BaseRepository(Generic[T], ABC):
         pass
 
     @abstractmethod
-    async def update(self, id: str, updates: Dict[str, Any]) -> Optional[T]:
+    async def update(self, id: str, updates: dict[str, Any]) -> T | None:
         pass
 
     @abstractmethod

@@ -1,5 +1,7 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
 from fastapi import APIRouter, status
+
 from app.core.config import settings
 from app.schemas.common import HealthStatusResponse
 
@@ -18,7 +20,7 @@ async def liveness_check() -> HealthStatusResponse:
         status="healthy",
         version=settings.VERSION,
         environment=settings.ENV,
-        timestamp=datetime.now(timezone.utc).isoformat(),
+        timestamp=datetime.now(UTC).isoformat(),
     )
 
 
@@ -34,5 +36,5 @@ async def readiness_check() -> HealthStatusResponse:
         status="ready",
         version=settings.VERSION,
         environment=settings.ENV,
-        timestamp=datetime.now(timezone.utc).isoformat(),
+        timestamp=datetime.now(UTC).isoformat(),
     )

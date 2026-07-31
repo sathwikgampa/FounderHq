@@ -1,15 +1,16 @@
-from datetime import datetime, timezone
-from typing import Generic, Optional, TypeVar
+from datetime import UTC, datetime
+from typing import TypeVar
+
 from pydantic import BaseModel, Field
 
 T = TypeVar("T")
 
 
-class APIResponseEnvelope(BaseModel, Generic[T]):
+class APIResponseEnvelope[T](BaseModel):
     success: bool = True
-    message: Optional[str] = None
+    message: str | None = None
     data: T
-    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 class HealthStatusResponse(BaseModel):

@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Any
 
 
 class CEOPlannerAgent:
@@ -7,7 +7,7 @@ class CEOPlannerAgent:
     def __init__(self) -> None:
         self.name = "CEO Planner Agent"
 
-    async def execute_intent(self, user_command: str) -> Dict[str, Any]:
+    async def execute_intent(self, user_command: str) -> dict[str, Any]:
         """Placeholder intent analysis and execution pipeline."""
         return {
             "agent": self.name,

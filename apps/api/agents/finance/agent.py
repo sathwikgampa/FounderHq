@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Any
 
 
 class FinanceAgent:
@@ -7,5 +7,5 @@ class FinanceAgent:
     def __init__(self) -> None:
         self.name = "Finance Agent"
 
-    async def run(self) -> Dict[str, Any]:
+    async def run(self) -> dict[str, Any]:
         return {"agent": self.name, "status": "PLACEHOLDER"}
