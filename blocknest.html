@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlockNest — Web3 Onboarding</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            surface: '#0B0C15',
+            deep: '#05060E',
+          },
+          perspective: { '1000': '1000px' },
+          rotate: { 'x-6': 'rotateX(6deg)', 'x-neg-6': 'rotateX(-6deg)' },
+          transformStyle: { '3d': 'preserve-3d' },
+          keyframes: {
+            'fade-up': {
+              '0%': { opacity: '0', transform: 'translateY(40px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            marquee: {
+              '0%': { transform: 'translateX(0)' },
+              '100%': { transform: 'translateX(-50%)' },
+            },
+          },
+          animation: {
+            'fade-up': 'fade-up 0.8s cubic-bezier(0.16,1,0.3,1) forwards',
+            marquee: 'marquee 28s linear infinite',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #05060E;
+      color: #CBD5E1;
+      overflow-x: hidden;
+    }
+    ::-webkit-scrollbar { width: 0px; }
+
+    /* Glass card */
+    .glass-card {
+      background: rgba(19, 20, 31, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 4px 30px rgba(0,0,0,0.25);
+    }
+
+    /* Glow text */
+    .glow-text {
+      text-shadow: 0 0 20px rgba(168,85,247,0.5);
+    }
+
+    /* Gradient text utility */
+    .text-gradient-purple {
+      background: linear-gradient(135deg, #c084fc, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .text-gradient-stat {
+      background: linear-gradient(135deg, #d8b4fe, #f472b6, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 1000ms cubic-bezier(0.16,1,0.3,1),
+                  transform 1000ms cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.from-right {
+      transform: translateX(40px);
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0) translateX(0);
+    }
+    .reveal.delay-100 { transition-delay: 100ms; }
+    .reveal.delay-200 { transition-delay: 200ms; }
+    .reveal.delay-300 { transition-delay: 300ms; }
+    .reveal.delay-400 { transition-delay: 400ms; }
+    .reveal.delay-500 { transition-delay: 500ms; }
+
+    /* 3D card perspective container */
+    .perspective-container {
+      perspective: 1000px;
+    }
+
+    /* Curved horizon */
+    .curved-horizon {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200%;
+      height: 1000px;
+      border-top: 1px solid rgba(168,85,247,0.2);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* Partner strip gradient mask */
+    .partner-strip-mask {
+      -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+      mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    }
+
+    /* Stat counter glow */
+    .stat-number {
+      font-size: 4.5rem;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      line-height: 1;
+    }
+
+    /* CTA grid bg */
+    .cta-grid-bg {
+      background-image:
+        linear-gradient(rgba(168,85,247,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(168,85,247,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* Wallet icon overlap */
+    .wallet-stack > * + * { margin-left: -12px; }
+
+    /* Swap center divider pill */
+    .swap-divider {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 20;
+    }
+
+    /* Input pill */
+    .input-pill {
+      background: rgba(11,12,21,0.8);
+      border: 1px solid rgba(168,85,247,0.25);
+      backdrop-filter: blur(10px);
+    }
+
+    /* Hover lift */
+    .hover-lift {
+      transition: transform 500ms cubic-bezier(0.16,1,0.3,1),
+                  border-color 500ms cubic-bezier(0.16,1,0.3,1),
+                  box-shadow 500ms cubic-bezier(0.16,1,0.3,1);
+    }
+    .hover-lift:hover {
+      transform: translateY(-4px);
+      border-color: rgba(168,85,247,0.3);
+      box-shadow: 0 8px 40px rgba(147,51,234,0.2);
+    }
+
+    /* Spline background */
+    .spline-bg {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 900px;
+      z-index: -10;
+      -webkit-mask-image: linear-gradient(to bottom, transparent, black 0%, black 80%, transparent);
+      mask-image: linear-gradient(to bottom, transparent, black 0%, black 80%, transparent);
+    }
+    .spline-bg iframe {
+      width: 100%; height: 100%;
+      border: none;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="bg-deep min-h-screen antialiased">
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     LAYER 1 — SPLINE BACKGROUND
+════════════════════════════════════════════════════════════════════ -->
+<div class="spline-bg">
+  <iframe
+    src="https://my.spline.design/glowingplanetparticles-HmCVKutonlFn3Oqqe6DI9nWi/"
+    allowfullscreen
+    loading="lazy"
+  ></iframe>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     LAYER 2 — AMBIENT BLURS + STARS
+════════════════════════════════════════════════════════════════════ -->
+<div class="fixed inset-0 pointer-events-none z-0" aria-hidden="true">
+  <!-- Indigo top bloom -->
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px]"
+       style="background:radial-gradient(ellipse 70% 60% at 50% -10%,rgba(79,70,229,0.18) 0%,transparent 70%);filter:blur(40px)"></div>
+  <!-- Purple right bloom -->
+  <div class="absolute top-[200px] right-0 w-[600px] h-[600px]"
+       style="background:radial-gradient(ellipse 60% 60% at 100% 30%,rgba(147,51,234,0.12) 0%,transparent 70%);filter:blur(60px)"></div>
+  <!-- Bottom purple -->
+  <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px]"
+       style="background:radial-gradient(ellipse 80% 50% at 50% 100%,rgba(147,51,234,0.15) 0%,transparent 70%);filter:blur(80px)"></div>
+  <!-- White star dots -->
+  <div class="absolute inset-0" style="background-image:radial-gradient(circle,rgba(255,255,255,0.55) 1px,transparent 1px);background-size:80px 80px;opacity:0.12"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     LAYER 3 — CURVED HORIZON LINE
+════════════════════════════════════════════════════════════════════ -->
+<div class="relative z-0">
+  <div class="curved-horizon" style="top:650px"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     LAYER 4 — NAVBAR
+════════════════════════════════════════════════════════════════════ -->
+<header class="relative z-50 w-full py-6">
+  <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+
+    <!-- Logo -->
+    <a href="#" class="flex items-center gap-2.5 group">
+      <div class="w-8 h-8 rounded-xl flex items-center justify-center"
+           style="background:linear-gradient(135deg,#9333ea,#4f46e5)">
+        <iconify-icon icon="solar:layers-minimalistic-bold-duotone" width="18" class="text-white"></iconify-icon>
+      </div>
+      <span class="text-white font-semibold text-lg tracking-tight">BlockNest</span>
+    </a>
+
+    <!-- Center nav links -->
+    <nav class="hidden md:flex items-center gap-8">
+      <a href="#" class="text-slate-400 hover:text-white text-sm font-medium transition-colors duration-200">Platform</a>
+      <a href="#" class="text-slate-400 hover:text-white text-sm font-medium transition-colors duration-200">Integration</a>
+      <a href="#" class="text-slate-400 hover:text-white text-sm font-medium transition-colors duration-200">Resources</a>
+      <a href="#" class="text-slate-400 hover:text-white text-sm font-medium transition-colors duration-200">Pricing</a>
+    </nav>
+
+    <!-- Right CTA -->
+    <div class="flex items-center gap-4">
+      <a href="#" class="hidden sm:block text-slate-400 hover:text-white text-sm font-medium transition-colors duration-200">Sign in</a>
+      <a href="#"
+         class="px-5 py-2.5 rounded-full text-sm font-medium text-purple-300 border transition-all duration-300 hover:bg-purple-600/30 hover:text-white"
+         style="background:rgba(147,51,234,0.15);border-color:rgba(168,85,247,0.4)">
+        Start Building
+      </a>
+    </div>
+  </div>
+</header>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     LAYER 5 — HERO SECTION
+════════════════════════════════════════════════════════════════════ -->
+<main class="relative z-10">
+<section class="pt-20 pb-32 px-6">
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Badge -->
+    <div class="flex justify-center mb-8 reveal">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-medium text-purple-300"
+           style="background:rgba(147,51,234,0.1);border-color:rgba(168,85,247,0.25)">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+        </span>
+        Live — v2.0 Beta is live
+      </div>
+    </div>
+
+    <!-- Headline -->
+    <div class="text-center max-w-4xl mx-auto mb-8">
+      <h1 class="reveal font-semibold tracking-tight text-white mb-4"
+          style="font-size:clamp(2.8rem,6vw,4.75rem);line-height:1.08;letter-spacing:-0.025em">
+        Launch Web3 Products<br />
+        <span class="text-gradient-purple glow-text">Without Coding</span>
+      </h1>
+      <p class="reveal delay-100 text-slate-400 text-lg leading-relaxed max-w-2xl mx-auto">
+        BlockNest seamlessly integrates with your workflow to make<br class="hidden md:block" />
+        collaboration smarter, faster, and completely intuitive.
+      </p>
+    </div>
+
+    <!-- CTA Input + Buttons -->
+    <div class="reveal delay-200 flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
+      <!-- Glass pill input -->
+      <div class="input-pill flex items-center rounded-full px-4 py-2 w-full max-w-sm gap-3">
+        <iconify-icon icon="solar:mailbox-linear" width="18" class="text-slate-500 flex-shrink-0"></iconify-icon>
+        <input type="email" placeholder="Enter your email"
+               class="bg-transparent flex-1 text-sm text-slate-300 placeholder-slate-500 outline-none min-w-0" />
+        <button class="flex-shrink-0 px-5 py-2 rounded-full text-sm font-semibold text-white transition-all duration-300 hover:brightness-110"
+                style="background:linear-gradient(135deg,#9333ea,#4f46e5);box-shadow:0 0 20px rgba(147,51,234,0.4)">
+          Get Access
+        </button>
+      </div>
+      <!-- Secondary CTA -->
+      <a href="#"
+         class="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium text-slate-300 border border-white/10 hover:border-white/20 hover:text-white transition-all duration-300"
+         style="background:rgba(255,255,255,0.04)">
+        <iconify-icon icon="solar:play-circle-linear" width="18"></iconify-icon>
+        See How It Works
+      </a>
+    </div>
+
+    <!-- ── Dashboard Hero Cards Grid ── -->
+    <div class="perspective-container reveal delay-300">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 max-w-5xl mx-auto"
+           style="transform:rotateX(6deg);transform-style:preserve-3d">
+
+        <!-- LEFT: Balance Card -->
+        <div class="glass-card rounded-3xl p-6 hover-lift flex flex-col gap-5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-medium text-slate-500 uppercase tracking-widest">Total Balance</span>
+            <span class="text-xs px-2.5 py-1 rounded-full font-semibold text-emerald-400"
+                  style="background:rgba(16,185,129,0.12)">+14.2%</span>
+          </div>
+          <div>
+            <div class="text-3xl font-semibold text-white tracking-tight">$84,291.50</div>
+            <div class="text-slate-500 text-sm mt-1">↑ $4,812 this month</div>
+          </div>
+          <!-- Sparkline -->
+          <svg viewBox="0 0 120 36" class="w-full h-9" fill="none">
+            <defs>
+              <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#10B981" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M2 28L22 18L42 22L72 10L102 14L118 4" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 28L22 18L42 22L72 10L102 14L118 4 L118 36 L2 36 Z" fill="url(#sparkGrad)"/>
+          </svg>
+          <!-- Wallet stack avatars -->
+          <div>
+            <div class="text-xs text-slate-500 mb-2 uppercase tracking-widest font-medium">Connected Wallets</div>
+            <div class="flex items-center wallet-stack">
+              <div class="w-8 h-8 rounded-full border-2 border-[#0B0C15] flex items-center justify-center z-30"
+                   style="background:linear-gradient(135deg,#9333ea,#6366f1)">
+                <iconify-icon icon="simple-icons:ethereum" width="14" class="text-white"></iconify-icon>
+              </div>
+              <div class="w-8 h-8 rounded-full border-2 border-[#0B0C15] flex items-center justify-center z-20"
+                   style="background:linear-gradient(135deg,#f97316,#ef4444)">
+                <iconify-icon icon="simple-icons:metamask" width="14" class="text-white"></iconify-icon>
+              </div>
+              <div class="w-8 h-8 rounded-full border-2 border-[#0B0C15] flex items-center justify-center z-10"
+                   style="background:linear-gradient(135deg,#06b6d4,#3b82f6)">
+                <iconify-icon icon="simple-icons:coinbase" width="14" class="text-white"></iconify-icon>
+              </div>
+              <div class="w-8 h-8 rounded-full border-2 border-[#0B0C15] flex items-center justify-center text-[10px] font-semibold text-slate-400 z-0"
+                   style="background:#13141F">+4</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CENTER: Swap Card -->
+        <div class="glass-card rounded-3xl p-5 hover-lift flex flex-col gap-3 relative">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-medium text-slate-500 uppercase tracking-widest">Swap Tokens</span>
+            <button class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                    style="border:1px solid rgba(255,255,255,0.08)">
+              <iconify-icon icon="solar:settings-linear" width="14"></iconify-icon>
+            </button>
+          </div>
+
+          <!-- From -->
+          <div class="rounded-2xl p-4 flex items-center justify-between" style="background:rgba(11,12,21,0.6);border:1px solid rgba(255,255,255,0.06)">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center"
+                   style="background:linear-gradient(135deg,#9333ea,#6366f1)">
+                <iconify-icon icon="simple-icons:ethereum" width="14" class="text-white"></iconify-icon>
+              </div>
+              <div>
+                <div class="text-xs text-slate-500">From</div>
+                <div class="text-sm font-semibold text-white">ETH</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-lg font-semibold text-white">2.450</div>
+              <div class="text-xs text-slate-500">≈ $4,812.50</div>
+            </div>
+          </div>
+
+          <!-- Swap icon pill — centered -->
+          <div class="flex justify-center my-1 relative z-20">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center border text-purple-300 transition-colors hover:text-white hover:border-purple-500/60 cursor-pointer"
+                 style="background:rgba(147,51,234,0.2);border-color:rgba(168,85,247,0.35)">
+              <iconify-icon icon="solar:transfer-vertical-bold" width="16"></iconify-icon>
+            </div>
+          </div>
+
+          <!-- To -->
+          <div class="rounded-2xl p-4 flex items-center justify-between" style="background:rgba(11,12,21,0.6);border:1px solid rgba(255,255,255,0.06)">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center"
+                   style="background:linear-gradient(135deg,#7c3aed,#8b5cf6)">
+                <iconify-icon icon="simple-icons:polygon" width="14" class="text-white"></iconify-icon>
+              </div>
+              <div>
+                <div class="text-xs text-slate-500">To</div>
+                <div class="text-sm font-semibold text-white">MATIC</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-lg font-semibold text-white">7,320</div>
+              <div class="text-xs text-slate-500">≈ $4,796.88</div>
+            </div>
+          </div>
+
+          <!-- Swap button -->
+          <button class="w-full mt-1 py-3 rounded-2xl font-semibold text-sm text-white transition-all duration-300 hover:brightness-110"
+                  style="background:linear-gradient(135deg,#9333ea,#4f46e5);box-shadow:0 0 20px rgba(147,51,234,0.35)">
+            Confirm Swap
+          </button>
+        </div>
+
+        <!-- RIGHT: Crypto Prices -->
+        <div class="glass-card rounded-3xl p-6 hover-lift flex flex-col gap-4">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-medium text-slate-500 uppercase tracking-widest">Markets</span>
+            <span class="text-xs text-purple-400 cursor-pointer hover:text-purple-300">View all →</span>
+          </div>
+
+          <!-- BTC -->
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-amber-400"
+                 style="background:rgba(245,158,11,0.15)">
+              <iconify-icon icon="simple-icons:bitcoin" width="16"></iconify-icon>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-medium text-white">Bitcoin</span>
+                <span class="text-sm font-semibold text-white">$62,480</span>
+              </div>
+              <div class="flex items-center justify-between mt-0.5">
+                <span class="text-xs text-slate-500">BTC</span>
+                <span class="text-xs font-medium text-emerald-400">+3.24%</span>
+              </div>
+            </div>
+            <svg viewBox="0 0 60 20" class="w-14 h-5 flex-shrink-0" fill="none">
+              <path d="M1 15L15 8L30 12L45 5L59 1" stroke="#10B981" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+
+          <!-- ETH -->
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-indigo-400"
+                 style="background:rgba(99,102,241,0.15)">
+              <iconify-icon icon="simple-icons:ethereum" width="16"></iconify-icon>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-medium text-white">Ethereum</span>
+                <span class="text-sm font-semibold text-white">$1,968</span>
+              </div>
+              <div class="flex items-center justify-between mt-0.5">
+                <span class="text-xs text-slate-500">ETH</span>
+                <span class="text-xs font-medium text-emerald-400">+1.87%</span>
+              </div>
+            </div>
+            <svg viewBox="0 0 60 20" class="w-14 h-5 flex-shrink-0" fill="none">
+              <path d="M1 12L15 7L30 10L45 4L59 2" stroke="#10B981" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+
+          <!-- SOL -->
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-purple-400"
+                 style="background:rgba(147,51,234,0.15)">
+              <iconify-icon icon="simple-icons:solana" width="16"></iconify-icon>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-medium text-white">Solana</span>
+                <span class="text-sm font-semibold text-white">$142.30</span>
+              </div>
+              <div class="flex items-center justify-between mt-0.5">
+                <span class="text-xs text-slate-500">SOL</span>
+                <span class="text-xs font-medium text-rose-400">-0.91%</span>
+              </div>
+            </div>
+            <svg viewBox="0 0 60 20" class="w-14 h-5 flex-shrink-0" fill="none">
+              <path d="M1 5L15 12L30 8L45 15L59 18" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+
+          <!-- LINK -->
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-blue-400"
+                 style="background:rgba(59,130,246,0.15)">
+              <iconify-icon icon="simple-icons:chainlink" width="16"></iconify-icon>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-medium text-white">Chainlink</span>
+                <span class="text-sm font-semibold text-white">$13.72</span>
+              </div>
+              <div class="flex items-center justify-between mt-0.5">
+                <span class="text-xs text-slate-500">LINK</span>
+                <span class="text-xs font-medium text-emerald-400">+5.61%</span>
+              </div>
+            </div>
+            <svg viewBox="0 0 60 20" class="w-14 h-5 flex-shrink-0" fill="none">
+              <path d="M1 16L15 9L30 13L45 6L59 2" stroke="#10B981" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+
+      </div><!-- /grid -->
+    </div><!-- /perspective-container -->
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 3 — TRUSTED PARTNERS + STATS
+════════════════════════════════════════════════════════════════════ -->
+<section class="relative z-10 py-20 px-6">
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Partners label -->
+    <p class="reveal text-center text-xs font-semibold text-slate-500 uppercase tracking-widest mb-10">
+      Trusted by leading Web3 companies
+    </p>
+
+    <!-- Continuous marquee strip -->
+    <div class="partner-strip-mask overflow-hidden mb-24">
+      <div class="flex animate-marquee gap-16 items-center" style="width:max-content">
+        <!-- first copy -->
+        <iconify-icon icon="simple-icons:coinbase"   width="32" class="text-slate-600 hover:text-[#1652F0] transition-colors duration-300 cursor-pointer flex-shrink-0"></iconify-icon>
+        <iconify-icon icon="simple-icons:binance"    width="32" class="text-slate-600 hover:text-[#F0B90B] transition-colors duration-300 cursor-pointer flex-shrink-0"></iconify-icon>
+        <iconify-icon icon="simple-icons:metamask"   width="32" class="text-slate-600 hover:text-[#E2761B] transition-colors duration-300 cursor-pointer flex-shrink-0"></iconify-icon>
+        <iconify-icon icon="simple-icons:ethereum"   width="32" class="text-slate-600 hover:text-[#627EEA] transition-colors duration-300 cursor-pointer flex-shrink-0"></iconify-icon>
+        <iconify-icon icon="simple-icons:polygon"    width="32" class="text-slate-600 hover:text-[#8247E5] transition-colors duration-300 cursor-pointer flex-shrink-0"></iconify-icon>
+        <iconify-icon icon="simple-icons:chainlink"  width="32" class="text-slate-600 hover:text-[#375BD2] transition-colors duration-300 cursor-pointer flex-shrink-0"></iconify-icon>
+        <iconify-icon icon="simple-icons:solana"     width="32" class="text-slate-600 hover:text-[#9945FF] transition-colors duration-300 cursor-pointer flex-shrink-0"></iconify-icon>
+        <iconify-icon icon="simple-icons:uniswap"    width="32" class="text-slate-600 hover:text-[#FF007A] transition-colors duration-300 cursor-pointer flex-shrink-0"></iconify-icon>
+        <!-- duplicate for seamless loop -->
+        <iconify-icon icon="simple-icons:coinbase"   width="32" class="text-slate-600 hover:text-[#1652F0] transition-colors duration-300 cursor-pointer flex-shrink-0"></iconify-icon>
+        <iconify-icon icon="simple-icons:binance"    width="32" class="text-slate-600 hover:text-[#F0B90B] transition-colors duration-300 cursor-pointer flex-shrink-0"></iconify-icon>
+        <iconify-icon icon="simple-icons:metamask"   width="32" class="text-slate-600 hover:text-[#E2761B] transition-colors duration-300 cursor-pointer flex-shrink-0"></iconify-icon>
+        <iconify-icon icon="simple-icons:ethereum"   width="32" class="text-slate-600 hover:text-[#627EEA] transition-colors duration-300 cursor-pointer flex-shrink-0"></iconify-icon>
+        <iconify-icon icon="simple-icons:polygon"    width="32" class="text-slate-600 hover:text-[#8247E5] transition-colors duration-300 cursor-pointer flex-shrink-0"></iconify-icon>
+        <iconify-icon icon="simple-icons:chainlink"  width="32" class="text-slate-600 hover:text-[#375BD2] transition-colors duration-300 cursor-pointer flex-shrink-0"></iconify-icon>
+        <iconify-icon icon="simple-icons:solana"     width="32" class="text-slate-600 hover:text-[#9945FF] transition-colors duration-300 cursor-pointer flex-shrink-0"></iconify-icon>
+        <iconify-icon icon="simple-icons:uniswap"    width="32" class="text-slate-600 hover:text-[#FF007A] transition-colors duration-300 cursor-pointer flex-shrink-0"></iconify-icon>
+      </div>
+    </div>
+
+    <!-- Stats: 3 columns with dividers -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-0 reveal">
+      <!-- Stat 1 -->
+      <div class="flex flex-col items-center text-center px-8 py-8 relative">
+        <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-5"
+             style="background:rgba(147,51,234,0.12);border:1px solid rgba(168,85,247,0.2)">
+          <iconify-icon icon="solar:users-group-rounded-linear" width="24" class="text-purple-400"></iconify-icon>
+        </div>
+        <div class="stat-number text-gradient-stat mb-1" data-val="120000" data-suffix="K+">0</div>
+        <div class="text-sm text-slate-400 font-medium">Active Developers</div>
+        <div class="text-xs text-slate-600 mt-1">building on BlockNest</div>
+        <!-- right divider -->
+        <div class="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 w-px h-20"
+             style="background:linear-gradient(to bottom,transparent,rgba(168,85,247,0.25),transparent)"></div>
+      </div>
+
+      <!-- Stat 2 -->
+      <div class="flex flex-col items-center text-center px-8 py-8 relative">
+        <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-5"
+             style="background:rgba(79,70,229,0.12);border:1px solid rgba(99,102,241,0.2)">
+          <iconify-icon icon="solar:chart-square-linear" width="24" class="text-indigo-400"></iconify-icon>
+        </div>
+        <div class="stat-number text-gradient-stat mb-1" data-val="4.8" data-suffix="B+">0</div>
+        <div class="text-sm text-slate-400 font-medium">Transactions Processed</div>
+        <div class="text-xs text-slate-600 mt-1">across all chains</div>
+        <!-- right divider -->
+        <div class="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 w-px h-20"
+             style="background:linear-gradient(to bottom,transparent,rgba(168,85,247,0.25),transparent)"></div>
+      </div>
+
+      <!-- Stat 3 -->
+      <div class="flex flex-col items-center text-center px-8 py-8">
+        <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-5"
+             style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.2)">
+          <iconify-icon icon="solar:shield-check-linear" width="24" class="text-emerald-400"></iconify-icon>
+        </div>
+        <div class="stat-number text-gradient-stat mb-1" data-val="99.9" data-suffix="%">0</div>
+        <div class="text-sm text-slate-400 font-medium">Uptime Guaranteed</div>
+        <div class="text-xs text-slate-600 mt-1">enterprise-grade SLA</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 4 — TESTIMONIALS / MASONRY
+════════════════════════════════════════════════════════════════════ -->
+<section class="relative z-10 py-24 px-6">
+  <div class="max-w-7xl mx-auto">
+
+    <div class="text-center mb-16 reveal">
+      <p class="text-xs font-semibold text-purple-400 uppercase tracking-widest mb-3">Community</p>
+      <h2 class="text-4xl md:text-5xl font-semibold text-white tracking-tight" style="letter-spacing:-0.025em">
+        Loved by builders<br />
+        <span class="text-gradient-purple">around the world</span>
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+      <!-- Card 1 — Uniswap -->
+      <div class="glass-card rounded-3xl p-6 hover-lift reveal delay-100 flex flex-col gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl flex items-center justify-center"
+               style="background:rgba(255,0,122,0.15)">
+            <iconify-icon icon="simple-icons:uniswap" width="20" class="text-[#FF007A]"></iconify-icon>
+          </div>
+          <div>
+            <div class="text-sm font-semibold text-white">Uniswap Labs</div>
+            <div class="flex items-center gap-1 text-xs text-slate-500">
+              <iconify-icon icon="solar:verified-check-bold" width="13" class="text-blue-400"></iconify-icon>
+              Official Partner
+            </div>
+          </div>
+        </div>
+        <p class="text-slate-300 text-sm leading-relaxed">
+          "BlockNest gave us the infrastructure to launch our v3 pools in half the time. The no-code tooling is genuinely best-in-class for DeFi."
+        </p>
+        <div class="flex gap-1 mt-auto">
+          <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+          <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+          <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+          <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+          <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+        </div>
+      </div>
+
+      <!-- Card 2 — James Dupont (gradient card) -->
+      <div class="rounded-3xl p-6 hover-lift reveal delay-200 flex flex-col gap-4"
+           style="background:linear-gradient(160deg,#13141F,#0A0B10);border:1px solid rgba(255,255,255,0.07)">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm text-white"
+               style="background:linear-gradient(135deg,#9333ea,#6366f1)">JD</div>
+          <div>
+            <div class="text-sm font-semibold text-white">James Dupont</div>
+            <div class="flex items-center gap-1 text-xs text-slate-500">
+              <iconify-icon icon="solar:verified-check-bold" width="13" class="text-purple-400"></iconify-icon>
+              Senior Solidity Engineer
+            </div>
+          </div>
+        </div>
+        <p class="text-slate-300 text-sm leading-relaxed">
+          "I shipped a full staking protocol in 3 days using BlockNest. What used to take months of boilerplate is now drag-and-drop. Absolutely game-changing."
+        </p>
+        <div class="flex gap-1 mt-auto">
+          <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+          <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+          <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+          <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+          <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+        </div>
+      </div>
+
+      <!-- Card 3 — Polygon -->
+      <div class="glass-card rounded-3xl p-6 hover-lift reveal delay-300 flex flex-col gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl flex items-center justify-center"
+               style="background:rgba(130,71,229,0.15)">
+            <iconify-icon icon="simple-icons:polygon" width="20" class="text-[#8247E5]"></iconify-icon>
+          </div>
+          <div>
+            <div class="text-sm font-semibold text-white">Polygon</div>
+            <div class="flex items-center gap-1 text-xs text-slate-500">
+              <iconify-icon icon="solar:verified-check-bold" width="13" class="text-blue-400"></iconify-icon>
+              Ecosystem Partner
+            </div>
+          </div>
+        </div>
+        <p class="text-slate-300 text-sm leading-relaxed">
+          "We integrated BlockNest into our zkEVM developer portal and saw a 3× increase in new dApp launches within the first quarter."
+        </p>
+        <!-- Mini metric -->
+        <div class="rounded-2xl p-3 flex items-center justify-between mt-1"
+             style="background:rgba(130,71,229,0.08);border:1px solid rgba(130,71,229,0.15)">
+          <span class="text-xs text-slate-400">New dApps Q1</span>
+          <span class="text-sm font-semibold text-purple-300">+312% ↑</span>
+        </div>
+        <div class="flex gap-1">
+          <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+          <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+          <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+          <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+          <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+        </div>
+      </div>
+
+      <!-- Card 4 — Anna Silva (spans 2 cols on md) -->
+      <div class="rounded-3xl p-6 hover-lift reveal delay-100 md:col-span-2 flex flex-col gap-4"
+           style="background:linear-gradient(160deg,#13141F,#0A0B10);border:1px solid rgba(255,255,255,0.07)">
+        <div class="flex items-start gap-4">
+          <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center font-bold text-sm text-white"
+               style="background:linear-gradient(135deg,#f472b6,#a855f7)">AS</div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-sm font-semibold text-white">Anna Silva</div>
+                <div class="flex items-center gap-1 text-xs text-slate-500">
+                  <iconify-icon icon="solar:verified-check-bold" width="13" class="text-purple-400"></iconify-icon>
+                  Web3 Product Lead, Binance
+                </div>
+              </div>
+              <div class="flex gap-1">
+                <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+                <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+                <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+                <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+                <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+              </div>
+            </div>
+            <p class="text-slate-300 text-sm leading-relaxed mt-3">
+              "As someone who bridges product and engineering, BlockNest is the first platform that speaks both languages fluently. Our non-technical PMs can now prototype on-chain flows that our devs take straight to production. We cut our time-to-launch by 60%."
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5 — Chainlink -->
+      <div class="glass-card rounded-3xl p-6 hover-lift reveal delay-200 flex flex-col gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl flex items-center justify-center"
+               style="background:rgba(55,91,210,0.15)">
+            <iconify-icon icon="simple-icons:chainlink" width="20" class="text-[#375BD2]"></iconify-icon>
+          </div>
+          <div>
+            <div class="text-sm font-semibold text-white">Chainlink</div>
+            <div class="flex items-center gap-1 text-xs text-slate-500">
+              <iconify-icon icon="solar:verified-check-bold" width="13" class="text-blue-400"></iconify-icon>
+              Oracle Partner
+            </div>
+          </div>
+        </div>
+        <p class="text-slate-300 text-sm leading-relaxed">
+          "BlockNest's oracle integration layer made wiring up Chainlink price feeds to our contracts completely seamless — no ABI fumbling required."
+        </p>
+        <div class="flex gap-1 mt-auto">
+          <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+          <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+          <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+          <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+          <iconify-icon icon="solar:star-bold" width="14" class="text-amber-400"></iconify-icon>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 5 — CTA FOOTER
+════════════════════════════════════════════════════════════════════ -->
+<section class="relative z-20 py-32 px-6 overflow-hidden">
+  <!-- Grid bg -->
+  <div class="absolute inset-0 cta-grid-bg opacity-60"></div>
+  <!-- Bottom purple blur -->
+  <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] pointer-events-none"
+       style="background:radial-gradient(ellipse 80% 60% at 50% 100%,rgba(147,51,234,0.35) 0%,transparent 70%);filter:blur(130px)"></div>
+  <!-- Top subtle line -->
+  <div class="absolute top-0 inset-x-0 h-px" style="background:linear-gradient(to right,transparent,rgba(168,85,247,0.3),transparent)"></div>
+
+  <div class="relative max-w-3xl mx-auto text-center">
+    <p class="reveal text-xs font-semibold text-purple-400 uppercase tracking-widest mb-4">Get Started Today</p>
+    <h2 class="reveal delay-100 text-4xl md:text-6xl font-semibold text-white mb-6 tracking-tight" style="letter-spacing:-0.025em">
+      Build the future<br />of <span class="text-gradient-purple glow-text">Web3</span>
+    </h2>
+    <p class="reveal delay-200 text-slate-400 text-lg leading-relaxed mb-10 max-w-xl mx-auto">
+      Join 120,000+ developers who ship faster with BlockNest. No smart contract experience required.
+    </p>
+
+    <div class="reveal delay-300 flex flex-col sm:flex-row items-center justify-center gap-4">
+      <a href="#"
+         class="px-8 py-4 rounded-full font-semibold text-black bg-white text-sm transition-all duration-300 hover:bg-slate-100"
+         style="box-shadow:0 0 20px rgba(255,255,255,0.25)">
+        Access Platform →
+      </a>
+      <a href="#"
+         class="px-8 py-4 rounded-full font-medium text-slate-300 border border-white/10 text-sm hover:border-white/20 hover:text-white transition-all duration-300"
+         style="background:rgba(255,255,255,0.04)">
+        View Documentation
+      </a>
+    </div>
+
+    <!-- Trust row -->
+    <div class="reveal delay-400 flex items-center justify-center gap-6 mt-10 text-xs text-slate-600">
+      <span class="flex items-center gap-1.5">
+        <iconify-icon icon="solar:shield-check-linear" width="14" class="text-emerald-500"></iconify-icon>
+        SOC 2 Certified
+      </span>
+      <span class="w-px h-3" style="background:rgba(255,255,255,0.1)"></span>
+      <span class="flex items-center gap-1.5">
+        <iconify-icon icon="solar:lock-linear" width="14" class="text-emerald-500"></iconify-icon>
+        Non-custodial
+      </span>
+      <span class="w-px h-3" style="background:rgba(255,255,255,0.1)"></span>
+      <span class="flex items-center gap-1.5">
+        <iconify-icon icon="solar:code-linear" width="14" class="text-emerald-500"></iconify-icon>
+        Open Source
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     FOOTER BAR
+════════════════════════════════════════════════════════════════════ -->
+<footer class="relative z-20 border-t py-8 px-6" style="border-color:rgba(255,255,255,0.06);background:#030408">
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-2.5">
+      <div class="w-6 h-6 rounded-lg flex items-center justify-center"
+           style="background:linear-gradient(135deg,#9333ea,#4f46e5)">
+        <iconify-icon icon="solar:layers-minimalistic-bold-duotone" width="14" class="text-white"></iconify-icon>
+      </div>
+      <span class="text-white font-semibold text-sm">BlockNest</span>
+    </div>
+    <div class="flex items-center gap-8 text-xs text-slate-500">
+      <a href="#" class="hover:text-white transition-colors">Privacy</a>
+      <a href="#" class="hover:text-white transition-colors">Terms</a>
+      <a href="#" class="hover:text-white transition-colors">Security</a>
+      <a href="#" class="hover:text-white transition-colors">Docs</a>
+    </div>
+    <p class="text-xs text-slate-600">© 2026 BlockNest. All rights reserved.</p>
+  </div>
+</footer>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     JAVASCRIPT — Scroll Reveal + Stat Counters
+════════════════════════════════════════════════════════════════════ -->
+<script>
+  // ── Scroll Reveal ──────────────────────────────────────────────────
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+      } else {
+        entry.target.classList.remove('active');
+      }
+    });
+  }, { root: null, rootMargin: '0px', threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  // ── Stat Counter (animateValue) ────────────────────────────────────
+  function animateValue(el) {
+    const target   = parseFloat(el.dataset.val);
+    const suffix   = el.dataset.suffix || '';
+    const duration = 2000;
+    const isFloat  = String(target).includes('.');
+    let startTime  = null;
+
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = target * eased;
+
+      if (isFloat) {
+        el.textContent = current.toFixed(1) + suffix;
+      } else {
+        // For large numbers, show abbreviated (e.g. 120000 → 120K+)
+        if (target >= 1000) {
+          el.textContent = Math.floor(current / 1000) + suffix;
+        } else {
+          el.textContent = Math.floor(current) + suffix;
+        }
+      }
+
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  // Trigger counters when the stats section scrolls into view
+  const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.querySelectorAll('[data-val]').forEach(el => {
+          if (!el.dataset.animated) {
+            el.dataset.animated = 'true';
+            animateValue(el);
+          }
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+
+  // Observe the stats grid parent
+  document.querySelectorAll('[data-val]').forEach(el => {
+    const section = el.closest('section') || el.parentElement;
+    statsObserver.observe(section);
+  });
+
+  // ── Hero card 3D tilt on mouse move ───────────────────────────────
+  const perspContainer = document.querySelector('.perspective-container');
+  if (perspContainer) {
+    const grid = perspContainer.querySelector('.grid');
+    perspContainer.addEventListener('mousemove', (e) => {
+      const rect  = perspContainer.getBoundingClientRect();
+      const centerX = rect.left + rect.width  / 2;
+      const centerY = rect.top  + rect.height / 2;
+      const rotX = ((e.clientY - centerY) / rect.height) * -6;
+      const rotY = ((e.clientX - centerX) / rect.width)  *  4;
+      grid.style.transform =
+        `perspective(1000px) rotateX(${6 + rotX}deg) rotateY(${rotY}deg)`;
+      grid.style.transition = 'transform 100ms linear';
+    });
+    perspContainer.addEventListener('mouseleave', () => {
+      grid.style.transform = 'perspective(1000px) rotateX(6deg) rotateY(0deg)';
+      grid.style.transition = 'transform 600ms cubic-bezier(0.16,1,0.3,1)';
+    });
+  }
+</script>
+</body>
+</html>
