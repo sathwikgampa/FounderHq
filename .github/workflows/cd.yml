@@ -1,0 +1,12 @@
+name: Continuous Deployment Placeholder
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: CD Pipeline Ready
+        run: echo "Production CD pipeline placeholder active for Vercel & Cloud Run deployment."

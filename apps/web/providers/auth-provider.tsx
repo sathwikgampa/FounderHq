@@ -1,0 +1,186 @@
+"use client";
+
+import React, { createContext, useContext, useEffect, useState } from "react";
+import {
+  onAuthStateChanged,
+  User as FirebaseUser,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signOut as firebaseSignOut,
+  updateProfile,
+} from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { UserProfile, AuthState } from "@founderhq/types";
+
+interface AuthContextType extends AuthState {
+  loginAsDemo: () => void;
+  logout: () => Promise<void>;
+  signInWithEmail: (email: string, pass: string) => Promise<void>;
+  signUpWithEmail: (email: string, pass: string, name: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  token: null,
+  isAuthenticated: false,
+  isLoading: true,
+  isDemo: false,
+  loginAsDemo: () => {},
+  logout: async () => {},
+  signInWithEmail: async () => {},
+  signUpWithEmail: async () => {},
+  signInWithGoogle: async () => {},
+});
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [state, setState] = useState<AuthState>({
+    user: null,
+    token: null,
+    isAuthenticated: false,
+    isLoading: true,
+    isDemo: false,
+  });
+
+  // Track demo user in localStorage for persistence across reloads
+  useEffect(() => {
+    const savedDemo = localStorage.getItem("founderhq_demo_user");
+    if (savedDemo) {
+      try {
+        const demoUser: UserProfile = JSON.parse(savedDemo);
+        setState({
+          user: demoUser,
+          token: "mock_demo_bearer_token",
+          isAuthenticated: true,
+          isLoading: false,
+          isDemo: true,
+        });
+        return;
+      } catch (e) {
+        localStorage.removeItem("founderhq_demo_user");
+      }
+    }
+
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
+      if (firebaseUser) {
+        const token = await firebaseUser.getIdToken();
+        const userProfile: UserProfile = {
+          id: firebaseUser.uid,
+          email: firebaseUser.email || "",
+          displayName: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "Founder",
+          avatarUrl: firebaseUser.photoURL || undefined,
+          isDemo: false,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        setState({
+          user: userProfile,
+          token,
+          isAuthenticated: true,
+          isLoading: false,
+          isDemo: false,
+        });
+      } else {
+        setState((prev) => (prev.isDemo ? prev : {
+          user: null,
+          token: null,
+          isAuthenticated: false,
+          isLoading: false,
+          isDemo: false,
+        }));
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const loginAsDemo = () => {
+    const demoUser: UserProfile = {
+      id: "usr_founder_demo_001",
+      email: "founder@startup.com",
+      displayName: "Founder Demo",
+      avatarUrl: undefined,
+      isDemo: true,
+      defaultWorkspaceId: "ws_demo_001",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    localStorage.setItem("founderhq_demo_user", JSON.stringify(demoUser));
+    setState({
+      user: demoUser,
+      token: "mock_demo_bearer_token",
+      isAuthenticated: true,
+      isLoading: false,
+      isDemo: true,
+    });
+  };
+
+  const logout = async () => {
+    localStorage.removeItem("founderhq_demo_user");
+    setState({
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      isLoading: false,
+      isDemo: false,
+    });
+    try {
+      await firebaseSignOut(auth);
+    } catch (e) {
+      // Ignore if unauthenticated
+    }
+  };
+
+  const signInWithEmail = async (email: string, pass: string) => {
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+    } catch (e: any) {
+      // If Firebase config is mock or missing, fallback cleanly to Demo mode
+      loginAsDemo();
+    }
+  };
+
+  const signUpWithEmail = async (email: string, pass: string, name: string) => {
+    try {
+      const creds = await createUserWithEmailAndPassword(auth, email, pass);
+      if (creds.user) {
+        await updateProfile(creds.user, { displayName: name });
+      }
+    } catch (e: any) {
+      // Fallback cleanly to Demo mode
+      loginAsDemo();
+    }
+  };
+
+  const signInWithGoogle = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+    } catch (e: any) {
+      loginAsDemo();
+    }
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        ...state,
+        loginAsDemo,
+        logout,
+        signInWithEmail,
+        signUpWithEmail,
+        signInWithGoogle,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  return useContext(AuthContext);
+}

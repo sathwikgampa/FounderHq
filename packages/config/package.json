@@ -1,0 +1,6 @@
+{
+  "name": "@founderhq/config",
+  "version": "0.1.0",
+  "main": "./tailwind.config.base.js",
+  "private": true
+}
