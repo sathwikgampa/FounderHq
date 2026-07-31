@@ -156,18 +156,44 @@ def _extract_prompt_context(prompt: str) -> dict[str, Any]:  # noqa: C901
     )
 
     # Contextual domain mapping directly from user request
-    if any(w in lower_p for w in ["real estate", "broker", "realtor", "property", "listing"]):
-        target_audience = "Local real estate brokers & independent agent teams"
-        core_problem = (
-            "Brokers spend 2+ hours per listing manually drafting MLS copy & social assets"
-        )
+    if any(
+        w in lower_p
+        for w in [
+            "book",
+            "books",
+            "textbook",
+            "textbooks",
+            "used book",
+            "library",
+            "read",
+            "resale",
+            "secondhand",
+        ]
+    ):
+        target_audience = "Students, readers, campus book buyers & peer-to-peer book sellers"
+        core_problem = "Users struggle to quickly list, price, and sell used books/textbooks locally and on campus"
     elif any(
         w in lower_p
-        for w in ["study", "edtech", "education", "quiz", "course", "school", "student"]
+        for w in [
+            "study",
+            "edtech",
+            "edu tech",
+            "education",
+            "quiz",
+            "course",
+            "school",
+            "student",
+            "learning",
+        ]
     ):
         target_audience = "Students, educators, course creators & boutique learning academies"
         core_problem = (
             "Learners spend hours synthesizing notes into practice quizzes & study guides"
+        )
+    elif any(w in lower_p for w in ["real estate", "broker", "realtor", "property", "listing"]):
+        target_audience = "Local real estate brokers & independent agent teams"
+        core_problem = (
+            "Brokers spend 2+ hours per listing manually drafting MLS copy & social assets"
         )
     elif any(w in lower_p for w in ["health", "fitness", "tracking", "track", "workout", "gym"]):
         target_audience = "Health-conscious individuals, personal trainers & wellness coaches"
@@ -183,9 +209,10 @@ def _extract_prompt_context(prompt: str) -> dict[str, Any]:  # noqa: C901
             "Sales reps burn hours researching prospects & writing personalized cold emails"
         )
     else:
-        # Prompt-derived custom customer & problem fallback
-        target_audience = f"Target customers & early adopters of '{prompt[:40]}...'"
-        core_problem = f"Solving primary user pain points described in: '{prompt}'"
+        # Dynamic prompt-derived context extraction without truncating input
+        clean_prompt = prompt.strip().rstrip(".")
+        target_audience = f"Target customers & early adopters seeking '{clean_prompt}'"
+        core_problem = f"Solving primary user pain points described in: '{clean_prompt}'"
 
     return {
         "initial_capital": capital,

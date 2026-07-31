@@ -80,21 +80,66 @@ def _resolve_model(model_name: str) -> str:
 
 
 def generate_mvp_spec(startup_idea: str, core_problem: str) -> dict[str, Any]:
-    """Trim product scope to 3 core MVP features, compute build days and time saved.
+    """Trim product scope to 3 core MVP features, compute build days and time saved tailored to startup_idea.
 
     Args:
         startup_idea: Description of the startup concept.
         core_problem: Primary user pain point being solved.
     """
+    lower = (startup_idea + " " + core_problem).lower()
+
+    if any(
+        w in lower
+        for w in [
+            "book",
+            "books",
+            "textbook",
+            "textbooks",
+            "read",
+            "used book",
+            "library",
+            "edu tech",
+            "edtech",
+            "resale",
+            "secondhand",
+        ]
+    ):
+        features = [
+            "1-Click Camera Used Book Scanner & Instant Price Evaluator",
+            "Peer-to-Peer Campus Textbook Listing & Direct Chat Marketplace",
+            "Prepaid Shipping Label Exporter & Escrow Payment Checkout",
+        ]
+    elif any(w in lower for w in ["real estate", "broker", "realtor", "property", "listing"]):
+        features = [
+            f"1-Click AI MLS Listing Generator (Solves: {core_problem})",
+            "MLS Description & Social Media Video Exporter",
+            "Boutique Brokerage Brand Customizer Dashboard",
+        ]
+    elif any(w in lower for w in ["study", "education", "quiz", "course", "school"]):
+        features = [
+            "1-Click Study Guide & Automated Flashcard Generator",
+            "AI Quiz Master with Spaced-Repetition Analytics",
+            "Collaborative Study Group Dashboard & PDF Export",
+        ]
+    elif any(w in lower for w in ["health", "fitness", "track", "workout", "gym", "metric"]):
+        features = [
+            "Daily AI Health Metric & Workout Logger",
+            "Personalized Macro Nutrition & Meal Planner",
+            "Progress Analytics & Coach Sharing Portal",
+        ]
+    else:
+        clean_name = startup_idea.strip().rstrip(".")
+        features = [
+            f"1-Click Core Solution Engine for '{clean_name}'",
+            "Interactive User Dashboard & Real-Time Workflow Manager",
+            "Exportable Analytics & Asset Sharing Portal",
+        ]
+
     return {
         "tool": "generate_mvp_spec",
         "startup_idea": startup_idea,
         "core_problem": core_problem,
-        "mvp_features": [
-            f"1-Click AI Listing Generator (Solves: {core_problem})",
-            "MLS Description & Social Media Caption Export",
-            "Boutique Broker Brand Customizer Dashboard",
-        ],
+        "mvp_features": features,
         "estimated_build_days": 12,
         "time_saved_weeks": 3,
         "recommended_stack": ["Next.js 15", "Gemini 2.5 API", "Supabase Database"],
@@ -103,34 +148,90 @@ def generate_mvp_spec(startup_idea: str, core_problem: str) -> dict[str, Any]:
 
 
 def build_gtm_launch_plan(target_audience: str, launch_budget: float) -> dict[str, Any]:
-    """Define ICP targets, primary acquisition channels, sales projections, and email templates.
+    """Define ICP targets, primary acquisition channels, sales projections, and email templates dynamically.
 
     Args:
         target_audience: Description of target users/customers.
         launch_budget: Initial GTM launch budget in USD.
     """
+    lower = target_audience.lower()
+
+    if any(
+        w in lower
+        for w in [
+            "book",
+            "books",
+            "textbook",
+            "textbooks",
+            "student",
+            "edu",
+            "campus",
+            "resale",
+            "secondhand",
+            "education",
+        ]
+    ):
+        icps = [
+            f"Primary ICP: University students, campus book readers & textbook sellers ({target_audience})",
+            "Secondary ICP: Independent secondhand bookstore owners & student union reps",
+        ]
+        channels = [
+            "Campus Subreddits & University Discord Study Groups",
+            "On-Campus Flyer QR Codes & Student Association Partnerships",
+            "Short-Form Video Demos (TikTok/Reels/Instagram)",
+        ]
+        email_body = (
+            "Hi {Student_Name},\n\n"
+            f"Noticed you are managing books/materials for {target_audience}. We built a 10-second scanner app "
+            "that lets you list used textbooks for cash on campus instantly.\n\n"
+            "Would you be open to testing 2 free book listings this week?\n\n"
+            "Best,\nFounders"
+        )
+    elif any(w in lower for w in ["real estate", "broker", "realtor", "property"]):
+        icps = [
+            f"Primary ICP: Local real estate brokers & independent agent teams ({target_audience})",
+            "Secondary ICP: Property managers and boutique residential firms",
+        ]
+        channels = [
+            "LinkedIn Direct Messaging",
+            "Niche Real Estate Subreddits & Facebook Groups",
+        ]
+        email_body = (
+            "Hi {Broker_Name},\n\n"
+            f"Noticed your team manages properties in {target_audience}. We built an AI app that generates "
+            "MLS-compliant real estate descriptions in 10 seconds flat.\n\n"
+            "Would you be open to testing 3 free listings for your team this week?\n\n"
+            "Best,\nFounders"
+        )
+    else:
+        clean_aud = target_audience.replace(
+            "Target customers & early adopters seeking ", ""
+        ).replace("Target customers & early adopters of ", "")
+        icps = [
+            f"Primary ICP: Target customers & early adopters seeking '{clean_aud}'",
+            "Secondary ICP: Niche community members & power users",
+        ]
+        channels = [
+            "Direct Outreach via Cold Email & LinkedIn",
+            "Niche Online Communities & Subreddits",
+        ]
+        email_body = (
+            "Hi {Name},\n\n"
+            f"Noticed your work regarding {clean_aud}. We built an automated solution to streamline your workflow in seconds.\n\n"
+            "Would you be open to testing free early access this week?\n\n"
+            "Best,\nFounders"
+        )
+
     return {
         "tool": "build_gtm_launch_plan",
         "target_audience": target_audience,
         "launch_budget_usd": launch_budget,
-        "icp_targets": [
-            f"Primary ICP: Local real estate brokers & independent agent teams ({target_audience})",
-            "Secondary ICP: Commercial property managers and boutique residential firms",
-        ],
-        "primary_channels": [
-            "LinkedIn Direct Messaging",
-            "Niche Real Estate Subreddits & Facebook Groups",
-        ],
-        "projected_sales_impact": "$1,500/mo in initial recurring sales within 30 days",
+        "icp_targets": icps,
+        "primary_channels": channels,
+        "projected_sales_impact": "$1,800/mo in initial sales within 30 days",
         "cold_email_template": {
-            "subject": f"Quick question regarding {target_audience} property listings",
-            "body": (
-                "Hi {Broker_Name},\n\n"
-                f"Noticed your team manages listings in {target_audience}. We built an AI app that generates "
-                "MLS-compliant real estate descriptions in 10 seconds flat.\n\n"
-                "Would you be open to testing 3 free listings for your team this week?\n\n"
-                "Best,\nFounders"
-            ),
+            "subject": f"Quick question regarding {target_audience}",
+            "body": email_body,
         },
     }
 
