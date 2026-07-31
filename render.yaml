@@ -1,0 +1,31 @@
+services:
+  # FastAPI Backend API
+  - type: web
+    name: founderhq-api
+    runtime: docker
+    dockerfilePath: Dockerfile.api
+    dockerContext: .
+    plan: free
+    envVars:
+      - key: ENV
+        value: production
+      - key: PORT
+        value: 8000
+      - key: DEBUG
+        value: 'false'
+
+  # Next.js Web Frontend
+  - type: web
+    name: founderhq-web
+    runtime: docker
+    dockerfilePath: Dockerfile.web
+    dockerContext: .
+    plan: free
+    envVars:
+      - key: NEXT_PUBLIC_APP_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_BASE_URL
+        fromService:
+          type: web
+          name: founderhq-api
+          property: host
