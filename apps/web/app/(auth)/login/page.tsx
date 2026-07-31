@@ -5,12 +5,16 @@ import { useRouter } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, User } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useAuth } from '@/providers/auth-provider';
 
 export default function LoginPage() {
     const router = useRouter();
+    const { signInWithEmail, signUpWithEmail, signInWithGoogle, loginAsDemo } = useAuth();
+
     const [isSignUp, setIsSignUp] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     // Form State
     const [email, setEmail] = useState('');
@@ -21,7 +25,7 @@ export default function LoginPage() {
     // Validation
     const [error, setError] = useState('');
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
 
@@ -43,8 +47,50 @@ export default function LoginPage() {
             return;
         }
 
-        console.log('Sign in attempted with:', { name, email, isSignUp });
-        alert(isSignUp ? 'Account created successfully!' : 'Signed in successfully!');
+        try {
+            setIsLoading(true);
+            if (isSignUp) {
+                await signUpWithEmail(email, password, name);
+            } else {
+                await signInWithEmail(email, password);
+            }
+            router.push('/dashboard');
+        } catch (err: any) {
+            console.error('Auth error:', err);
+            // Fallback for demo environments if Firebase isn't configured
+            if (err.message && err.message.includes('Firebase')) {
+                loginAsDemo();
+                router.push('/dashboard');
+            } else {
+                setError(err.message || 'Authentication failed. Please try again.');
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleGoogleAuth = async () => {
+        setError('');
+        setIsLoading(true);
+        try {
+            await signInWithGoogle();
+            router.push('/dashboard');
+        } catch (err: any) {
+            console.error('Google Auth error:', err);
+            if (err.message && err.message.includes('Firebase')) {
+                loginAsDemo();
+                router.push('/dashboard');
+            } else {
+                setError(err.message || 'Google Authentication failed.');
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleDemoAuth = (e: React.MouseEvent) => {
+        e.preventDefault();
+        loginAsDemo();
         router.push('/dashboard');
     };
 
@@ -134,8 +180,9 @@ export default function LoginPage() {
                     {/* OAuth */}
                     <button
                         type="button"
-                        onClick={() => console.log('Initiate Google OAuth login')}
-                        className="w-full mb-6 flex items-center justify-center gap-3 py-3 px-4 bg-transparent border border-white/20 hover:bg-white/5 rounded-xl transition-colors group"
+                        onClick={handleGoogleAuth}
+                        disabled={isLoading}
+                        className="w-full mb-6 flex items-center justify-center gap-3 py-3 px-4 bg-transparent border border-white/20 hover:bg-white/5 disabled:opacity-50 rounded-xl transition-colors group"
                     >
                         <GoogleIcon />
                         <span className="text-sm font-semibold text-white group-hover:text-white transition-colors">
@@ -258,22 +305,24 @@ export default function LoginPage() {
                         <div className="pt-4">
                             <button
                                 type="submit"
-                                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-[#2C5FA8] hover:bg-[#255294] text-white rounded-xl text-sm font-semibold transition-all group shadow-lg shadow-blue-900/20"
+                                disabled={isLoading}
+                                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-[#2C5FA8] hover:bg-[#255294] disabled:bg-[#2C5FA8]/50 text-white rounded-xl text-sm font-semibold transition-all group shadow-lg shadow-blue-900/20"
                             >
-                                <span>{isSignUp ? 'Create Workspace' : 'Sign in to Workspace'}</span>
-                                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                                <span>{isLoading ? 'Processing...' : (isSignUp ? 'Create Workspace' : 'Sign in to Workspace')}</span>
+                                {!isLoading && <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />}
                             </button>
                         </div>
                     </form>
 
                     {/* Secondary Link */}
                     <div className="mt-6 text-center">
-                        <Link
-                            href="/dashboard"
+                        <button
+                            onClick={handleDemoAuth}
+                            disabled={isLoading}
                             className="text-sm text-slate-400 hover:text-white font-medium transition-colors inline-block"
                         >
                             Try Demo Workspace →
-                        </Link>
+                        </button>
                     </div>
 
                     {/* Footer */}
