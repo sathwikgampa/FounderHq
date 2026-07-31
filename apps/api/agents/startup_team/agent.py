@@ -54,8 +54,32 @@ def analyze_and_route_workflow(prompt: str) -> dict[str, Any]:  # noqa: C901
     lower_p = prompt.lower()
     selected_agents: list[str] = []
 
+    # Check for 0-to-1 Startup Incubator Launch Plan intent
+    if any(
+        k in lower_p
+        for k in [
+            "30-day",
+            "launch plan",
+            "incubator",
+            "0-to-1",
+            "b2b ai app",
+            "personal savings",
+            "startup idea",
+            "co-founder",
+        ]
+    ):
+        selected_agents = ["ProductAgent", "GrowthAgent", "FinanceAgent", "LegalAgent"]
+        return {
+            "selected_agents": selected_agents,
+            "workflow_type": "SEQUENTIAL",
+            "step_count": len(selected_agents),
+        }
+
     # Map prompt intents to sub-agents
-    if any(k in lower_p for k in ["runway", "balance", "burn", "afford", "finance", "budget"]):
+    if any(
+        k in lower_p
+        for k in ["runway", "balance", "burn", "afford", "finance", "budget", "capital", "savings"]
+    ):
         selected_agents.append("FinanceAgent")
 
     if any(
@@ -74,16 +98,43 @@ def analyze_and_route_workflow(prompt: str) -> dict[str, Any]:  # noqa: C901
     ):
         selected_agents.append("TalentAgent")
 
-    if any(k in lower_p for k in ["campaign", "growth", "marketing", "ads", "linkedin"]):
+    if any(
+        k in lower_p
+        for k in [
+            "campaign",
+            "growth",
+            "marketing",
+            "ads",
+            "linkedin",
+            "gtm",
+            "audience",
+            "waitlist",
+            "outreach",
+        ]
+    ):
         selected_agents.append("GrowthAgent")
 
-    if any(k in lower_p for k in ["contract", "legal", "nda", "safe", "equity", "employment"]):
+    if any(
+        k in lower_p
+        for k in [
+            "contract",
+            "legal",
+            "nda",
+            "safe",
+            "equity",
+            "employment",
+            "incorporation",
+            "vesting",
+        ]
+    ):
         selected_agents.append("LegalAgent")
 
-    if any(k in lower_p for k in ["sales", "deal", "seat", "enterprise", "pricing"]):
+    if any(k in lower_p for k in ["sales", "deal", "seat", "enterprise", "pricing", "lead"]):
         selected_agents.append("SalesAgent")
 
-    if any(k in lower_p for k in ["feature", "prd", "rice", "prioritize", "product"]):
+    if any(
+        k in lower_p for k in ["feature", "prd", "rice", "prioritize", "product", "mvp", "stack"]
+    ):
         selected_agents.append("ProductAgent")
 
     if any(k in lower_p for k in ["cloud", "aws", "infrastructure", "mau", "users", "cto", "tech"]):
@@ -93,7 +144,7 @@ def analyze_and_route_workflow(prompt: str) -> dict[str, Any]:  # noqa: C901
         selected_agents.append("InvestmentAgent")
 
     if not selected_agents:
-        selected_agents = ["FinanceAgent", "TalentAgent"]
+        selected_agents = ["ProductAgent", "GrowthAgent", "FinanceAgent", "LegalAgent"]
 
     # Deduplicate while preserving order
     seen = set()
@@ -131,8 +182,143 @@ def analyze_and_route_workflow(prompt: str) -> dict[str, Any]:  # noqa: C901
 
 
 # ==============================================================================
-# SECTION 1 – DETERMINISTIC TOOL FUNCTIONS (7 TOOLS)
+# SECTION 1 – DETERMINISTIC TOOL FUNCTIONS (11 TOOLS)
 # ==============================================================================
+
+
+def generate_mvp_spec(startup_idea: str, core_problem: str) -> dict[str, Any]:
+    """Trim scope to 3 essential MVP features and recommend a 14-day low-code/AI stack.
+
+    Args:
+        startup_idea: Description of the startup concept.
+        core_problem: The primary user pain point being solved.
+    """
+    return {
+        "tool": "generate_mvp_spec",
+        "startup_idea": startup_idea,
+        "core_problem": core_problem,
+        "mvp_features": [
+            f"Core AI Generation Engine (Solves: {core_problem})",
+            "One-Click Founder Output Dashboard & Preview",
+            "Exportable PDF/Asset Generator",
+        ],
+        "tech_stack_recommendation": {
+            "frontend": "Next.js 15 + TailwindCSS",
+            "backend": "FastAPI + Google ADK",
+            "ai_engine": "Gemini 2.5 API",
+            "target_build_timeline_days": 14,
+        },
+        "incubation_advice": "Focus strictly on the 3 core MVP features. Defer custom authentication and telemetry to post-launch.",
+    }
+
+
+def build_gtm_launch_plan(target_audience: str, launch_budget: float) -> dict[str, Any]:
+    """Define ICP targets, top 3 acquisition channels, waitlist copy, and cold email templates.
+
+    Args:
+        target_audience: Description of target users/customers.
+        launch_budget: Initial GTM budget in USD.
+    """
+    return {
+        "tool": "build_gtm_launch_plan",
+        "target_audience": target_audience,
+        "launch_budget_usd": launch_budget,
+        "icp_targets": [
+            f"Primary ICP: Real estate agents, brokers, and team leads ({target_audience})",
+            "Secondary ICP: Property managers and boutique residential firms",
+        ],
+        "acquisition_channels": [
+            "Direct Cold Email Outreach via Apollo/Instantly",
+            "Niche Facebook/LinkedIn Real Estate Agent Communities",
+            "Product Hunt Launch & Short-Form Video Demos (X/TikTok)",
+        ],
+        "waitlist_copy": {
+            "headline": f"AI Automation for {target_audience} — Launch in 30 Days",
+            "subheadline": "Write high-converting property listings in 10 seconds flat.",
+            "cta_button": "Join Beta Waitlist",
+        },
+        "cold_email_template": {
+            "subject": f"Quick question regarding {target_audience} listings",
+            "body": (
+                "Hi {Name},\n\n"
+                f"Noticed your team manages properties in {target_audience}. We built an AI tool that writes "
+                "MLS-compliant real estate listings automatically in under 10 seconds.\n\n"
+                "Would you be open to testing 3 free listings this week?\n\n"
+                "Best,\nFounders"
+            ),
+        },
+    }
+
+
+def calculate_bootstrap_runway(initial_capital: float, est_monthly_cost: float) -> dict[str, Any]:
+    """Calculate zero-revenue bootstrap runway in months and assign health status.
+
+    Args:
+        initial_capital: Total personal savings or initial capital in USD.
+        est_monthly_cost: Estimated monthly operating expense in USD.
+    """
+    if est_monthly_cost <= 0:
+        runway_months = math.inf
+        health_status = "STRONG_BOOTSTRAP"
+    else:
+        runway_months = round(initial_capital / est_monthly_cost, 2)
+        if runway_months < 3:
+            health_status = "CRITICAL_CAPITAL_WARNING"
+        elif runway_months <= 6:
+            health_status = "LEAN_VALIDATION"
+        else:
+            health_status = "STRONG_BOOTSTRAP"
+
+    display_runway = "∞" if runway_months == math.inf else f"{runway_months} months"
+
+    recommendation = {
+        "CRITICAL_CAPITAL_WARNING": "URGENT: Less than 3 months runway. Keep monthly operating costs under $1,000.",
+        "LEAN_VALIDATION": "3-6 months runway. Maintain lean validation and defer hiring non-essential headcount.",
+        "STRONG_BOOTSTRAP": "Strong runway (>6 months). Fully funded to execute 30-day MVP build and initial GTM.",
+    }[health_status]
+
+    return {
+        "tool": "calculate_bootstrap_runway",
+        "initial_capital_usd": initial_capital,
+        "est_monthly_cost_usd": est_monthly_cost,
+        "runway_months": display_runway,
+        "health_status": health_status,
+        "cfo_recommendation": recommendation,
+    }
+
+
+def generate_incorporation_checklist(country_region: str, has_co_founders: bool) -> dict[str, Any]:
+    """Outline incorporation steps, founder equity terms, and IP assignment templates.
+
+    Args:
+        country_region: Country or jurisdiction (e.g. 'Delaware, USA', 'India').
+        has_co_founders: Whether the startup has co-founders.
+    """
+    equity_split = (
+        "50/50 Equity Split with 4-year vesting and 1-year cliff"
+        if has_co_founders
+        else "100% Founder Equity"
+    )
+
+    return {
+        "tool": "generate_incorporation_checklist",
+        "country_region": country_region,
+        "has_co_founders": has_co_founders,
+        "incorporation_steps": [
+            f"Form Legal Entity (e.g. Delaware C-Corp or local LLC in {country_region})",
+            "Obtain EIN / Federal Tax ID and open business bank account",
+            "Execute Proprietary Information and Inventions Assignment Agreement (PIIA)",
+            "Draft Founder Stock Purchase Agreement with standard Vesting Schedule",
+        ],
+        "founder_equity_terms": {
+            "structure": equity_split,
+            "vesting_schedule": "4-year monthly vesting schedule with a 12-month cliff",
+            "ip_assignment": "All pre-existing & future company IP assigned 100% to legal entity",
+        },
+        "approval_status": "HOLD_FOR_HUMAN_APPROVAL",
+        "requires_human_signoff": True,
+        "legal_note": "Equity allocation and legal entity incorporation filings require explicit founder sign-off.",
+    }
 
 
 def check_runway(budget: float, monthly_burn: float) -> dict[str, Any]:
@@ -332,10 +518,10 @@ FinanceAgent = Agent(
     description="CFO Sub-Agent. Evaluates capital runway, monthly burn rate, and financial health.",
     instruction=(
         "You are FinanceAgent — CFO of FounderHQ.\n"
-        "Use the `check_runway` tool to analyze budget and monthly burn rate. "
-        "Report runway months, health score, and CFO recommendations."
+        "Use `calculate_bootstrap_runway` to evaluate zero-revenue runway and health status (CRITICAL_CAPITAL_WARNING, LEAN_VALIDATION, STRONG_BOOTSTRAP). "
+        "Use `check_runway` for operational burn rate checks."
     ),
-    tools=[check_runway],
+    tools=[calculate_bootstrap_runway, check_runway],
 )
 
 TalentAgent = Agent(
@@ -356,21 +542,22 @@ GrowthAgent = Agent(
     description="Head of Marketing Sub-Agent. Designs GTM campaigns and lead target projections.",
     instruction=(
         "You are GrowthAgent — Head of Marketing at FounderHQ.\n"
-        "Use the `create_campaign_plan` tool to project impressions, CPC, and CPL. "
-        "Flag campaigns >= $5,000 for human approval."
+        "Use `build_gtm_launch_plan` to define ICP targets, acquisition channels, waitlist copy, and cold email templates. "
+        "Use `create_campaign_plan` for paid campaign projections."
     ),
-    tools=[create_campaign_plan],
+    tools=[build_gtm_launch_plan, create_campaign_plan],
 )
 
 LegalAgent = Agent(
     name="LegalAgent",
     model=_resolve_model(_SUB_AGENT_MODEL_ID),
-    description="General Counsel Sub-Agent. Audits contract risks and compliance.",
+    description="General Counsel Sub-Agent. Audits contract risks and incorporation checklists.",
     instruction=(
         "You are LegalAgent — General Counsel at FounderHQ.\n"
-        "Use the `verify_contract` tool to inspect contracts and assess legal risk tiers (LOW, MEDIUM, HIGH)."
+        "Use `generate_incorporation_checklist` for incorporation, founder equity splits (4-year vesting / 1-year cliff), and IP assignments. "
+        "Always return 'HOLD_FOR_HUMAN_APPROVAL' for equity terms and legal filings. Use `verify_contract` for contract auditing."
     ),
-    tools=[verify_contract],
+    tools=[generate_incorporation_checklist, verify_contract],
 )
 
 SalesAgent = Agent(
@@ -388,12 +575,13 @@ SalesAgent = Agent(
 ProductAgent = Agent(
     name="ProductAgent",
     model=_resolve_model(_SUB_AGENT_MODEL_ID),
-    description="Head of Product Sub-Agent. Prioritizes roadmap features into developer PRD specs.",
+    description="Head of MVP Sub-Agent. Trims product scope into 14-day tech stack & feature specs.",
     instruction=(
-        "You are ProductAgent — Head of Product at FounderHQ.\n"
-        "Use the `prioritize_features` tool to calculate RICE scores and prioritize backlog features."
+        "You are ProductAgent — Head of MVP at FounderHQ.\n"
+        "Use `generate_mvp_spec` to trim scope down to 3 essential MVP features and recommend a 14-day low-code/AI tech stack. "
+        "Use `prioritize_features` for RICE score prioritization."
     ),
-    tools=[prioritize_features],
+    tools=[generate_mvp_spec, prioritize_features],
 )
 
 TechArchitectAgent = Agent(
@@ -426,32 +614,28 @@ InvestmentAgent = Agent(
 CEOAgent = Agent(
     name="CEOAgent",
     model=_resolve_model(_CEO_MODEL_ID),
-    description="Root Orchestrator & CEO of FounderHQ. Single point of contact for executive requests.",
+    description="AI Co-Founder & Incubator Lead. Single point of contact for executive requests and 0-to-1 launch plans.",
     instruction=(
-        "You are CEOAgent — CEO and Root Orchestrator of FounderHQ AI Startup OS.\n\n"
+        "You are CEOAgent — AI Co-Founder and Incubator Lead at FounderHQ.\n\n"
         "Your responsibilities:\n"
-        "1. Receive the founder's prompt and delegate domain sub-tasks to your specialized sub-agents:\n"
-        "   - FinanceAgent (CFO)\n"
-        "   - TalentAgent (Head of HR)\n"
-        "   - GrowthAgent (Head of Marketing)\n"
-        "   - LegalAgent (General Counsel)\n"
-        "   - SalesAgent (Head of Sales)\n"
-        "   - ProductAgent (Head of Product)\n"
-        "   - TechArchitectAgent (CTO)\n"
-        "   - InvestmentAgent (Head of Investor Relations)\n"
-        "2. Synthesize all departmental results into a structured Executive Summary with 4 sections:\n"
-        "   - Executive Brief\n"
-        "   - Departmental Breakthroughs\n"
-        "   - Human Approval Queue Warnings\n"
-        "   - Operational Action Plan\n"
+        "1. When a founder submits a raw startup idea or incubator query, delegate tasks in sequence to:\n"
+        "   - ProductAgent (Head of MVP): Generates 14-day MVP spec and 3 core features\n"
+        "   - GrowthAgent (Head of GTM): Builds GTM launch plan, waitlist copy, and outreach templates\n"
+        "   - FinanceAgent (CFO): Calculates bootstrap runway and health status\n"
+        "   - LegalAgent (General Counsel): Outlines incorporation steps, equity vesting terms, and legal checklists\n"
+        "2. Synthesize all departmental results into a clean 30-Day Startup Launch Plan with 4 sections:\n"
+        "   - Section 1: 14-Day MVP Technical Specification & Tech Stack\n"
+        "   - Section 2: 30-Day Go-To-Market & Lead Acquisition Plan\n"
+        "   - Section 3: Bootstrap Financial Runway & Lean Budget Audit\n"
+        "   - Section 4: Incorporation, Founder Equity Vesting & Legal Checklist\n"
     ),
     sub_agents=[
-        FinanceAgent,
-        TalentAgent,
+        ProductAgent,
         GrowthAgent,
+        FinanceAgent,
         LegalAgent,
         SalesAgent,
-        ProductAgent,
+        TalentAgent,
         TechArchitectAgent,
         InvestmentAgent,
     ],
