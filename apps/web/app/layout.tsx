@@ -1,15 +1,16 @@
-import type { Metadata } from "next";
-import { AppProviders } from "@/providers";
-import "@/app/globals.css";
+import type { Metadata } from 'next';
+import { AppProviders } from '@/providers';
+import '@/app/globals.css';
 
 export const metadata: Metadata = {
-  title: "FounderHQ — AI Operating System for Startups",
-  description: "Enterprise AI Operating System powering startup founders with an intelligent CEO Planner.",
-  keywords: ["Startup", "AI Operating System", "CEO Planner", "FounderHQ"],
+  title: 'FounderHQ — AI Operating System for Startups',
+  description:
+    'Enterprise AI Operating System powering startup founders with an intelligent CEO Planner.',
+  keywords: ['Startup', 'AI Operating System', 'CEO Planner', 'FounderHQ'],
   icons: {
-    icon: "/logo.svg",
-    shortcut: "/logo.svg",
-    apple: "/logo.svg",
+    icon: '/logo.svg',
+    shortcut: '/logo.svg',
+    apple: '/logo.svg',
   },
 };
 
