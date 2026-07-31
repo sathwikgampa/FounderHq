@@ -6,6 +6,7 @@ services:
     name: founderhq-api
     env: docker
     dockerfilePath: ./Dockerfile.api
+    dockerContext: .
     plan: free
     region: oregon
     healthCheckPath: /api/v1/healthz
@@ -23,9 +24,15 @@ services:
       - key: HOST
         value: 0.0.0.0
       - key: CORS_ORIGINS
-        value: '["*"]'
+        value: '["https://founderhq-web.onrender.com","https://founderhq.vercel.app"]'
       - key: JWT_SECRET_KEY
         generateValue: true
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: FEATHERLESS_API_KEY
+        sync: false
 
   # --------------------------------------------------
   # 2. FounderHQ Next.js Web Frontend Service
@@ -44,4 +51,8 @@ services:
         fromService:
           type: web
           name: founderhq-api
-          property: host
+          property: hostport
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: NEXT_PUBLIC_ELEVENLABS_API_KEY
+        sync: false
