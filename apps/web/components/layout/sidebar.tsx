@@ -13,21 +13,25 @@ import {
   CircleDollarSign,
   Users,
   Scale,
-  Briefcase,
   User,
   ChevronRight,
   LogOut,
   Loader2,
+  TrendingUp,
+  Handshake,
+  Grip,
 } from 'lucide-react';
 import { useAuth } from '@/providers/auth-provider';
 
 const mainNavItems = [{ name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard }];
 
 const agentSubItems = [
-  { name: 'Finance', href: '/finance', icon: CircleDollarSign },
-  { name: 'Hiring', href: '/hiring', icon: Users },
-  { name: 'Legal', href: '/legal', icon: Scale },
-  { name: 'Investors', href: '/investors', icon: Briefcase },
+  { name: 'Finance', href: '/agents/finance', icon: CircleDollarSign },
+  { name: 'HR', href: '/agents/hr', icon: Users },
+  { name: 'Growth', href: '/agents/growth', icon: TrendingUp },
+  { name: 'Legal', href: '/agents/legal', icon: Scale },
+  { name: 'Sales', href: '/agents/sales', icon: Handshake },
+  { name: 'Other', href: '/agents/other', icon: Grip },
 ];
 
 const secondaryNavItems = [
@@ -50,13 +54,11 @@ export function Sidebar() {
     return (
       <Link
         href={item.href}
-        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${
-          isSub ? 'ml-6 text-sm' : ''
-        } ${
-          isActive
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${isSub ? 'ml-6 text-sm' : ''
+          } ${isActive
             ? 'bg-primary/10 text-primary font-medium'
             : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-        }`}
+          }`}
       >
         <Icon
           size={isSub ? 16 : 18}
@@ -90,26 +92,22 @@ export function Sidebar() {
         ))}
 
         <div className="mb-1">
-          <div
-            className={`w-full flex items-center justify-between rounded-xl transition-all duration-200 group ${pathname.startsWith('/agents') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+          <button
+            onClick={() => setAgentsExpanded(!agentsExpanded)}
+            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 group ${pathname.startsWith('/agents') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
           >
-            <Link href="/agents" className="flex-1 flex items-center gap-3 px-3 py-2.5">
+            <div className="flex items-center gap-3">
               <Bot
                 size={18}
                 className={`transition-colors ${pathname.startsWith('/agents') ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`}
               />
               <span>Agents</span>
-            </Link>
-            <button
-              onClick={() => setAgentsExpanded(!agentsExpanded)}
-              className="p-3 rounded-r-xl hover:bg-background/50 transition-colors"
-            >
-              <ChevronRight
-                size={16}
-                className={`transition-transform duration-200 ${agentsExpanded || pathname.startsWith('/agents') ? 'rotate-90' : ''} ${pathname.startsWith('/agents') ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`}
-              />
-            </button>
-          </div>
+            </div>
+            <ChevronRight
+              size={16}
+              className={`transition-transform duration-200 ${agentsExpanded ? 'rotate-90' : ''} ${pathname.startsWith('/agents') ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`}
+            />
+          </button>
 
           {(agentsExpanded || pathname.startsWith('/agents')) && (
             <div className="mt-1 space-y-1">
