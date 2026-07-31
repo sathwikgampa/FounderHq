@@ -30,6 +30,9 @@ from sse_starlette.sse import EventSourceResponse
 # Logging Setup
 # ──────────────────────────────────────────────────────────────────────────────
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
@@ -367,9 +370,8 @@ async def root_ping():
 
 if __name__ == "__main__":
     uvicorn.run(
-        "apps.api.main:app",
+        app,
         host="0.0.0.0",
         port=8000,
-        reload=True,
         log_level="info",
     )
