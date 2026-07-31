@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Sparkles, Mic, Paperclip, Send, Terminal } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Sparkles, Mic, MicOff, Paperclip, Send, Terminal, Volume2, VolumeX, Square } from 'lucide-react';
 import { toast } from 'sonner';
+import { useVoice } from '@/hooks/use-voice';
 
 const PROMPT_CHIPS = [
   'Analyze runway & burn',
@@ -16,16 +17,38 @@ const PROMPT_CHIPS = [
 export function AiCopilot() {
   const [query, setQuery] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [lastResponse, setLastResponse] = useState<string | null>(null);
+
+  const { isListening, isSpeaking, transcript, toggleListening, speak, stopSpeaking } = useVoice(
+    (finalText) => {
+      if (finalText) setQuery(finalText);
+    }
+  );
+
+  // Sync live STT transcript to query state
+  useEffect(() => {
+    if (transcript) {
+      setQuery(transcript);
+    }
+  }, [transcript]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
     setIsProcessing(true);
-    setTimeout(() => {
+
+    const userPrompt = query;
+
+    setTimeout(async () => {
       setIsProcessing(false);
-      toast.success(`CEO Planner processed: "${query}"`, { icon: '✨' });
+      const responseText = `CEO Planner evaluated: "${userPrompt}". 10 executive agents executed parallel workflows. Runway remains healthy at 16 months.`;
+      setLastResponse(responseText);
+      toast.success(`CEO Planner processed: "${userPrompt}"`, { icon: '✨' });
       setQuery('');
-    }, 1200);
+
+      // Play ultra-realistic ElevenLabs TTS voice output!
+      await speak(responseText);
+    }, 1000);
   };
 
   const handleChipClick = (chip: string) => {
@@ -34,13 +57,13 @@ export function AiCopilot() {
 
   return (
     <div id="copilot" className="w-full my-8">
-      <div className="relative max-w-4xl mx-auto">
+      <div className="relative max-w-4xl mx-auto space-y-3">
         {/* Glow halo */}
         <div className="absolute -inset-1 bg-gradient-to-r from-[#7C5CFF]/30 via-indigo-500/20 to-purple-500/30 rounded-[32px] blur-xl opacity-60 pointer-events-none" />
 
         <form
           onSubmit={handleSubmit}
-          className="relative bg-[#0E1014]/95 backdrop-blur-2xl border border-white/10 rounded-[28px] p-4 shadow-2xl space-y-3"
+          className="relative bg-[#0E1014]/95 backdrop-blur-2xl border border-white/10 rounded-[28px] p-4 shadow-2xl space-y-3 z-10"
         >
           <div className="flex items-center gap-3 px-2">
             <div className="w-8 h-8 rounded-xl bg-[#7C5CFF]/20 border border-[#7C5CFF]/40 flex items-center justify-center text-[#7C5CFF] shrink-0">
@@ -51,19 +74,48 @@ export function AiCopilot() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Ask FounderHQ anything... (e.g. /runway, /mvp, /hiring)"
+              placeholder={isListening ? 'Listening to voice input...' : 'Ask FounderHQ anything... (e.g. /runway, /mvp, /hiring)'}
               className="flex-1 bg-transparent text-sm text-white placeholder:text-slate-500 focus:outline-none"
             />
 
             <div className="flex items-center gap-2">
+              {/* Mic STT Trigger */}
               <button
                 type="button"
-                onClick={() => toast.info('Voice command active. Listening...')}
-                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
-                title="Voice Command"
+                onClick={toggleListening}
+                className={`p-2 rounded-xl transition-all relative ${
+                  isListening
+                    ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse'
+                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                }`}
+                title={isListening ? 'Stop Voice Recording' : 'Voice Input (ElevenLabs STT & Groq Whisper)'}
               >
-                <Mic size={16} />
+                {isListening ? <MicOff size={16} /> : <Mic size={16} />}
+                {isListening && (
+                  <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+                )}
               </button>
+
+              {/* TTS Playback Stop / Replay */}
+              {isSpeaking ? (
+                <button
+                  type="button"
+                  onClick={stopSpeaking}
+                  className="p-2 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/40 animate-pulse"
+                  title="Stop AI Voice Playback"
+                >
+                  <Square size={14} />
+                </button>
+              ) : lastResponse ? (
+                <button
+                  type="button"
+                  onClick={() => speak(lastResponse)}
+                  className="p-2 rounded-xl text-slate-400 hover:text-[#7C5CFF] hover:bg-white/5 transition-colors"
+                  title="Replay ElevenLabs Voice Response"
+                >
+                  <Volume2 size={16} />
+                </button>
+              ) : null}
 
               <button
                 type="button"
@@ -101,6 +153,17 @@ export function AiCopilot() {
             ))}
           </div>
         </form>
+
+        {/* Live Audio Status Banner */}
+        {isSpeaking && (
+          <div className="px-4 py-2 rounded-2xl bg-[#7C5CFF]/15 border border-[#7C5CFF]/30 flex items-center justify-between text-xs text-[#7C5CFF]">
+            <div className="flex items-center gap-2">
+              <Volume2 size={14} className="animate-bounce" />
+              <span>Playing ElevenLabs Executive AI Voice...</span>
+            </div>
+            <button onClick={stopSpeaking} className="text-[11px] underline hover:text-white">Stop</button>
+          </div>
+        )}
       </div>
     </div>
   );
