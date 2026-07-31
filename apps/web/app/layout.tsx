@@ -6,6 +6,11 @@ export const metadata: Metadata = {
   title: "FounderHQ — AI Operating System for Startups",
   description: "Enterprise AI Operating System powering startup founders with an intelligent CEO Planner.",
   keywords: ["Startup", "AI Operating System", "CEO Planner", "FounderHQ"],
+  icons: {
+    icon: "/logo.svg",
+    shortcut: "/logo.svg",
+    apple: "/logo.svg",
+  },
 };
 
 export default function RootLayout({
