@@ -1,6 +1,5 @@
 """App Schemas Package."""
 
-from app.api.v1 import *  # noqa
 from app.schemas.approvals import ApprovalActionRequest, ApprovalResponse
 from app.schemas.common import APIResponseEnvelope, HealthStatusResponse
 from app.schemas.documents import (
