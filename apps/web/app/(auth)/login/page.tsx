@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, User } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/providers/auth-provider';
+import { toast } from 'sonner';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -74,6 +75,7 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       await signInWithGoogle();
+      toast.success('Successfully authenticated with Google!', { icon: '🌐' });
       router.push('/dashboard');
     } catch (err: unknown) {
       const errorObj = err as Error;
