@@ -194,10 +194,10 @@ export function AiChatWidget() {
         ]);
         setFinalBrief(
           `### 🎯 Executive Multi-Agent Launch Plan\n\n` +
-          `* **CFO Runway Audit**: $450,000 cash reserve (~18 months runway at $25,000/mo net burn).\n` +
-          `* **Talent Strategy**: Senior AI Engineer job post approved ($130k–$150k target salary + 0.75% equity pool).\n` +
-          `* **Legal & Investment**: YC Post-Money SAFE term sheet reviewed ($8M pre-money valuation / 11.11% dilution).\n\n` +
-          `*Status: All executive agent handoffs verified and ready for execution.*`
+            `* **CFO Runway Audit**: $450,000 cash reserve (~18 months runway at $25,000/mo net burn).\n` +
+            `* **Talent Strategy**: Senior AI Engineer job post approved ($130k–$150k target salary + 0.75% equity pool).\n` +
+            `* **Legal & Investment**: YC Post-Money SAFE term sheet reviewed ($8M pre-money valuation / 11.11% dilution).\n\n` +
+            `*Status: All executive agent handoffs verified and ready for execution.*`,
         );
       },
     );
