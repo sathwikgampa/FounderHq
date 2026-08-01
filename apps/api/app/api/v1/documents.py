@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
 
 from app.ai.memory.manager import rag_engine
 from app.schemas.documents import (
@@ -49,6 +49,34 @@ async def upload_document_metadata(payload: DocumentUploadRequest):
         success=True,
         data=result,
         message="Document uploaded and indexed into Startup RAG memory",
+    )
+
+
+@router.post(
+    "/upload_file",
+    response_model=APIResponse[dict],
+    status_code=status.HTTP_201_CREATED,
+)
+async def upload_pdf_file(
+    file: UploadFile = File(...),
+    startup_id: str = Form("startup-001"),
+    department: str = Form("GLOBAL"),
+    visibility: str = Form("GLOBAL"),
+):
+    """Process and index binary PDF document directly into RAG pipeline."""
+    pdf_bytes = await file.read()
+    doc_id = await rag_engine.ingest_pdf_bytes(
+        pdf_bytes=pdf_bytes,
+        file_name=file.filename or "uploaded_document.pdf",
+        workspace_id=startup_id,
+        owner_id="siddharth",
+        visibility=visibility,
+        department=department,
+    )
+    return APIResponse(
+        success=True,
+        data={"document_id": doc_id, "filename": file.filename},
+        message="PDF processed and indexed through complete RAG Architecture",
     )
 
 

@@ -269,69 +269,9 @@ class EnterpriseRAGEngine:
     """Central Intelligence Knowledge Layer for FounderHQ Multi-Agent System."""
 
     def __init__(self) -> None:
-        self._vector_store: list[ChunkResult] = []
-        self._seed_default_workspace_knowledge()
+        from rag.pipeline import RAGPipeline
 
-    def _seed_default_workspace_knowledge(self) -> None:
-        """Pre-populate core startup knowledge base for immediate zero-latency RAG queries."""
-        default_docs = [
-            (
-                "q3_financial_model.pdf",
-                "FINANCE",
-                "Q3 Startup Financial Model & Runway Statement\n"
-                "Total Cash Reserve: $450,000 USD. Monthly Net Burn Rate: $25,000 / month.\n"
-                "Zero-Revenue Runway: 18 Months remaining. Monthly Recurring Revenue (MRR): $15,000.\n"
-                "Max safe monthly engineering spend: $12,500/mo to preserve 14+ months runway.",
-            ),
-            (
-                "series_a_safe_terms.pdf",
-                "LEGAL",
-                "Series A SAFE Term Sheet — YC Post-Money SAFE\n"
-                "Pre-Money Valuation: $8,000,000 USD. Investment Amount: $1,000,000 USD.\n"
-                "Investor Ownership Post-Money: 11.11%. Board Seat: 1 Independent Observer.\n"
-                "Human Approval Requirement: Mandatory for cap table dilution > 10%.",
-            ),
-            (
-                "senior_ai_engineer_jd.pdf",
-                "HR",
-                "Senior AI/ML Engineer Job Posting & Compensation Package\n"
-                "Role: Senior AI Infrastructure Lead. Target Salary Range: $130,000 – $150,000 USD.\n"
-                "Equity Option Pool Grant: 0.75% – 1.25% with 4-year vesting (1-year cliff).\n"
-                "Approval Status: Pending CFO Runway & Sign-off.",
-            ),
-            (
-                "soc2_security_policy.pdf",
-                "OPERATIONS",
-                "SOC 2 Type II Security & Compliance Policy\n"
-                "Data Isolation: Tenant workspace_id enforced on all REST endpoints and DB queries.\n"
-                "Encryption Standard: AES-256 at rest, TLS 1.3 in transit. RBAC Enforcement: Strict Owner/Admin rules.",
-            ),
-        ]
-
-        for doc_name, dept, content in default_docs:
-            doc_id = f"doc-sys-{dept.lower()}"
-            raw_paragraphs = [p.strip() for p in content.split("\n") if p.strip()]
-            for idx, para in enumerate(raw_paragraphs):
-                meta = DocumentChunkMetadata(
-                    document_id=doc_id,
-                    workspace_id="startup-001",
-                    owner_id="system",
-                    visibility="GLOBAL",
-                    department=dept,
-                    file_name=doc_name,
-                    chunk_number=idx + 1,
-                )
-                chunk_res = ChunkResult(
-                    chunk_id=f"{doc_id}_chunk_{idx}",
-                    text=para,
-                    score=0.95,
-                    metadata=meta,
-                )
-                self._vector_store.append(chunk_res)
-
-        logger.info(
-            f"Initialized Enterprise RAG Engine with {len(self._vector_store)} seed chunks."
-        )
+        self.pipeline = RAGPipeline()
 
     async def ingest_document(
         self,
@@ -343,35 +283,37 @@ class EnterpriseRAGEngine:
         visibility: str = "GLOBAL",
         department: str | None = None,
     ) -> int:
-        """Semantic chunking and dynamic metadata indexing pipeline."""
-        raw_paragraphs = [p.strip() for p in content.split("\n\n") if p.strip()]
-        if not raw_paragraphs:
-            raw_paragraphs = (
-                [content.strip()] if content.strip() else [f"Document content for {file_name}"]
-            )
+        """Ingests raw content or PDF streams through the RAG pipeline."""
+        content_bytes = content.encode("utf-8")
+        doc_id = await self.pipeline.process_and_index_pdf(
+            source=content_bytes,
+            filename=file_name,
+            workspace_id=workspace_id,
+            owner_id=owner_id,
+            visibility=visibility,
+            department=department,
+        )
+        logger.info(f"Ingested document {file_name} into Enterprise RAG Engine (ID={doc_id})")
+        return 1
 
-        chunks_added = 0
-        for idx, paragraph in enumerate(raw_paragraphs):
-            meta = DocumentChunkMetadata(
-                document_id=document_id,
-                workspace_id=workspace_id,
-                owner_id=owner_id,
-                visibility=visibility,
-                department=department,
-                file_name=file_name,
-                chunk_number=idx + 1,
-            )
-            chunk_res = ChunkResult(
-                chunk_id=f"{document_id}_chunk_{idx}",
-                text=paragraph,
-                score=0.95,
-                metadata=meta,
-            )
-            self._vector_store.append(chunk_res)
-            chunks_added += 1
-
-        logger.info(f"Ingested document {file_name} into RAG Engine ({chunks_added} chunks)")
-        return chunks_added
+    async def ingest_pdf_bytes(
+        self,
+        pdf_bytes: bytes,
+        file_name: str,
+        workspace_id: str = "startup-001",
+        owner_id: str = "siddharth",
+        visibility: str = "GLOBAL",
+        department: str | None = None,
+    ) -> str:
+        """Ingests binary PDF uploads through the PDF Processing -> Chunking -> Vector DB pipeline."""
+        return await self.pipeline.process_and_index_pdf(
+            source=pdf_bytes,
+            filename=file_name,
+            workspace_id=workspace_id,
+            owner_id=owner_id,
+            visibility=visibility,
+            department=department,
+        )
 
     async def query_knowledge_base(
         self,
@@ -380,80 +322,22 @@ class EnterpriseRAGEngine:
         workspace_id: str,
         user_departments: list[str] | None = None,
     ) -> dict[str, Any]:
-        """Agentic Retrieval Pipeline with dynamic BM25 scoring and executive answer synthesis."""
-        user_depts = user_departments or ["GLOBAL"]
-
-        # Step 1: Intent Detection & Query Rewriting
-        rewrite_res = QueryRewriter.rewrite_query(user_prompt)
-        search_query = rewrite_res["rewritten_query"]
-
-        # Step 2: Permission Resolver — filter BEFORE similarity search
-        accessible_chunks = PermissionResolver.filter_accessible_chunks(
-            chunks=self._vector_store,
+        """Query RAG Knowledge Engine through Query Understanding, Hybrid Retrieval, Re-ranking, Context Compression, and LLM Generation."""
+        res = await self.pipeline.execute_retrieval(
+            query=user_prompt,
             user_id=user_id,
             workspace_id=workspace_id,
-            user_departments=user_depts,
+            departments=user_departments,
         )
-
-        # Step 3: Dynamic BM25 / Keyword Scoring
-        scored_chunks: list[ChunkResult] = []
-        for chunk in accessible_chunks:
-            score = _compute_relevance_score(search_query, chunk.text, chunk.metadata)
-            scored_chunks.append(
-                ChunkResult(
-                    chunk_id=chunk.chunk_id,
-                    text=chunk.text,
-                    score=score,
-                    metadata=chunk.metadata,
-                )
-            )
-
-        # Sort by relevance score descending
-        ranked_chunks = sorted(scored_chunks, key=lambda c: c.score, reverse=True)[:6]
-
-        # Step 4: Format citations & compressed context
-        citations = [
-            {
-                "file_name": c.metadata.file_name,
-                "chunk_number": c.metadata.chunk_number,
-                "page_number": c.metadata.page_number,
-                "visibility": c.metadata.visibility,
-                "relevance_score": c.score,
-            }
-            for c in ranked_chunks
-        ]
-
-        compressed_context = "\n\n".join(
-            [
-                f"[📄 {c.metadata.file_name} | Chunk {c.metadata.chunk_number}] {c.text}"
-                for c in ranked_chunks
-            ]
-        )
-
-        # Step 5: LLM Generation / Executive Knowledge Synthesis
-        generated_answer = ""
-        if compressed_context.strip():
-            rag_prompt = _build_rag_prompt(
-                user_question=search_query,
-                context=compressed_context,
-            )
-            generated_answer = await _call_gemini(rag_prompt)
-
-        if not generated_answer or len(generated_answer.strip()) < 20:
-            # Executive fallback synthesizer per Simple Format Law
-            generated_answer = ExecutiveKnowledgeSynthesizer.synthesize_fallback_answer(
-                query=user_prompt,
-                chunks=ranked_chunks,
-            )
 
         return {
-            "query": user_prompt,
-            "rewritten_query": search_query,
-            "intent": rewrite_res["intent"],
-            "compressed_context": compressed_context,
-            "citations": citations,
-            "retrieved_chunk_count": len(ranked_chunks),
-            "generated_answer": generated_answer,
+            "query": res.query,
+            "rewritten_query": res.rewritten_query,
+            "intent": res.intent,
+            "compressed_context": res.compressed_context,
+            "citations": res.citations,
+            "retrieved_chunk_count": res.retrieved_chunk_count,
+            "generated_answer": res.generated_answer,
         }
 
 

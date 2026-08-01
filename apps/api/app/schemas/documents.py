@@ -61,9 +61,9 @@ class RAGQueryRequest(BaseModel):
 
 class CitationItem(BaseModel):
     file_name: str
-    chunk_number: int
-    page_number: int
-    visibility: str
+    chunk_number: int = 1
+    page_number: int = 1
+    visibility: str = "GLOBAL"
 
 
 class RAGQueryResponse(BaseModel):
