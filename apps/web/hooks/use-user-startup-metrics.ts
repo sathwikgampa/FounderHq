@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export interface UserStartupMetrics {
   revenue: string | null;
@@ -27,6 +27,7 @@ export interface StartupHealthCalculation {
 }
 
 const STORAGE_KEY = 'founderhq_user_metrics_v1';
+const UPDATE_EVENT = 'founderhq_metrics_updated';
 
 export const DEMO_METRICS: UserStartupMetrics = {
   revenue: '$28,450',
@@ -163,13 +164,12 @@ export function useUserStartupMetrics() {
   const [metrics, setMetrics] = useState<UserStartupMetrics>(NULL_METRICS);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  useEffect(() => {
+  const syncMetricsFromStorage = useCallback(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         setMetrics(JSON.parse(saved));
       } else {
-        // Default to NULL state for new user login
         setMetrics(NULL_METRICS);
       }
     } catch {
@@ -178,6 +178,28 @@ export function useUserStartupMetrics() {
       setIsLoaded(true);
     }
   }, []);
+
+  useEffect(() => {
+    syncMetricsFromStorage();
+
+    const handleUpdate = () => {
+      syncMetricsFromStorage();
+    };
+
+    window.addEventListener('storage', handleUpdate);
+    window.addEventListener(UPDATE_EVENT, handleUpdate);
+
+    return () => {
+      window.removeEventListener('storage', handleUpdate);
+      window.removeEventListener(UPDATE_EVENT, handleUpdate);
+    };
+  }, [syncMetricsFromStorage]);
+
+  const notifyChange = () => {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event(UPDATE_EVENT));
+    }
+  };
 
   const saveMetrics = (newMetrics: Partial<UserStartupMetrics>) => {
     const updated: UserStartupMetrics = {
@@ -188,6 +210,7 @@ export function useUserStartupMetrics() {
     setMetrics(updated);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      notifyChange();
     } catch {
       // localStorage fallback
     }
@@ -197,6 +220,7 @@ export function useUserStartupMetrics() {
     setMetrics(DEMO_METRICS);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(DEMO_METRICS));
+      notifyChange();
     } catch {
       // localStorage fallback
     }
@@ -206,6 +230,7 @@ export function useUserStartupMetrics() {
     setMetrics(NULL_METRICS);
     try {
       localStorage.removeItem(STORAGE_KEY);
+      notifyChange();
     } catch {
       // localStorage fallback
     }

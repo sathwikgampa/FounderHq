@@ -138,6 +138,7 @@ export function HeroMissionControl() {
                     strokeDasharray="88"
                     strokeDashoffset={health.strokeDashoffset}
                     strokeLinecap="round"
+                    className="transition-all duration-700 ease-out"
                   />
                 </svg>
                 <span className="absolute text-[10px] font-bold text-[#111827]">
