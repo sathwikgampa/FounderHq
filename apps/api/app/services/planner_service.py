@@ -298,11 +298,34 @@ def _extract_prompt_context(prompt: str) -> dict[str, Any]:  # noqa: C901
     elif any(w in lower_p for w in ["hiring", "job", "recruiting", "hr", "candidate", "resume"]):
         target_audience = "Hiring managers, recruiters & fast-growing tech startups"
         core_problem = "Recruiters waste hours screening resumes & scheduling interview rounds"
-    elif any(w in lower_p for w in ["sales", "lead", "b2b", "outreach", "crm", "email"]):
-        target_audience = "B2B sales teams, agency owners & account executives"
-        core_problem = (
-            "Sales reps burn hours researching prospects & writing personalized cold emails"
-        )
+    elif any(
+        w in lower_p
+        for w in ["food", "restaurant", "recipe", "delivery", "meal", "dining", "catering"]
+    ):
+        target_audience = "Restaurant owners, foodies & local delivery partners"
+        core_problem = "Managing local food orders, menu updates, and delivery dispatch"
+    elif any(
+        w in lower_p
+        for w in ["crypto", "web3", "blockchain", "nft", "wallet", "token", "defi", "coin"]
+    ):
+        target_audience = "Crypto investors, Web3 founders & digital asset traders"
+        core_problem = "Tracking portfolio transactions, tax compliance, and smart contract risks"
+    elif any(
+        w in lower_p for w in ["code", "developer", "dev", "tech", "cloud", "aws", "api", "github"]
+    ):
+        target_audience = "Software engineers, CTOs & engineering teams"
+        core_problem = "Manual code reviews, latency bottlenecks, and API documentation"
+    elif any(
+        w in lower_p for w in ["shop", "store", "commerce", "ecommerce", "retail", "marketplace"]
+    ):
+        target_audience = "Online merchants, boutique brands & e-commerce shoppers"
+        core_problem = "Managing product inventory, AI product listings, and escrow checkout"
+    elif any(
+        w in lower_p
+        for w in ["marketing", "social", "content", "ads", "creator", "media", "campaign"]
+    ):
+        target_audience = "Content creators, social media managers & marketing agencies"
+        core_problem = "Writing engaging content, multi-channel scheduling, and lead tracking"
     else:
         clean_prompt = prompt.strip().rstrip(".")
         target_audience = f"Target customers & early adopters seeking '{clean_prompt}'"

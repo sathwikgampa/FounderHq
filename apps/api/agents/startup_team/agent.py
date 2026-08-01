@@ -296,6 +296,36 @@ def generate_mvp_spec(startup_idea: str, core_problem: str) -> dict[str, Any]:
             "Personalized Macro Nutrition & Meal Planner",
             "Progress Analytics & Coach Sharing Portal",
         ]
+    elif any(w in lower for w in ["food", "restaurant", "recipe", "delivery", "meal", "dining"]):
+        features = [
+            "1-Click Local Order & Menu Scanner",
+            "Real-Time P2P Dispatch & Order Tracking Engine",
+            "Merchant Analytics & Payout Portal",
+        ]
+    elif any(
+        w in lower for w in ["crypto", "web3", "blockchain", "nft", "wallet", "token", "defi"]
+    ):
+        features = [
+            "Automated Transaction & Portfolio Tracker",
+            "Smart Contract Audit & Risk Evaluator",
+            "Exportable Tax & Capital Gains Summary",
+        ]
+    elif any(
+        w in lower for w in ["code", "developer", "dev", "tech", "cloud", "aws", "api", "github"]
+    ):
+        features = [
+            "1-Click Code Review & Automated Bug Scanner",
+            "Real-Time API Monitor & Latency Alert Engine",
+            "Developer Documentation Exporter",
+        ]
+    elif any(
+        w in lower for w in ["shop", "store", "commerce", "ecommerce", "retail", "marketplace"]
+    ):
+        features = [
+            "1-Click Inventory & AI Product Copy Generator",
+            "P2P Escrow Checkout & Order Manager",
+            "Storefront Analytics & Customer Portal",
+        ]
     elif any(w in lower for w in ["hiring", "job", "recruiting", "hr", "candidate"]):
         features = [
             "Automated Resume Screening & Candidate Ranker",

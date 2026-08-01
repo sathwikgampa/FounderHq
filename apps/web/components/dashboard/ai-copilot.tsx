@@ -212,13 +212,154 @@ export function AiCopilot() {
       };
     }
 
-    // Default dynamic synthesis for any custom startup concept
-    const cleanPrompt = userPrompt.trim().replace(/^["']|["']$/g, '');
+    if (
+      lowerP.includes('food') ||
+      lowerP.includes('restaurant') ||
+      lowerP.includes('recipe') ||
+      lowerP.includes('delivery') ||
+      lowerP.includes('meal') ||
+      lowerP.includes('dining')
+    ) {
+      return {
+        executionId: `exec-${Date.now()}`,
+        command: userPrompt,
+        status: 'COMPLETED',
+        planSummary: `CEO Planner Blueprint for Food & Delivery Concept ("${userPrompt}"): Scoped 3 core MVP features (1-Click Local Order & Menu Scanner, Real-Time P2P Dispatch & Order Tracking Engine, Merchant Analytics & Payout Portal). Target: Local restaurants & foodies ($1,800/mo projected sales). Safe monthly tool budget: $150/mo.`,
+        consultedAgents: ['CEO Planner Agent', 'Product Agent', 'Growth Agent', 'Finance Agent'],
+        agentSteps: [
+          {
+            agentName: 'CEO Planner Agent',
+            status: 'COMPLETED',
+            summary: `Parsed food delivery prompt '${userPrompt.slice(0, 50)}...'. Delegated to Product, Growth, and Finance agents.`,
+          },
+          {
+            agentName: 'Product Executive Agent',
+            status: 'COMPLETED',
+            summary:
+              'Scoped V1 MVP: 1-Click Local Menu Scanner, Real-Time P2P Order Dispatch Engine, Merchant Analytics Portal. Recommended Stack: Next.js 15, Gemini 2.5 API, Supabase.',
+          },
+          {
+            agentName: 'Growth Executive Agent',
+            status: 'COMPLETED',
+            summary:
+              'Targeted local restaurant owners & foodies via direct flyer QR codes & Instagram food creators. Projected initial sales: $1,800/mo.',
+          },
+          {
+            agentName: 'Finance Executive Agent',
+            status: 'COMPLETED',
+            summary:
+              'Evaluated zero-revenue bootstrap runway: 12.0 months remaining at $150/mo safe software budget limit.',
+          },
+        ],
+      };
+    }
+
+    if (
+      lowerP.includes('crypto') ||
+      lowerP.includes('web3') ||
+      lowerP.includes('blockchain') ||
+      lowerP.includes('nft') ||
+      lowerP.includes('wallet') ||
+      lowerP.includes('token') ||
+      lowerP.includes('defi')
+    ) {
+      return {
+        executionId: `exec-${Date.now()}`,
+        command: userPrompt,
+        status: 'COMPLETED',
+        planSummary: `CEO Planner Blueprint for Web3 / Crypto Concept ("${userPrompt}"): Scoped 3 core MVP features (Automated Transaction & Portfolio Tracker, Smart Contract Audit & Risk Evaluator, Exportable Tax Summary). Target: Web3 investors & traders ($1,800/mo sales impact).`,
+        consultedAgents: [
+          'CEO Planner Agent',
+          'Product Agent',
+          'Growth Agent',
+          'Finance Agent',
+          'Legal Agent',
+        ],
+        agentSteps: [
+          {
+            agentName: 'CEO Planner Agent',
+            status: 'COMPLETED',
+            summary: `Parsed Web3 prompt '${userPrompt.slice(0, 50)}...'. Dispatched executive team for security & compliance audit.`,
+          },
+          {
+            agentName: 'Product Executive Agent',
+            status: 'COMPLETED',
+            summary:
+              'Scoped V1 MVP: Automated Multi-Chain Portfolio Tracker, Smart Contract Audit Engine, Exportable Tax Summary. Stack: Next.js 15 + Viem + Gemini API.',
+          },
+          {
+            agentName: 'Growth Executive Agent',
+            status: 'COMPLETED',
+            summary:
+              'Targeted Web3 traders & DAO members across X (Twitter) & Discord. Cold DM & partnership template ready.',
+          },
+          {
+            agentName: 'Finance Executive Agent',
+            status: 'COMPLETED',
+            summary: 'Verified capital runway (12.0 months safe at $150/mo tool budget).',
+          },
+        ],
+      };
+    }
+
+    if (
+      lowerP.includes('fitness') ||
+      lowerP.includes('health') ||
+      lowerP.includes('workout') ||
+      lowerP.includes('gym') ||
+      lowerP.includes('nutrition')
+    ) {
+      return {
+        executionId: `exec-${Date.now()}`,
+        command: userPrompt,
+        status: 'COMPLETED',
+        planSummary: `CEO Planner Blueprint for Health & Fitness App ("${userPrompt}"): Scoped Daily AI Health Metric & Workout Logger, Personalized Macro Meal Planner, Coach Sharing Portal. Target: Fitness enthusiasts & personal trainers ($1,800/mo sales impact).`,
+        consultedAgents: ['CEO Planner Agent', 'Product Agent', 'Growth Agent', 'Finance Agent'],
+        agentSteps: [
+          {
+            agentName: 'CEO Planner Agent',
+            status: 'COMPLETED',
+            summary: `Parsed fitness prompt '${userPrompt.slice(0, 50)}...'. Initiated Product and GTM planning.`,
+          },
+          {
+            agentName: 'Product Executive Agent',
+            status: 'COMPLETED',
+            summary:
+              'Scoped V1 MVP: Daily AI Health Metric Logger, Personalized Macro Meal Planner, Progress Analytics Portal. Build Target: 14 days.',
+          },
+          {
+            agentName: 'Growth Executive Agent',
+            status: 'COMPLETED',
+            summary:
+              'Targeted personal trainers & fitness creators via Instagram/TikTok outreach. Outreach script: "Track client progress in 10s".',
+          },
+          {
+            agentName: 'Finance Executive Agent',
+            status: 'COMPLETED',
+            summary: 'Calculated 12.0 months bootstrap runway at $150/mo safe software budget.',
+          },
+        ],
+      };
+    }
+
+    // Universal Semantic Synthesizer for ANY custom prompt text
+    const cleanConcept = userPrompt
+      .replace(
+        /^(i need to build|i want to build|build a|build an|create a|create an|make a|make an|how to build|generate|design|our startup is|my startup idea is)/i,
+        '',
+      )
+      .trim()
+      .replace(/^["']|["']$/g, '');
+
+    const displayConcept = cleanConcept
+      ? cleanConcept.charAt(0).toUpperCase() + cleanConcept.slice(1)
+      : userPrompt.trim();
+
     return {
       executionId: `exec-${Date.now()}`,
       command: userPrompt,
       status: 'COMPLETED',
-      planSummary: `CEO Planner 30-Day Blueprint for "${cleanPrompt}": Scoped 3 core V1 features (1-Click Core Solution Engine, Interactive Workflow Manager, Exportable Analytics). GTM Target: Early adopters & target community. Safe software tool spend limit: $150/mo.`,
+      planSummary: `CEO Planner 30-Day Blueprint for "${displayConcept}": Scoped 3 core V1 features (1-Click Core Solution Engine for "${displayConcept}", Real-Time Interactive Workflow Manager, Exportable Analytics & Asset Sharing Portal). GTM Target: Early adopters & target community seeking "${displayConcept}". Safe software tool spend limit: $150/mo.`,
       consultedAgents: [
         'CEO Planner Agent',
         'Product Agent',
@@ -230,17 +371,17 @@ export function AiCopilot() {
         {
           agentName: 'CEO Planner Agent',
           status: 'COMPLETED',
-          summary: `Analyzed founder prompt '${cleanPrompt.slice(0, 50)}...'. Orchestrated 4 executive sub-agents.`,
+          summary: `Analyzed founder prompt '${displayConcept.slice(0, 50)}...'. Orchestrated 4 executive sub-agents in sequential launch topology.`,
         },
         {
           agentName: 'Product Executive Agent',
           status: 'COMPLETED',
-          summary: `Scoped 3 core V1 MVP features for '${cleanPrompt.slice(0, 30)}'. Tech stack: Next.js 15, Gemini 2.5 API, Supabase. Saves 3 weeks coding.`,
+          summary: `Scoped 3 core V1 MVP features for '${displayConcept.slice(0, 35)}': (1) 1-Click Core Solution Engine, (2) Real-Time Workflow Manager, (3) Exportable Analytics Portal. Recommended Stack: Next.js 15, Gemini 2.5 API, Supabase. Saves 3 weeks coding.`,
         },
         {
           agentName: 'Growth Executive Agent',
           status: 'COMPLETED',
-          summary: `Formulated GTM strategy targeting early adopters of '${cleanPrompt.slice(0, 30)}'. Outreach email script ready. Projected sales: $1,800/mo in 30 days.`,
+          summary: `Formulated GTM strategy targeting early adopters seeking '${displayConcept.slice(0, 30)}'. Outreach email script ready: "Hi {{Name}}, open to testing our solution this week?". Projected sales: $1,800/mo in 30 days.`,
         },
         {
           agentName: 'Finance Executive Agent',
