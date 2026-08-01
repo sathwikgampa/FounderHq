@@ -20,53 +20,183 @@ _EXECUTIONS_STORE: dict[str, PlannerExecutionResponse] = {}
 
 
 class PlannerService:
-    def execute_command(self, payload: PlannerExecuteRequest) -> PlannerExecutionResponse:
+    def execute_command(
+        self, payload: PlannerExecuteRequest
+    ) -> PlannerExecutionResponse:  # noqa: C901
+        from agents.startup_team.agent import (
+            analyze_and_route_workflow,
+            build_gtm_launch_plan,
+            calculate_bootstrap_runway,
+            calculate_cap_table_dilution,
+            draft_job_posting,
+            estimate_cloud_cost,
+            evaluate_lead_and_pricing,
+            generate_incorporation_checklist,
+            generate_mvp_spec,
+        )
+
         execution_id = f"exec-{uuid.uuid4().hex[:8]}"
         now = datetime.now(UTC).isoformat()
+        command = payload.command.strip()
 
-        command_lower = payload.command.lower()
+        # Step 1: Dynamic Workflow Routing
+        route_info = analyze_and_route_workflow(command)
+        selected_agents: list[str] = route_info.get(
+            "selected_agents", ["ProductAgent", "GrowthAgent", "FinanceAgent"]
+        )
+        intent_cat = route_info.get("intent_category", "SPECIALIZED_OPERATIONS")
+
+        # Step 2: Context Extraction from User Prompt
+        ctx = _extract_prompt_context(command)
+        capital = ctx["initial_capital"]
+        monthly_cost = ctx["est_monthly_cost"]
+        target_aud = ctx["target_audience"]
+        core_prob = ctx["core_problem"]
+
+        # Step 3: Execute Domain Tools dynamically based on selected agents
+        steps: list[AgentStepResult] = []
+        consulted: list[str] = ["CEO Planner Agent"]
         requires_approval = False
         approval_id = None
 
-        # Check if action requires executive approval (e.g. hiring, large spend)
-        if any(
-            keyword in command_lower
-            for keyword in ["hire", "hiring", "spend", "budget", "contract", "salary", "recruit"]
-        ):
-            requires_approval = True
-            approval_id = f"appr-{uuid.uuid4().hex[:8]}"
-
-        steps = [
+        # Always start with CEO Planner Agent step
+        steps.append(
             AgentStepResult(
                 agentName="CEO Planner Agent",
                 status="COMPLETED",
-                summary=f"Parsed command '{payload.command[:60]}...'. Analyzed startup objectives.",
-                outputs={"goal": payload.command, "priority": "HIGH"},
-            ),
-            AgentStepResult(
-                agentName="Finance Executive Agent",
-                status="COMPLETED",
-                summary="Verified runway ($495,000 balance / 16.5 months runway). Financial health is stable.",
+                summary=f"Analyzed command '{command[:70]}...'. Category: {intent_cat}. Delegated to {len(selected_agents)} executive sub-agents.",
                 outputs={
-                    "burnRate": 30000,
-                    "runwayMonths": 16.5,
-                    "impactCheck": "APPROVED_WITHIN_BUDGET",
+                    "command": command,
+                    "intent": intent_cat,
+                    "targetAudience": target_aud,
+                    "extractedCapital": capital,
+                    "routingRationale": route_info.get("routing_rationale", ""),
                 },
-            ),
-            AgentStepResult(
-                agentName="Talent Executive Agent",
-                status="COMPLETED" if not requires_approval else "REQUIRES_APPROVAL",
-                summary="Formulated strategic role descriptions and compensation benchmark plan.",
-                outputs={
-                    "roles": ["Senior AI Engineer", "Lead Product Designer"],
-                    "estimatedBudget": "$120,000/yr",
-                },
-            ),
-        ]
+            )
+        )
 
+        for agent_name in selected_agents:
+            if agent_name == "ProductAgent":
+                mvp = generate_mvp_spec(command, core_prob)
+                consulted.append("Product Agent")
+                steps.append(
+                    AgentStepResult(
+                        agentName="Product Executive Agent",
+                        status="COMPLETED",
+                        summary=f"Scoped MVP features: {', '.join(mvp.get('mvp_features', [])[:2])}. Recommended tech stack: {mvp.get('tech_stack_recommendation', {}).get('frontend', 'Next.js 15')}.",
+                        outputs=mvp,
+                    )
+                )
+
+            elif agent_name == "GrowthAgent":
+                gtm = build_gtm_launch_plan(target_aud, 500.0)
+                consulted.append("Growth Agent")
+                steps.append(
+                    AgentStepResult(
+                        agentName="Growth Executive Agent",
+                        status="COMPLETED",
+                        summary=f"Formulated GTM strategy for '{target_aud[:40]}'. Projected sales impact: {gtm.get('projected_sales_impact', '$1,800/mo')}.",
+                        outputs=gtm,
+                    )
+                )
+
+            elif agent_name == "FinanceAgent":
+                fin = calculate_bootstrap_runway(capital, monthly_cost)
+                consulted.append("Finance Agent")
+                steps.append(
+                    AgentStepResult(
+                        agentName="Finance Executive Agent",
+                        status="COMPLETED",
+                        summary=f"Evaluated runway ({fin.get('runway_months', '6')} months remaining at ${monthly_cost:,.0f}/mo burn). Health: {fin.get('health_status', 'STABLE')}.",
+                        outputs=fin,
+                    )
+                )
+
+            elif agent_name == "TalentAgent":
+                requires_approval = True
+                approval_id = approval_id or f"appr-{uuid.uuid4().hex[:8]}"
+                talent = draft_job_posting(f"Senior Engineer ({target_aud[:20]})", 130000.0)
+                consulted.append("Talent Agent")
+                steps.append(
+                    AgentStepResult(
+                        agentName="Talent Executive Agent",
+                        status="REQUIRES_APPROVAL",
+                        summary=f"Drafted job spec for '{talent.get('role_title', 'Key Hire')}'. Monthly burn impact: ${talent.get('monthly_burn_impact_usd', 10833):,.2f}.",
+                        outputs=talent,
+                    )
+                )
+
+            elif agent_name == "LegalAgent":
+                leg = generate_incorporation_checklist("Delaware, USA", ctx["has_co_founders"])
+                if leg.get("requires_human_signoff"):
+                    requires_approval = True
+                    approval_id = approval_id or f"appr-{uuid.uuid4().hex[:8]}"
+                consulted.append("Legal Agent")
+                steps.append(
+                    AgentStepResult(
+                        agentName="Legal Executive Agent",
+                        status=(
+                            "REQUIRES_APPROVAL"
+                            if leg.get("requires_human_signoff")
+                            else "COMPLETED"
+                        ),
+                        summary=f"Audited equity split ({leg.get('founder_equity_terms', {}).get('structure', '50/50 Split')}) and PIIA IP assignment terms.",
+                        outputs=leg,
+                    )
+                )
+
+            elif agent_name == "SalesAgent":
+                sales = evaluate_lead_and_pricing(15000.0, 50)
+                if sales.get("requires_human_signoff"):
+                    requires_approval = True
+                    approval_id = approval_id or f"appr-{uuid.uuid4().hex[:8]}"
+                consulted.append("Sales Agent")
+                steps.append(
+                    AgentStepResult(
+                        agentName="Sales Executive Agent",
+                        status=(
+                            "REQUIRES_APPROVAL"
+                            if sales.get("requires_human_signoff")
+                            else "COMPLETED"
+                        ),
+                        summary=f"Scored B2B deal priority ({sales.get('lead_priority', 'Tier 1')}). Contract value: ${sales.get('effective_contract_value_usd', 15000):,.2f}.",
+                        outputs=sales,
+                    )
+                )
+
+            elif agent_name == "TechArchitectAgent":
+                tech = estimate_cloud_cost(20000, "AWS Serverless")
+                consulted.append("Tech Architect Agent")
+                steps.append(
+                    AgentStepResult(
+                        agentName="Tech Architect Agent",
+                        status="COMPLETED",
+                        summary=f"Projected infrastructure scaling ({tech.get('monthly_active_users', 20000):,} MAU). Monthly estimate: ${tech.get('cost_breakdown_usd', {}).get('total_monthly_estimate', 190):,.2f}.",
+                        outputs=tech,
+                    )
+                )
+
+            elif agent_name == "InvestmentAgent":
+                ir = calculate_cap_table_dilution(2000000.0, 500000.0)
+                if ir.get("requires_human_signoff"):
+                    requires_approval = True
+                    approval_id = approval_id or f"appr-{uuid.uuid4().hex[:8]}"
+                consulted.append("Investment Agent")
+                steps.append(
+                    AgentStepResult(
+                        agentName="Investment Agent",
+                        status=(
+                            "REQUIRES_APPROVAL" if ir.get("requires_human_signoff") else "COMPLETED"
+                        ),
+                        summary=f"Modeled equity round dilution (Post-money valuation: ${ir.get('post_money_valuation_usd', 2500000):,.2f}, Investor equity: {ir.get('investor_ownership_pct', '20%')}).",
+                        outputs=ir,
+                    )
+                )
+
+        # Build dynamic executive plan summary
         summary = (
-            f"CEO Planner successfully orchestrated executive team review for: '{payload.command}'. "
-            f"Finance and Talent sub-agents evaluated the proposal. "
+            f"CEO Planner successfully orchestrated executive team review for: '{command}'. "
+            f"Consulted {len(consulted)-1} executive sub-agents ({', '.join(consulted[1:])}). "
             + (
                 "An approval request has been queued for founder sign-off."
                 if requires_approval
@@ -77,10 +207,10 @@ class PlannerService:
         response = PlannerExecutionResponse(
             executionId=execution_id,
             startupId=payload.startupId,
-            command=payload.command,
+            command=command,
             status="REQUIRES_APPROVAL" if requires_approval else "COMPLETED",
             planSummary=summary,
-            consultedAgents=["CEO Planner", "Finance Agent", "Talent Agent", "Growth Agent"],
+            consultedAgents=list(dict.fromkeys(consulted)),
             agentSteps=steps,
             requiresApproval=requires_approval,
             approvalId=approval_id,
