@@ -270,7 +270,9 @@ def _extract_prompt_context(prompt: str) -> dict[str, Any]:  # noqa: C901
         for w in [
             "study",
             "edtech",
+            "edutech",
             "edu tech",
+            "edu-tech",
             "education",
             "quiz",
             "course",

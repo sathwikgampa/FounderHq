@@ -132,6 +132,8 @@ def generate_mvp_spec(startup_idea: str, core_problem: str) -> dict[str, Any]:
             "library",
             "edu tech",
             "edtech",
+            "edutech",
+            "edu-tech",
             "resale",
             "secondhand",
         ]

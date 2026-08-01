@@ -267,6 +267,8 @@ def generate_mvp_spec(startup_idea: str, core_problem: str) -> dict[str, Any]:
             "library",
             "edu tech",
             "edtech",
+            "edutech",
+            "edu-tech",
             "resale",
             "secondhand",
         ]
@@ -345,6 +347,9 @@ def build_gtm_launch_plan(target_audience: str, launch_budget: float) -> dict[st
             "resale",
             "secondhand",
             "education",
+            "edtech",
+            "edutech",
+            "edu tech",
         ]
     ):
         icps = [
