@@ -20,9 +20,9 @@ _EXECUTIONS_STORE: dict[str, PlannerExecutionResponse] = {}
 
 
 class PlannerService:
-    def execute_command(
+    def execute_command(  # noqa: C901
         self, payload: PlannerExecuteRequest
-    ) -> PlannerExecutionResponse:  # noqa: C901
+    ) -> PlannerExecutionResponse:
         from agents.startup_team.agent import (
             analyze_and_route_workflow,
             build_gtm_launch_plan,
