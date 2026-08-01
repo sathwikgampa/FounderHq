@@ -134,7 +134,9 @@ export function AuraBackground({
     let script = document.getElementById(scriptId) as HTMLScriptElement | null;
 
     const initUnicorn = () => {
+      let attempts = 0;
       const runInit = () => {
+        attempts += 1;
         const win = window as unknown as { UnicornStudio?: { init?: () => void } };
         if (win.UnicornStudio && typeof win.UnicornStudio.init === 'function') {
           try {
@@ -142,14 +144,12 @@ export function AuraBackground({
           } catch (e) {
             console.warn('UnicornStudio initialization caught error:', e);
           }
+        } else if (attempts < 5) {
+          setTimeout(runInit, 200);
         }
       };
 
-      if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-        window.requestIdleCallback(() => runInit(), { timeout: 1000 });
-      } else {
-        setTimeout(runInit, 100);
-      }
+      setTimeout(runInit, 100);
     };
 
     if (!script) {
@@ -163,7 +163,6 @@ export function AuraBackground({
         initUnicorn();
       };
       script.onerror = () => {
-        // Blocked by client ad-blocker gracefully handled
         console.info('CDN script blocked by client extension, fallback background active.');
       };
       document.head.appendChild(script);

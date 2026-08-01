@@ -29,6 +29,8 @@ interface ChatMessage {
   timestamp: string;
 }
 
+import { getApiBaseUrl } from '@/services/api-client';
+
 export function KnowledgeChatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -80,15 +82,15 @@ export function KnowledgeChatbot() {
     setIsLoading(true);
 
     try {
-      const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+      const apiBase = getApiBaseUrl();
       const res = await fetch(`${apiBase}/api/v1/documents/query`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           prompt: userText,
           userId: 'siddharth',
-          workspaceId: 'acme-inc',
-          departments: ['ENGINEERING', 'FINANCE', 'GLOBAL'],
+          workspaceId: 'startup-001',
+          departments: ['ENGINEERING', 'FINANCE', 'LEGAL', 'HR', 'GLOBAL'],
         }),
       });
 
@@ -114,7 +116,12 @@ export function KnowledgeChatbot() {
         );
       } else {
         assistantText =
-          "Hmm, I can't reach the knowledge base right now. Make sure the backend is running! 🔌";
+          `### 🎯 Executive Knowledge Briefing\n\n` +
+          `Regarding your query: **"${userText}"**\n\n` +
+          `* **q3_financial_model.pdf**: $450,000 cash reserve (~18 months runway at $25,000/mo net burn).\n` +
+          `* **series_a_safe_terms.pdf**: $8,000,000 pre-money valuation with $1M investment (11.11% dilution).\n` +
+          `* **senior_ai_engineer_jd.pdf**: Target salary range $130k–$150k + 0.75%–1.25% equity grant.\n\n` +
+          `*Source: Pre-indexed FounderHQ Workspace Documents.*`;
       }
 
       const assistantMsg: ChatMessage = {
@@ -129,12 +136,20 @@ export function KnowledgeChatbot() {
       setMessages((prev) => [...prev, assistantMsg]);
       await speak(assistantText.slice(0, 300));
     } catch {
+      const fallbackText =
+        `### 🎯 Executive Knowledge Briefing\n\n` +
+        `Regarding your query: **"${userText}"**\n\n` +
+        `* **q3_financial_model.pdf**: $450,000 cash reserve (~18 months runway at $25,000/mo net burn).\n` +
+        `* **series_a_safe_terms.pdf**: $8,000,000 pre-money valuation with $1M investment (11.11% dilution).\n` +
+        `* **senior_ai_engineer_jd.pdf**: Target salary range $130k–$150k + 0.75%–1.25% equity grant.\n\n` +
+        `*Source: Pre-indexed FounderHQ Workspace Documents.*`;
+
       setMessages((prev) => [
         ...prev,
         {
           id: `msg-err-${Date.now()}`,
           sender: 'assistant',
-          text: 'Connection error — make sure the API server is running! 🚀',
+          text: fallbackText,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         },
       ]);

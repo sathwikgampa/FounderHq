@@ -5,9 +5,10 @@ export function BlockNestBackground() {
     <>
       {/* Spline 3D background */}
       <div
-        className="absolute top-0 left-0 right-0 pointer-events-none"
+        className="absolute top-0 left-0 right-0 pointer-events-none overflow-hidden"
         style={{
-          height: '900px',
+          height: '100%',
+          minHeight: '900px',
           zIndex: -10,
           WebkitMaskImage:
             'linear-gradient(to bottom, transparent, black 0%, black 80%, transparent)',
@@ -16,8 +17,8 @@ export function BlockNestBackground() {
       >
         <iframe
           src="https://my.spline.design/glowingplanetparticles-HmCVKutonlFn3Oqqe6DI9nWi/"
-          style={{ width: '100%', height: '100%', border: 'none', pointerEvents: 'none' }}
-          loading="lazy"
+          style={{ width: '100%', height: '100%', border: 'none' }}
+          allow="autoplay; fullscreen; xr-spatial-tracking"
           title="BlockNest 3D background"
         />
       </div>

@@ -1,13 +1,30 @@
 export function getApiBaseUrl(): string {
-  if (process.env.NEXT_PUBLIC_API_BASE_URL) {
-    return process.env.NEXT_PUBLIC_API_BASE_URL;
+  let url = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || '';
+
+  if (url) {
+    if (
+      typeof window !== 'undefined' &&
+      window.location.protocol === 'https:' &&
+      url.startsWith('http://') &&
+      !url.includes('localhost') &&
+      !url.includes('127.0.0.1')
+    ) {
+      url = url.replace('http://', 'https://');
+    }
+    return url.replace(/\/+$/, '');
   }
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL;
-  }
+
   if (typeof window !== 'undefined' && window.location.hostname) {
-    return `http://${window.location.hostname}:8000`;
+    const isLocal =
+      window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (isLocal) {
+      return 'http://localhost:8000';
+    }
+    // Production browser environment: use same origin or HTTPS protocol matching
+    const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
+    return `${protocol}//${window.location.hostname}`;
   }
+
   return 'http://localhost:8000';
 }
 
