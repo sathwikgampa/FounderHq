@@ -18,7 +18,7 @@ import { toast } from 'sonner';
 
 export function HeroMissionControl() {
   const { user } = useAuth();
-  const { metrics, saveMetrics, loadDemoData, resetToNewUser } = useUserStartupMetrics();
+  const { metrics, health, saveMetrics, loadDemoData, resetToNewUser } = useUserStartupMetrics();
   const [greeting, setGreeting] = useState('Good Morning');
   const [healthExpanded, setHealthExpanded] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -69,13 +69,13 @@ export function HeroMissionControl() {
       growthTrend: editForm.growthTrend.trim() || null,
     });
     setIsEditModalOpen(false);
-    toast.success('Startup metrics updated successfully!');
+    toast.success('Startup metrics & health score updated!');
   };
 
   const handleLoadDemo = () => {
     loadDemoData();
     setIsEditModalOpen(false);
-    toast.success('Loaded sample startup metrics');
+    toast.success('Loaded sample metrics (Health: 92%)');
   };
 
   const handleResetToNull = () => {
@@ -107,11 +107,11 @@ export function HeroMissionControl() {
           <p className="text-xs text-[#6B7280] mt-0.5">
             {metrics.isNewUser
               ? 'Welcome! Click "Edit Metrics" to set your revenue, runway & burn values.'
-              : 'Everything looks healthy today.'}
+              : `Overall startup health score calculated dynamically at ${health.score}%.`}
           </p>
         </div>
 
-        {/* Compact Circular Startup Health Indicator */}
+        {/* Dynamic Circular Startup Health Indicator */}
         <div className="relative flex items-center gap-3">
           <div className="relative">
             <button
@@ -132,76 +132,69 @@ export function HeroMissionControl() {
                     cx="18"
                     cy="18"
                     r="14"
-                    stroke={metrics.isNewUser ? '#94A3B8' : '#16A34A'}
+                    stroke={health.statusColor}
                     strokeWidth="3"
                     fill="transparent"
                     strokeDasharray="88"
-                    strokeDashoffset={metrics.isNewUser ? '44' : '7'}
+                    strokeDashoffset={health.strokeDashoffset}
                     strokeLinecap="round"
                   />
                 </svg>
                 <span className="absolute text-[10px] font-bold text-[#111827]">
-                  {metrics.isNewUser ? '--' : '92%'}
+                  {health.score === 0 ? '--' : `${health.score}%`}
                 </span>
               </div>
 
               <div>
                 <span className="text-xs font-bold text-[#111827] flex items-center gap-1">
-                  {metrics.isNewUser ? 'New Account' : 'Healthy'}{' '}
+                  {health.statusBadge}{' '}
                   <ChevronDown
                     size={12}
                     className={`text-[#6B7280] transition-transform ${healthExpanded ? 'rotate-180' : ''}`}
                   />
                 </span>
                 <span
-                  className={`text-[10px] font-medium flex items-center gap-1 ${
-                    metrics.isNewUser ? 'text-amber-600' : 'text-[#16A34A]'
-                  }`}
+                  className="text-[10px] font-medium flex items-center gap-1"
+                  style={{ color: health.statusColor }}
                 >
                   <span
-                    className={`w-1.5 h-1.5 rounded-full ${
-                      metrics.isNewUser ? 'bg-amber-500' : 'bg-[#16A34A] animate-pulse'
-                    }`}
+                    className="w-1.5 h-1.5 rounded-full animate-pulse"
+                    style={{ backgroundColor: health.statusColor }}
                   />
-                  {metrics.isNewUser ? 'Setup Required' : 'Optimal'}
+                  {health.statusText}
                 </span>
               </div>
             </button>
 
             {/* Expandable Health Breakdown Popup */}
             {healthExpanded && (
-              <div className="absolute right-0 top-14 z-30 w-60 p-3.5 rounded-2xl bg-white border border-[#ECECEC] shadow-xl text-xs space-y-2">
+              <div className="absolute right-0 top-14 z-30 w-64 p-3.5 rounded-2xl bg-white border border-[#ECECEC] shadow-xl text-xs space-y-2">
                 <div className="flex justify-between font-bold text-[#111827] border-b border-[#ECECEC] pb-1.5">
-                  <span>Health Breakdown</span>
-                  <span className={metrics.isNewUser ? 'text-amber-600' : 'text-[#16A34A]'}>
-                    {metrics.isNewUser ? 'Pending Setup' : '92%'}
+                  <span>Dynamic Health Score</span>
+                  <span style={{ color: health.statusColor }}>
+                    {health.score === 0 ? 'Pending Setup' : `${health.score}%`}
                   </span>
                 </div>
                 <div className="space-y-1.5 text-[#6B7280]">
-                  <div className="flex justify-between">
-                    <span>Runway Buffer</span>
-                    <span className="text-[#111827] font-semibold">
-                      {metrics.runway ?? 'Not Set'}
-                    </span>
+                  <div className="flex justify-between items-center">
+                    <span>Runway ({metrics.runway ?? 'Not Set'})</span>
+                    <span className="text-[#111827] font-semibold">{health.runwayScore}%</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Revenue Target</span>
-                    <span className="text-[#111827] font-semibold">
-                      {metrics.revenue ?? 'Not Set'}
-                    </span>
+                  <div className="flex justify-between items-center">
+                    <span>Growth ({metrics.growth ?? 'Not Set'})</span>
+                    <span className="text-[#111827] font-semibold">{health.growthScore}%</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Monthly Burn</span>
-                    <span className="text-[#111827] font-semibold font-mono">
-                      {metrics.burn ?? 'Not Set'}
-                    </span>
+                  <div className="flex justify-between items-center">
+                    <span>Revenue ({metrics.revenue ?? 'Not Set'})</span>
+                    <span className="text-[#111827] font-semibold">{health.revenueScore}%</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Growth Rate</span>
-                    <span className="text-[#111827] font-semibold">
-                      {metrics.growth ?? 'Not Set'}
-                    </span>
+                  <div className="flex justify-between items-center">
+                    <span>Burn Trend ({metrics.burnTrend ?? 'Not Set'})</span>
+                    <span className="text-[#111827] font-semibold">{health.burnScore}%</span>
                   </div>
+                </div>
+                <div className="pt-1 border-t border-[#ECECEC] text-[10px] text-[#94A3B8]">
+                  Calculated dynamically from your actual metrics.
                 </div>
               </div>
             )}
