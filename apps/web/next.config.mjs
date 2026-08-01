@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: process.env.NEXT_OUTPUT_STANDALONE === 'true' || process.env.NODE_ENV === 'production' && process.platform !== 'win32' ? 'standalone' : undefined,
+  output:
+    process.env.NEXT_OUTPUT_STANDALONE === 'true' || process.env.NODE_ENV === 'production'
+      ? 'standalone'
+      : undefined,
   reactStrictMode: true,
   compress: true,
   transpilePackages: ["@founderhq/ui", "@founderhq/types", "@founderhq/shared"],
