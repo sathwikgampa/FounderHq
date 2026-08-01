@@ -4,11 +4,18 @@
 
 ### _An Enterprise Multi-Agent Operating System for 0-to-1 Founders_
 
-[![Python](https://img.shields.io/badge/Python-3.11%2B-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
-[![Google ADK](https://img.shields.io/badge/Google_ADK-Gemini_2.5-4285F4.svg?logo=google&logoColor=white)](https://ai.google.dev/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.110.0-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Next.js](https://img.shields.io/badge/Next.js-14.2.0-000000.svg?logo=next.js&logoColor=white)](https://nextjs.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+<br />
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Google_ADK-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Google ADK" />
+  <img src="https://img.shields.io/badge/Gemini_2.5-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white" alt="Gemini 2.5" />
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/Next.js_14-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js 14" />
+  <img src="https://img.shields.io/badge/Python_3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.11+" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Firebase_Auth-DD2C00?style=for-the-badge&logo=firebase&logoColor=white" alt="Firebase Auth" />
+  <img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="MIT License" />
+</p>
 
 </div>
 
@@ -38,16 +45,16 @@ Powered by **Google ADK (Agent Development Kit)** and **Gemini 2.5**, FounderHQ 
 
 FounderHQ was built using a curated, battle-tested stack. Every framework and tool was deliberately chosen to meet strict enterprise requirements: real-time streaming, high-throughput multi-agent execution, type safety, and premium user experience.
 
-| Layer                 | Technology Chosen                      | What It Does in FounderHQ                                                                             | Architectural Rationale (Why This Choice?)                                                                                                         |
-| :-------------------- | :------------------------------------- | :---------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Agent Framework**   | **Google ADK & Gemini 2.5**            | Multi-agent orchestration, CEO routing (`gemini-2.5-pro`) & sub-agent execution (`gemini-2.5-flash`). | **1M+ token context window**, native tool calling, structured JSON output, and sub-second reasoning speed for complex executive workflows.         |
-| **Backend API**       | **FastAPI (Python 3.11+)**             | High-speed REST API gateway, business logic, RAG vector pipeline & SSE event streaming.               | **Asynchronous ASGI throughput**, automatic OpenAPI generation, native Pydantic validation, and seamless integration with AI/ML Python libraries.  |
-| **Real-Time Stream**  | **SSE-Starlette (Server-Sent Events)** | Streams live agent thought traces, tool execution steps, and blueprints line-by-line to the client.   | **Lightweight unidirectional HTTP streaming** without the heavy connection overhead, stateful reconnects, and socket complexity of WebSockets.     |
-| **Frontend Core**     | **Next.js 14 (App Router & React 18)** | Executive Mission Control UI, Copilot command bar, Agent explorer, and metric management.             | **App Router architecture**, Server Components for instant initial load, smooth client-side hydration, and native Vercel deployment optimizations. |
-| **Styling & Icons**   | **Tailwind CSS & Lucide React**        | Enterprise glassmorphism styling, responsive KPI grids, and crisp SVG icons.                          | **Utility-first styling** enables rapid customization of modern dark/light themes without CSS bundle bloat or runtime style recalculations.        |
-| **Data Validation**   | **Pydantic v2**                        | Strict schema validation for request payloads, agent tool signatures, and response models.            | **Rust-backed validation engine** for maximum speed, preventing malformed tool arguments or invalid payload states before execution.               |
-| **Auth & Security**   | **Firebase Auth**                      | Google OAuth popup login & session token handling with local fallback support.                        | **Production-grade Google OAuth integration**, seamless token verification, and domain whitelist authorization support.                            |
-| **Testing & Quality** | **Pytest & TestClient**                | End-to-end API verification suite testing all 15+ backend routes and tool contracts.                  | **Blazing fast parallel test execution**, easy fixture mocking for AI tools, and strict CI/CD gate checks to ensure zero-regression releases.      |
+|                                        Icon                                         | Layer                 | Technology Chosen                      | What It Does in FounderHQ                                                                             | Architectural Rationale (Why This Choice?)                                                                                                         |
+| :---------------------------------------------------------------------------------: | :-------------------- | :------------------------------------- | :---------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+|   <img src="https://cdn.simpleicons.org/google/4285F4" width="22" height="22" />    | **Agent Framework**   | **Google ADK & Gemini 2.5**            | Multi-agent orchestration, CEO routing (`gemini-2.5-pro`) & sub-agent execution (`gemini-2.5-flash`). | **1M+ token context window**, native tool calling, structured JSON output, and sub-second reasoning speed for complex executive workflows.         |
+|   <img src="https://cdn.simpleicons.org/fastapi/009688" width="22" height="22" />   | **Backend API**       | **FastAPI (Python 3.11+)**             | High-speed REST API gateway, business logic, RAG vector pipeline & SSE event streaming.               | **Asynchronous ASGI throughput**, automatic OpenAPI generation, native Pydantic validation, and seamless integration with AI/ML Python libraries.  |
+|   <img src="https://cdn.simpleicons.org/python/3776AB" width="22" height="22" />    | **Real-Time Stream**  | **SSE-Starlette (Server-Sent Events)** | Streams live agent thought traces, tool execution steps, and blueprints line-by-line to the client.   | **Lightweight unidirectional HTTP streaming** without the heavy connection overhead, stateful reconnects, and socket complexity of WebSockets.     |
+|  <img src="https://cdn.simpleicons.org/nextdotjs/000000" width="22" height="22" />  | **Frontend Core**     | **Next.js 14 (App Router & React 18)** | Executive Mission Control UI, Copilot command bar, Agent explorer, and metric management.             | **App Router architecture**, Server Components for instant initial load, smooth client-side hydration, and native Vercel deployment optimizations. |
+| <img src="https://cdn.simpleicons.org/tailwindcss/06B6D4" width="22" height="22" /> | **Styling & Icons**   | **Tailwind CSS & Lucide React**        | Enterprise glassmorphism styling, responsive KPI grids, and crisp SVG icons.                          | **Utility-first styling** enables rapid customization of modern dark/light themes without CSS bundle bloat or runtime style recalculations.        |
+|  <img src="https://cdn.simpleicons.org/pydantic/E92063" width="22" height="22" />   | **Data Validation**   | **Pydantic v2**                        | Strict schema validation for request payloads, agent tool signatures, and response models.            | **Rust-backed validation engine** for maximum speed, preventing malformed tool arguments or invalid payload states before execution.               |
+|  <img src="https://cdn.simpleicons.org/firebase/DD2C00" width="22" height="22" />   | **Auth & Security**   | **Firebase Auth**                      | Google OAuth popup login & session token handling with local fallback support.                        | **Production-grade Google OAuth integration**, seamless token verification, and domain whitelist authorization support.                            |
+|   <img src="https://cdn.simpleicons.org/pytest/0A9EDC" width="22" height="22" />    | **Testing & Quality** | **Pytest & TestClient**                | End-to-end API verification suite testing all 15+ backend routes and tool contracts.                  | **Blazing fast parallel test execution**, easy fixture mocking for AI tools, and strict CI/CD gate checks to ensure zero-regression releases.      |
 
 ---
 
@@ -93,13 +100,13 @@ FounderHQ was built using a curated, battle-tested stack. Every framework and to
 
 ### Agent Roster & Tool Matrix
 
-| Executive Agent       | Core Model         | Primary ADK Tool                     | Primary Deliverable                                     |
-| :-------------------- | :----------------- | :----------------------------------- | :------------------------------------------------------ |
-| **CEO Planner Agent** | `gemini-2.5-pro`   | `analyze_and_route_workflow()`       | 30-Day Orchestrated Executive Blueprint                 |
-| **Product Agent**     | `gemini-2.5-flash` | `generate_mvp_spec()`                | 14-Day Scoped MVP Features & Recommended Tech Stack     |
-| **Growth Agent**      | `gemini-2.5-flash` | `build_gtm_launch_plan()`            | Target ICP, Waitlist Copy & Outreach Sales Scripts      |
-| **Finance Agent**     | `gemini-2.5-flash` | `calculate_bootstrap_runway()`       | Zero-Revenue Runway Months & Safe Spend Budget          |
-| **Legal Agent**       | `gemini-2.5-flash` | `generate_incorporation_checklist()` | Founder Equity Split (4-Yr Vesting / 1-Yr Cliff) & NDAs |
+|                                      SVG                                       | Executive Agent       | Core Model         | Primary ADK Tool                     | Primary Deliverable                                     |
+| :----------------------------------------------------------------------------: | :-------------------- | :----------------- | :----------------------------------- | :------------------------------------------------------ |
+| <img src="https://cdn.simpleicons.org/google/4285F4" width="18" height="18" /> | **CEO Planner Agent** | `gemini-2.5-pro`   | `analyze_and_route_workflow()`       | 30-Day Orchestrated Executive Blueprint                 |
+| <img src="https://cdn.simpleicons.org/google/34A853" width="18" height="18" /> | **Product Agent**     | `gemini-2.5-flash` | `generate_mvp_spec()`                | 14-Day Scoped MVP Features & Recommended Tech Stack     |
+| <img src="https://cdn.simpleicons.org/google/FBBC05" width="18" height="18" /> | **Growth Agent**      | `gemini-2.5-flash` | `build_gtm_launch_plan()`            | Target ICP, Waitlist Copy & Outreach Sales Scripts      |
+| <img src="https://cdn.simpleicons.org/google/EA4335" width="18" height="18" /> | **Finance Agent**     | `gemini-2.5-flash` | `calculate_bootstrap_runway()`       | Zero-Revenue Runway Months & Safe Spend Budget          |
+| <img src="https://cdn.simpleicons.org/google/8E75B2" width="18" height="18" /> | **Legal Agent**       | `gemini-2.5-flash` | `generate_incorporation_checklist()` | Founder Equity Split (4-Yr Vesting / 1-Yr Cliff) & NDAs |
 
 ---
 
