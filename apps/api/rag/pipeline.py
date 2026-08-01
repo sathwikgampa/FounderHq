@@ -41,6 +41,7 @@ class RAGQueryResult:
     citations: list[dict[str, Any]]
     retrieved_chunk_count: int
     generated_answer: str
+    confidence: float
 
 
 class RAGPipeline:
@@ -49,7 +50,7 @@ class RAGPipeline:
     def __init__(self, storage_path: Path | None = None) -> None:
         self.loader = PDFLoader()
         self.doc_processor = DocumentProcessor()
-        self.chunker = SmartChunker(target_chunk_size=800, overlap_size=150)
+        self.chunker = SmartChunker(target_chunk_size=600, overlap_size=100)
         self.embedding_gen = EmbeddingGenerator(dimension=384)
         self.vector_db = VectorDatabase(storage_path=storage_path)
         self.retriever = HybridRetriever(
@@ -115,9 +116,10 @@ class RAGPipeline:
         visibility: str = "GLOBAL",
         department: str | None = None,
         category: str = "general",
+        document_id: str | None = None,
     ) -> str:
         """Executes Ingestion Flow: PDF -> Processing -> OCR/Cleaning -> Chunking -> Embeddings -> Vector DB."""
-        doc_id = f"doc-{uuid.uuid4().hex[:8]}"
+        doc_id = document_id or f"doc-{uuid.uuid4().hex[:8]}"
 
         # Step 1: User Uploads PDF -> Document Processing Loader
         pages = self.loader.load_pdf(source)
@@ -140,6 +142,7 @@ class RAGPipeline:
         vectors = self.embedding_gen.generate_batch_embeddings([c.text for c in chunks])
 
         # Step 5: Vector Database Indexing
+        self.vector_db.delete_document(doc_id)
         self.vector_db.add_chunks(chunks, vectors, doc_id)
 
         logger.info(
@@ -155,7 +158,7 @@ class RAGPipeline:
         departments: list[str] | None = None,
     ) -> RAGQueryResult:
         """Executes Query Flow: Query -> Understanding -> Embedding -> Hybrid Retrieval -> Re-ranking -> Compression -> Prompt -> LLM."""
-        user_depts = departments or ["GLOBAL", "FINANCE", "LEGAL", "HR"]
+        user_depts = departments or []
 
         # Step 1 & 2 & 3: Query Understanding, Query Embedding, Hybrid Retrieval
         qu_res, candidates = self.retriever.retrieve(
@@ -163,7 +166,7 @@ class RAGPipeline:
             user_id=user_id,
             workspace_id=workspace_id,
             user_departments=user_depts,
-            top_k=10,
+            top_k=20,
         )
 
         # Step 4: Re-ranking Model
@@ -182,6 +185,9 @@ class RAGPipeline:
         if not answer or len(answer.strip()) < 20:
             answer = self._synthesize_fallback_answer(query=query, compressed_res=compressed_res)
 
+        confidence = max(
+            (float(c["relevance_score"]) for c in compressed_res.citations), default=0.0
+        )
         return RAGQueryResult(
             query=query,
             rewritten_query=qu_res.rewritten_query,
@@ -190,6 +196,7 @@ class RAGPipeline:
             citations=compressed_res.citations,
             retrieved_chunk_count=compressed_res.chunk_count,
             generated_answer=answer,
+            confidence=round(min(1.0, confidence), 4),
         )
 
     def _build_prompt(self, query: str, context: str) -> str:

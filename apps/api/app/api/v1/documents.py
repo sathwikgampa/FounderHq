@@ -27,8 +27,9 @@ doc_service = DocumentService()
 async def upload_document_metadata(payload: DocumentUploadRequest):
     """Register uploaded document metadata and trigger vector indexing."""
     result = doc_service.upload_document(payload)
-    # Synthesize rich structured document content for indexing
-    parsed_content = (
+    # Use extracted content when it is supplied.  A metadata registration must
+    # never masquerade as the contents of an uploaded document.
+    parsed_content = payload.content or (
         f"Document Title: {payload.filename}\n"
         f"Department: {payload.department or 'GLOBAL'}\n"
         f"Category: {payload.category.upper()} Operational Document\n"
@@ -39,7 +40,7 @@ async def upload_document_metadata(payload: DocumentUploadRequest):
     await rag_engine.ingest_document(
         document_id=result.id,
         workspace_id=payload.startupId,
-        owner_id="siddharth",
+        owner_id=payload.ownerId,
         content=parsed_content,
         file_name=payload.filename,
         visibility=payload.visibility,
@@ -62,16 +63,28 @@ async def upload_pdf_file(
     startup_id: str = Form("startup-001"),
     department: str = Form("GLOBAL"),
     visibility: str = Form("GLOBAL"),
+    owner_id: str = Form("siddharth"),
 ):
     """Process and index binary PDF document directly into RAG pipeline."""
     pdf_bytes = await file.read()
+    record = doc_service.upload_document(
+        DocumentUploadRequest(
+            filename=file.filename or "uploaded_document.pdf",
+            startupId=startup_id,
+            visibility=visibility,
+            department=department,
+            ownerId=owner_id,
+        ),
+        file_size=len(pdf_bytes),
+    )
     doc_id = await rag_engine.ingest_pdf_bytes(
         pdf_bytes=pdf_bytes,
         file_name=file.filename or "uploaded_document.pdf",
         workspace_id=startup_id,
-        owner_id="siddharth",
+        owner_id=owner_id,
         visibility=visibility,
         department=department,
+        document_id=record.id,
     )
     return APIResponse(
         success=True,
@@ -132,6 +145,7 @@ async def delete_document(id: str):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Document with ID '{id}' not found",
         )
+    rag_engine.delete_document(id)
     return APIResponse(
         success=True,
         data={"id": id, "deleted": True},

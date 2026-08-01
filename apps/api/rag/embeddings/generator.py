@@ -41,11 +41,34 @@ class EmbeddingGenerator:
     def __init__(self, dimension: int = 384) -> None:
         self.dimension = dimension
         self.api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+        self.openai_api_key = os.getenv("OPENAI_API_KEY")
 
     def generate_embedding(self, text: str) -> list[float]:
         """Generates dense embedding vector for given input text."""
         if not text.strip():
             return [0.0] * self.dimension
+
+        # Prefer a production embedding model when configured.  Supplying the
+        # requested dimensions keeps its vectors compatible with the local
+        # fallback index during deployments and tests.
+        if self.openai_api_key:
+            try:
+                import httpx
+
+                response = httpx.post(
+                    "https://api.openai.com/v1/embeddings",
+                    headers={"Authorization": f"Bearer {self.openai_api_key}"},
+                    json={
+                        "model": "text-embedding-3-large",
+                        "input": text,
+                        "dimensions": self.dimension,
+                    },
+                    timeout=10.0,
+                )
+                response.raise_for_status()
+                return self._normalize_vector(response.json()["data"][0]["embedding"])
+            except Exception as exc:
+                logger.debug("OpenAI embedding request failed: %s", exc)
 
         # Strategy 1: Google GenAI Client Embeddings API
         if self.api_key:
@@ -63,17 +86,8 @@ class EmbeddingGenerator:
             except Exception as exc:
                 logger.debug(f"Gemini embed_content API failed or not configured: {exc}")
 
-        # Strategy 2: Sentence Transformers if installed
-        try:
-            from sentence_transformers import SentenceTransformer  # type: ignore[import]
-
-            model = SentenceTransformer("all-MiniLM-L6-v2")
-            vec = model.encode(text).tolist()
-            return self._normalize_vector(vec)
-        except Exception:
-            pass
-
-        # Strategy 3: Deterministic L2-Normalized Hashing & Term-Frequency Vectorizer
+        # Strategy 2: deterministic local fallback.  Do not silently load the
+        # weak MiniLM model for a production RAG request.
         return self._generate_fallback_embedding(text)
 
     def generate_batch_embeddings(self, texts: list[str]) -> list[list[float]]:

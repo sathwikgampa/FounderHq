@@ -68,7 +68,7 @@ class DocumentProcessor:
 
         for page in pages:
             page_text = page.text
-            is_scanned_page = not page.has_text or len(page_text.strip()) < 20
+            is_scanned_page = not page.has_text
 
             if is_scanned_page:
                 is_scanned_doc = True
@@ -126,12 +126,9 @@ class DocumentProcessor:
         except Exception as exc:
             logger.debug(f"Pytesseract / pdf2image not available or failed: {exc}")
 
-        # OCR Fallback for scanned startup documents
-        return (
-            f"Scanned Document Content — {filename} (Page {page_number})\n"
-            f"Extracted optical text for startup workspace verification: Financial metrics, SAFE equity agreement terms, "
-            f"engineering hiring plans, and operational rules."
-        )
+        # Do not index fabricated OCR results: they create false citations.
+        logger.warning("OCR unavailable for %s page %s", filename, page_number)
+        return ""
 
     @staticmethod
     def clean_text(text: str) -> str:
@@ -149,6 +146,18 @@ class DocumentProcessor:
 
         # Preserve paragraph structure while eliminating excessive empty lines (>2 newlines)
         text = re.sub(r"\n{3,}", "\n\n", text)
+        text = re.sub(r"(?<=\w)-\s*\n\s*(?=\w)", "", text)
+
+        lines: list[str] = []
+        previous = ""
+        for line in text.split("\n"):
+            normalized = re.sub(r"\s+", " ", line).strip().lower()
+            if normalized and normalized == previous:
+                continue
+            lines.append(line.strip())
+            if normalized:
+                previous = normalized
+        text = "\n".join(lines)
 
         # Strip unprintable ascii control codes while retaining standard text & currency
         text = "".join(char for char in text if ord(char) >= 32 or char in ("\n", "\t"))

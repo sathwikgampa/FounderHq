@@ -292,6 +292,7 @@ class EnterpriseRAGEngine:
             owner_id=owner_id,
             visibility=visibility,
             department=department,
+            document_id=document_id,
         )
         logger.info(f"Ingested document {file_name} into Enterprise RAG Engine (ID={doc_id})")
         return 1
@@ -304,6 +305,7 @@ class EnterpriseRAGEngine:
         owner_id: str = "siddharth",
         visibility: str = "GLOBAL",
         department: str | None = None,
+        document_id: str | None = None,
     ) -> str:
         """Ingests binary PDF uploads through the PDF Processing -> Chunking -> Vector DB pipeline."""
         return await self.pipeline.process_and_index_pdf(
@@ -313,7 +315,12 @@ class EnterpriseRAGEngine:
             owner_id=owner_id,
             visibility=visibility,
             department=department,
+            document_id=document_id,
         )
+
+    def delete_document(self, document_id: str) -> int:
+        """Remove all indexed chunks when the source document is deleted."""
+        return self.pipeline.vector_db.delete_document(document_id)
 
     async def query_knowledge_base(
         self,
@@ -338,6 +345,7 @@ class EnterpriseRAGEngine:
             "citations": res.citations,
             "retrieved_chunk_count": res.retrieved_chunk_count,
             "generated_answer": res.generated_answer,
+            "confidence": res.confidence,
         }
 
 

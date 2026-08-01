@@ -33,7 +33,7 @@ class Chunk:
 class SmartChunker:
     """Performs smart header-aware and semantic chunking over processed document text."""
 
-    def __init__(self, target_chunk_size: int = 800, overlap_size: int = 150) -> None:
+    def __init__(self, target_chunk_size: int = 600, overlap_size: int = 100) -> None:
         self.target_chunk_size = target_chunk_size
         self.overlap_size = overlap_size
 
@@ -117,8 +117,8 @@ class SmartChunker:
         return sections if sections else [("General Context", text)]
 
     def _sliding_window_chunk(self, text: str, target_size: int, overlap: int) -> list[str]:
-        """Splits text into chunks of roughly `target_size` characters with sliding `overlap`."""
-        if len(text) <= target_size:
+        """Splits on paragraph boundaries into token-sized chunks with word overlap."""
+        if len(text.split()) <= target_size:
             return [text]
 
         # Break text into paragraphs or sentences first
@@ -128,22 +128,22 @@ class SmartChunker:
 
         chunks: list[str] = []
         current_chunk: list[str] = []
-        current_len = 0
+        current_tokens = 0
 
         for p in paragraphs:
-            p_len = len(p)
-            if current_len + p_len > target_size and current_chunk:
+            p_tokens = len(p.split())
+            if current_tokens + p_tokens > target_size and current_chunk:
                 # Store completed chunk
                 chunk_str = "\n\n".join(current_chunk)
                 chunks.append(chunk_str)
 
                 # Compute overlap for sliding window
-                overlap_text = chunk_str[-overlap:] if len(chunk_str) > overlap else chunk_str
+                overlap_text = " ".join(chunk_str.split()[-overlap:])
                 current_chunk = [overlap_text, p]
-                current_len = len(overlap_text) + p_len
+                current_tokens = len(overlap_text.split()) + p_tokens
             else:
                 current_chunk.append(p)
-                current_len += p_len + 2
+                current_tokens += p_tokens
 
         if current_chunk:
             chunks.append("\n\n".join(current_chunk))

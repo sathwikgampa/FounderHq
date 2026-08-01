@@ -21,6 +21,10 @@ class DocumentUploadRequest(BaseModel):
     startupId: str = Field(..., description="Target startup ID")
     visibility: str = Field(default="GLOBAL", description="GLOBAL, TEAM, PRIVATE, SYSTEM")
     department: str | None = Field(default=None, description="Department permissions")
+    ownerId: str = Field(default="siddharth", description="Owner ID for private-document isolation")
+    content: str | None = Field(
+        default=None, description="Optional extracted document text for indexing"
+    )
 
 
 class DocumentUploadResponse(BaseModel):
@@ -64,6 +68,9 @@ class CitationItem(BaseModel):
     chunk_number: int = 1
     page_number: int = 1
     visibility: str = "GLOBAL"
+    department: str | None = None
+    header_context: str | None = None
+    relevance_score: float | None = None
 
 
 class RAGQueryResponse(BaseModel):
@@ -77,3 +84,4 @@ class RAGQueryResponse(BaseModel):
         default="",
         description="LLM-synthesized answer grounded strictly in retrieved context",
     )
+    confidence: float = Field(default=0.0, ge=0.0, le=1.0)
