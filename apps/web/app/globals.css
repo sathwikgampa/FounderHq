@@ -104,10 +104,46 @@
     @apply rounded-xl;
   }
 
-  /* Form control focus and readability */
+  /* Form control focus and high-contrast readability */
+  input,
+  textarea,
+  select {
+    color: #0f172a !important;
+  }
+
   input::placeholder,
   textarea::placeholder {
-    color: #94a3b8;
-    opacity: 1;
+    color: #475569 !important;
+    opacity: 1 !important;
+  }
+
+  /* High contrast text visibility overrides for crisp readability */
+  .text-slate-400 {
+    color: #334155 !important;
+  }
+
+  .text-gray-400 {
+    color: #334155 !important;
+  }
+
+  .text-muted-foreground {
+    color: #334155 !important;
+  }
+
+  /* Ensure dark background cards keep readable light text */
+  .bg-[#0d0d12] .text-slate-400,
+  .bg-[#111827] .text-slate-400,
+  .bg-[#0F172A] .text-slate-400,
+  .bg-black .text-slate-400,
+  .dark .text-slate-400 {
+    color: #cbd5e1 !important;
+  }
+
+  .bg-[#0d0d12] .text-gray-400,
+  .bg-[#111827] .text-gray-400,
+  .bg-[#0F172A] .text-gray-400,
+  .bg-black .text-gray-400,
+  .dark .text-gray-400 {
+    color: #cbd5e1 !important;
   }
 }
