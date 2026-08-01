@@ -34,6 +34,23 @@ Powered by **Google ADK (Agent Development Kit)** and **Gemini 2.5**, FounderHQ 
 
 ---
 
+## 🛠️ Technology Stack & Architectural Rationale
+
+FounderHQ was built using a curated, battle-tested stack. Every framework and tool was deliberately chosen to meet strict enterprise requirements: real-time streaming, high-throughput multi-agent execution, type safety, and premium user experience.
+
+| Layer                 | Technology Chosen                      | What It Does in FounderHQ                                                                             | Architectural Rationale (Why This Choice?)                                                                                                         |
+| :-------------------- | :------------------------------------- | :---------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Agent Framework**   | **Google ADK & Gemini 2.5**            | Multi-agent orchestration, CEO routing (`gemini-2.5-pro`) & sub-agent execution (`gemini-2.5-flash`). | **1M+ token context window**, native tool calling, structured JSON output, and sub-second reasoning speed for complex executive workflows.         |
+| **Backend API**       | **FastAPI (Python 3.11+)**             | High-speed REST API gateway, business logic, RAG vector pipeline & SSE event streaming.               | **Asynchronous ASGI throughput**, automatic OpenAPI generation, native Pydantic validation, and seamless integration with AI/ML Python libraries.  |
+| **Real-Time Stream**  | **SSE-Starlette (Server-Sent Events)** | Streams live agent thought traces, tool execution steps, and blueprints line-by-line to the client.   | **Lightweight unidirectional HTTP streaming** without the heavy connection overhead, stateful reconnects, and socket complexity of WebSockets.     |
+| **Frontend Core**     | **Next.js 14 (App Router & React 18)** | Executive Mission Control UI, Copilot command bar, Agent explorer, and metric management.             | **App Router architecture**, Server Components for instant initial load, smooth client-side hydration, and native Vercel deployment optimizations. |
+| **Styling & Icons**   | **Tailwind CSS & Lucide React**        | Enterprise glassmorphism styling, responsive KPI grids, and crisp SVG icons.                          | **Utility-first styling** enables rapid customization of modern dark/light themes without CSS bundle bloat or runtime style recalculations.        |
+| **Data Validation**   | **Pydantic v2**                        | Strict schema validation for request payloads, agent tool signatures, and response models.            | **Rust-backed validation engine** for maximum speed, preventing malformed tool arguments or invalid payload states before execution.               |
+| **Auth & Security**   | **Firebase Auth**                      | Google OAuth popup login & session token handling with local fallback support.                        | **Production-grade Google OAuth integration**, seamless token verification, and domain whitelist authorization support.                            |
+| **Testing & Quality** | **Pytest & TestClient**                | End-to-end API verification suite testing all 15+ backend routes and tool contracts.                  | **Blazing fast parallel test execution**, easy fixture mocking for AI tools, and strict CI/CD gate checks to ensure zero-regression releases.      |
+
+---
+
 ## 🏗️ Architecture Diagram & Agent Matrix
 
 ### System Architecture
