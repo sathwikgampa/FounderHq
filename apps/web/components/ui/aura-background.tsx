@@ -126,9 +126,42 @@ export function AuraBackground({
     };
   }, []);
 
-  // Load Unicorn Studio Script for exact asset ILgOO23w4wEyPQOKyLO4
+  // Load Unicorn Studio Script with WebGL context detection & exception suppression
   useEffect(() => {
     if (typeof window === 'undefined') return;
+
+    // Suppress WebGL context loss uncaught promise rejections from third-party WebGL scripts
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      const reason = String(event?.reason?.message || event?.reason || '');
+      if (
+        reason.includes('WebGL') ||
+        reason.includes('context') ||
+        reason.includes('Error creating WebGL context')
+      ) {
+        event.preventDefault(); // Prevent browser console error crash
+      }
+    };
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+
+    const isWebGlSupported = () => {
+      try {
+        const c = document.createElement('canvas');
+        return !!(
+          window.WebGLRenderingContext &&
+          (c.getContext('webgl') || c.getContext('experimental-webgl') || c.getContext('webgl2'))
+        );
+      } catch {
+        return false;
+      }
+    };
+
+    // If browser lacks WebGL context support, rely cleanly on 2D Canvas Aurora fallback
+    if (!isWebGlSupported()) {
+      console.info('WebGL context creation not available; using 2D Canvas Aurora fallback.');
+      return () => {
+        window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+      };
+    }
 
     const scriptId = 'unicorn-studio-script';
     let script = document.getElementById(scriptId) as HTMLScriptElement | null;
@@ -169,6 +202,10 @@ export function AuraBackground({
     } else {
       initUnicorn();
     }
+
+    return () => {
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+    };
   }, [projectId]);
 
   return (
