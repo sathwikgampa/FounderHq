@@ -1,4 +1,4 @@
-# 🚀 FounderHQ – Autonomous AI Operating System for Startups
+# FounderHQ – Autonomous AI Operating System for Startups
 
 [![Next.js 15](https://img.shields.io/badge/Next.js-15.5-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
@@ -10,18 +10,18 @@
 
 ---
 
-## 🏆 Hackathon Submission Checklist (Section 5.4 Compliance)
+## 1. Hackathon Submission Checklist (Section 5.4 Compliance)
 
-| Submission Requirement               | Link / Details                                                                             | Status                                                            |
-| :----------------------------------- | :----------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
-| **🌐 Live Deployed Product**         | [https://founderhq.vercel.app](https://founderhq.vercel.app) _(or your Vercel/Render URL)_ | ✅ Ready for Deployment                                           |
-| **📂 Public Source Code Repository** | Public GitHub Repository with complete README & setup instructions                         | ✅ Fully Documented                                               |
-| **🎥 60-Second Demonstration Video** | See [`DEMO_SCRIPT.md`](./DEMO_SCRIPT.md) for 60s timestamped script & recording blueprint  | ✅ Script & Outline Complete                                      |
-| **📌 Distributed Git Commits**       | Incremental, structured commits throughout development event                               | ✅ Compliant (See [`GIT_COMMIT_GUIDE.md`](./GIT_COMMIT_GUIDE.md)) |
+| Submission Requirement            | Link / Details                                                                             | Status                                                         |
+| :-------------------------------- | :----------------------------------------------------------------------------------------- | :------------------------------------------------------------- |
+| **Live Deployed Product**         | [https://founderhq.vercel.app](https://founderhq.vercel.app) _(or your Vercel/Render URL)_ | Ready for Deployment                                           |
+| **Public Source Code Repository** | Public GitHub Repository with complete README & setup instructions                         | Fully Documented                                               |
+| **60-Second Demonstration Video** | See [`DEMO_SCRIPT.md`](./DEMO_SCRIPT.md) for 60s timestamped script & recording blueprint  | Script & Outline Complete                                      |
+| **Distributed Git Commits**       | Incremental, structured commits throughout development event                               | Compliant (See [`GIT_COMMIT_GUIDE.md`](./GIT_COMMIT_GUIDE.md)) |
 
 ---
 
-## 🎯 1. Problem Clarity & Product Vision (Weight: 10%)
+## 1. Problem Clarity & Product Vision (Weight: 10%)
 
 ### The Problem
 
@@ -37,7 +37,7 @@ FounderHQ solves operational fragmentation by acting as an **Autonomous AI Co-Fo
 
 ---
 
-## 🧠 2. AI Integration Depth & System Architecture (Weight: 25%)
+## 2. AI Integration Depth & System Architecture (Weight: 25%)
 
 FounderHQ goes far beyond simple LLM chat wrappers by engineering a **hierarchical multi-agent cognitive architecture**:
 
@@ -76,7 +76,7 @@ FounderHQ goes far beyond simple LLM chat wrappers by engineering a **hierarchic
 
 ---
 
-## 🛠️ 3. Technical Execution & Monorepo Architecture (Weight: 20%)
+## 3. Technical Execution & Monorepo Architecture (Weight: 20%)
 
 Engineered as a production-grade monorepo powered by **Turborepo** and `pnpm`:
 
@@ -102,7 +102,7 @@ FounderHq/
 
 ---
 
-## 🎨 4. Design & User Experience (Weight: 10%)
+## 4. Design & User Experience (Weight: 10%)
 
 - **Aesthetic Excellence:** Modern, premium dark-mode interface built with custom glassmorphism effects, HSL color palettes, and polished typography.
 - **Dynamic Navigation:** Floating collapsible sidebar (`floating-sidebar.tsx`) with nested recursive agent routing.
@@ -111,7 +111,7 @@ FounderHq/
 
 ---
 
-## ⚡ 5. Quick Start & Local Setup
+## 5. Quick Start & Local Setup
 
 ### Prerequisites
 
@@ -148,7 +148,7 @@ pnpm dev
 
 ---
 
-## 🌐 6. Production Deployment (Completeness: 10%)
+## 6. Production Deployment (Completeness: 10%)
 
 For detailed deployment instructions on Vercel and Render, refer to [`DEPLOYMENT.md`](./DEPLOYMENT.md).
 
@@ -160,18 +160,18 @@ pnpm --filter web build
 
 ---
 
-## 🎥 7. 60-Second Video Script & Presentation (Weight: 10%)
+## 7. 60-Second Video Script & Presentation (Weight: 10%)
 
 Refer to [`DEMO_SCRIPT.md`](./DEMO_SCRIPT.md) for the exact 60-second video demo script, visual screen recording guide, and voiceover text required for submission.
 
 ---
 
-## 🎓 8. Individual Interview Preparation (Section 6.2)
+## 8. Individual Interview Preparation (Section 6.2)
 
 Refer to [`INTERVIEW_PREP.md`](./INTERVIEW_PREP.md) for technical talking points, system design explanations, and Q&A preparation for the Axiss Group representative interviews during the demo round.
 
 ---
 
-## 📄 License
+## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
